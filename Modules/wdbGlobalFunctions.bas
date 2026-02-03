@@ -1059,18 +1059,20 @@ End If
 Dim db As Database
 Set db = CurrentDb()
 Dim d As Boolean, l As Boolean, rsPerm As Recordset
-d = False
-l = False
+d = True
+l = True
 
 Set rsPerm = db.OpenRecordset("SELECT * FROM tblPermissions WHERE user = '" & userName & "'")
 'restrict = true means you cannot access
 'set No Access first, then allow as it is OK
-d = True
-l = True
 
 If Nz(rsPerm!dept) = "" Or Nz(rsPerm("level")) = "" Then GoTo setRestrict 'if person isnt fully set up, do not allow access
 
-If rsPerm!dept = dept Then d = False 'if correct department, set d to false
+If (rsPerm!dept = dept) Then
+    d = False 'if correct department, set d to false
+ElseIf rsPerm!dept = "Project" And dept = "CPC" And rsPerm("level") = "Manager" Then ' Project has same permissions as CPC for Managers Only
+    d = False 'if correct department, set d to false
+End If
 
 Select Case True 'figure out level
     Case reqLevel = "" 'if level isn't specified, this doesn't matter! - allow
