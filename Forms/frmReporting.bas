@@ -14,3 +14,23 @@ Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
+
+Private Sub pePartInfo_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmReporting_partInfo"
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub peProjInfo_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmReporting_PE_proj"
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
