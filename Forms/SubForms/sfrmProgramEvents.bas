@@ -7,7 +7,7 @@ Option Explicit
 
 Private Sub correlatedGate_AfterUpdate()
 On Error GoTo Err_Handler
-Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "")
+Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "", Me.eventTitle)
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
@@ -15,7 +15,7 @@ End Sub
 
 Private Sub dataSubmitted_AfterUpdate()
 On Error GoTo Err_Handler
-Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "")
+Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "", Me.eventTitle)
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
@@ -23,7 +23,7 @@ End Sub
 
 Private Sub dataSubmittedDate_AfterUpdate()
 On Error GoTo Err_Handler
-Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "")
+Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "", Me.eventTitle)
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
@@ -50,7 +50,7 @@ End Sub
 
 Private Sub eventTitle_AfterUpdate()
 On Error GoTo Err_Handler
-Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "")
+Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "", Me.eventTitle)
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
@@ -58,7 +58,7 @@ End Sub
 
 Private Sub eventDate_AfterUpdate()
 On Error GoTo Err_Handler
-Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "")
+Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "", Me.eventTitle)
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
@@ -66,7 +66,7 @@ End Sub
 
 Private Sub eventType_AfterUpdate()
 On Error GoTo Err_Handler
-Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "")
+Call registerPartUpdates("tblProgramEvents", Me.programId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, "", Me.eventTitle)
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)

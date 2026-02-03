@@ -1,6 +1,20 @@
 Option Compare Database
 Option Explicit
 
+Function whatever()
+
+Dim db As Database
+Set db = CurrentDb()
+
+Dim qdf As QueryDef, tempRS As Recordset
+
+Set qdf = db.QueryDefs("qryFindNextPIllar")
+Debug.Print qdf.sql
+
+Set db = Nothing
+
+End Function
+
 Function doStuffFiles()
 
 Dim folderName As String

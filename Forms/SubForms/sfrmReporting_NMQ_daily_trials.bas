@@ -18,6 +18,8 @@ End Sub
 Private Sub noteHistory_Click()
 On Error GoTo Err_Handler
 
+If IsNull(Me.noteId) Then Exit Sub
+
 DoCmd.OpenForm "frmHistory"
 Form_frmHistory.RecordSource = "qryWdbUpdateTracking"
 Form_frmHistory.dataTag0.ControlSource = "dataTag1"
