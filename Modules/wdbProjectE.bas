@@ -1206,9 +1206,11 @@ If rsPack.RecordCount = 0 Then
 Else
     Do While Not rsPack.EOF
         If Nz(rsPack!packType) = "" & rsPI!dataStatus = 2 Then errorArray.Add "Packaging Type" 'required for transfer
-        If rsU!Org = "CUU" Then
+        If Nz(rsPI!unitId) = "" Then GoTo skipPackUCheck
+        If Nz(rsU!Org, "") = "CUU" Then
             If Nz(rsPack!boxesPerSkid) = "" & rsPI!dataStatus = 2 Then errorArray.Add "Boxes Per Skid (req. for CUU)" 'if CUU org, then need to check this for transfer for MEX FREIGHT cost calc
         End If
+skipPackUCheck:
 
         Set rsPackC = db.OpenRecordset("SELECT * from tblPartPackagingComponents WHERE packagingInfoId = " & rsPack!recordId)
         If rsPackC.RecordCount = 0 And rsPI!dataStatus = 2 Then errorArray.Add "Packaging Components missing (req. for transfer)" 'required for transfer

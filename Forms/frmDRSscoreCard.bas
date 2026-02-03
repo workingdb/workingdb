@@ -100,7 +100,7 @@ Err_Handler:
 End Sub
 
 Function setScorecardData()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 
 Me.lblWho.Caption = Form_frmDRSworkTracker.fltAssignee
 iUser = Nz(DLookup("[ID]", "tblPermissions", "[user] = '" & Form_frmDRSworkTracker.fltAssignee & "'"), 0)
@@ -263,7 +263,7 @@ End Function
 
 
 Private Sub Form_Load()
-'On Error GoTo Err_Handler
+On Error GoTo Err_Handler
 
 Call setTheme(Me)
 
