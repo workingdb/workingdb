@@ -96,7 +96,7 @@ Me.OrderByOn = True
 If (restrict(Environ("username"), "Project") And restrict(Environ("username"), "Service")) Then Me.newPartProject.Visible = False
 Me.nmqDash.Visible = Not restrict(Environ("username"), "New Model Quality")
 
-Me.reports.Visible = Not restrict(Environ("username"), "New Model Quality", "Manager") Or Not restrict(Environ("username"), "Project", "Supervisor")
+Me.reports.Visible = Not restrict(Environ("username"), "New Model Quality", "Manager") Or Not restrict(Environ("username"), "Project", "Supervisor", True)
 
 Me.chooseDept = Nz(userData("Dept"), "")
 

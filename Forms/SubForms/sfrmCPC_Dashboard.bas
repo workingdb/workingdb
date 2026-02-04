@@ -35,11 +35,11 @@ Private Sub btnEditInfo_Click()
 On Error GoTo Err_Handler
 
 If restrict(Environ("username"), "CPC", "Supervisor", True) Then
-    Call snackBox("error", "You can't edit a closed step", "Only a CPC manager can edit a step - looks like that's not you, sorry.", "frmCPC_Dashboard")
+    Call snackBox("error", "You can't edit this step", "Only a CPC manager can edit a step - looks like that's not you, sorry.", "frmCPC_Dashboard")
     Exit Sub
 End If
 
-'DoCmd.OpenForm "frmPartStepEdit", acNormal, , "ID = " & Me.ID
+DoCmd.OpenForm "frmCPC_stepEdit", acNormal, , "ID = " & Me.ID
 
 Exit Sub
 Err_Handler:
