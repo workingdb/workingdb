@@ -557,6 +557,21 @@ Select Case DLookup("templateType", "tblPartProjectTemplate", "recordId = " & DL
         projectOwner = "Service"
 End Select
 
+'CHECK PARAMETER FOR TEMP BYPASS
+Dim bypass As Boolean, bypassInfo As String, bypassOrg As String
+'can be an ORG, or an individual
+If DLookup("paramVal", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") = True Then 'if enabled, then check conditions
+    bypassInfo = DLookup("Message", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") 'what is the condition?
+    bypassOrg = DLookup("developingLocation", "tblPartInfo", "partNumber = '" & rsStep!partNumber & "'")
+    
+    If Len(bypassInfo) = 3 Then 'ORG bypass
+        If bypassInfo = "LVG" Then bypassInfo = "CNL" 'CNL will include LVG by default
+        If bypassInfo = bypassOrg Then GoTo bypassGatePillar
+    Else
+        If bypassInfo = Environ("username") Then GoTo bypassGatePillar
+    End If
+End If
+
 '---First, check if this step is in the current gate--- (you can only close it if true)
 Dim rsGate As Recordset
 Set rsGate = db.OpenRecordset("SELECT * FROM tblPartGates WHERE recordId = " & rsStep!partGateId)
@@ -574,6 +589,8 @@ If Not IsNull(rsStep!dueDate) And DCount("recordId", "tblPartSteps", "partGateId
     errorText = "This step is a pillar. All steps before this pillar must be closed before this step."
     GoTo errorOut
 End If
+
+bypassGatePillar:
 
 If restrict(Environ("username"), projectOwner) = False Then GoTo theCorrectFellow 'is the bro an owner?
 

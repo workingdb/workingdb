@@ -52,6 +52,29 @@ msgCap = "Steps: " & Left(Me.gateTitle, 2)
 Form_sfrmPartDashboard.Form.allowEdits = True
 Call Form_sfrmPartDashboard.sfrmPartDashLock(False)
 
+'CHECK PARAMETER FOR TEMP BYPASS
+Dim bypass As Boolean, bypassInfo As String, bypassOrg As String
+'can be an ORG, or an individual
+If DLookup("paramVal", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") = True Then 'if enabled, then check conditions
+    bypassInfo = DLookup("Message", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") 'what is the condition?
+    bypassOrg = DLookup("developingLocation", "tblPartInfo", "partNumber = '" & Me.partNumber & "'")
+    
+    If Len(bypassInfo) = 3 Then 'ORG bypass
+        If bypassInfo = "LVG" Then bypassInfo = "CNL" 'CNL will include LVG by default
+        If bypassInfo = bypassOrg Then
+            msgCap = "Steps: " & Left(Me.gateTitle, 2) & " (BYPASS)"
+            Call Form_sfrmPartDashboard.sfrmPartDashLock(False)
+            GoTo setMsg
+        End If
+    Else
+        If bypassInfo = Environ("username") Then
+            msgCap = "Steps: " & Left(Me.gateTitle, 2) & " (BYPASS)"
+            Call Form_sfrmPartDashboard.sfrmPartDashLock(False)
+            GoTo setMsg
+        End If
+    End If
+End If
+
 'are there steps in a previous gate that are open? MUST FINISH THOSE FIRST
 If Me.recordId > DMin("[partGateId]", "tblPartSteps", "partProjectId = " & Me.projectId & " AND [status] <> 'Closed'") Then
     msgCap = "Steps: " & Left(Me.gateTitle, 2) & " (LOCKED)"
