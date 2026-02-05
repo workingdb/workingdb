@@ -725,15 +725,19 @@ Select Case rsStepAction!stepAction
         End If
     Case "emailKOaif"
         'email all KO AIF attachments to COST_BOM_MAILBOX
-        If emailAIF(rsStep!recordId, rsStep!partNumber, "Kickoff", rsStep!partProjectId) = False Then
-            errorText = "Couldn't send email"
-            GoTo errorOut
+        If DLookup("developingLocation", "tblPartInfo", "partNumber = '" & rsStep!partNumber & "'") <> "NCM" Then 'REMOVE NCM FOR BETA TESTING
+            If emailAIF(rsStep!recordId, rsStep!partNumber, "Kickoff", rsStep!partProjectId) = False Then
+                errorText = "Couldn't send email"
+                GoTo errorOut
+            End If
         End If
     Case "emailTSFRaif"
         'email all TRANSFER AIF attachments to COST_BOM_MAILBOX
-        If emailAIF(rsStep!recordId, rsStep!partNumber, "Transfer", rsStep!partProjectId) = False Then
-            errorText = "Couldn't send email"
-            GoTo errorOut
+        If DLookup("developingLocation", "tblPartInfo", "partNumber = '" & rsStep!partNumber & "'") <> "NCM" Then 'REMOVE NCM FOR BETA TESTING
+            If emailAIF(rsStep!recordId, rsStep!partNumber, "Transfer", rsStep!partProjectId) = False Then
+                errorText = "Couldn't send email"
+                GoTo errorOut
+            End If
         End If
 End Select
 
@@ -1389,10 +1393,11 @@ End If
 aifInsert "Mexico Rates", Nz(rsU!Org) = "CUU", firstColBold:=True
 
 If rsPI!dataStatus = 2 Then '(transfer)
-    aifInsert "Org", Nz(rsU!Org, rsPI!developingLocation), firstColBold:=True  'for TRANSFER, use MP unit ORG
+    aifInsert "Project Org", Nz(rsU!Org, rsPI!developingLocation), firstColBold:=True  'for TRANSFER, use MP unit ORG
 Else
-    aifInsert "Org", Nz(rsPI!developingLocation, ""), firstColBold:=True 'for KICKOFF, use Developing ORG
+    aifInsert "Project Org", Nz(rsPI!developingLocation, ""), firstColBold:=True 'for KICKOFF, use Developing ORG
 End If
+aifInsert "MP Org", Nz(rsU!Org, rsPI!developingLocation), firstColBold:=True  'MP ORG - use MP unit to calc, and use dev location if not available
 
 aifInsert "Part Type", DLookup("partType", "tblDropDownsSP", "recordid = " & rsPI!partType), firstColBold:=True
 aifInsert "Locator", Nz(DLookup("finishLocator", "tblDropDownsSP", "recordid = " & rsPI!finishLocator)), firstColBold:=True

@@ -196,7 +196,7 @@ End Sub
 Private Sub Unit_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Unit.SetFocus
+Me.unit.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub

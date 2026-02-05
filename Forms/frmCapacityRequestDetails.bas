@@ -134,7 +134,7 @@ End If
 If currentUnit <> "" Then
     Dim unitId
     unitId = Nz(DLookup("recordId", "tblUnits", "unitName = '" & currentUnit & "'"), 0)
-    Me.Unit = unitId
+    Me.unit = unitId
 End If
 
 'Dim rs1 As DAO.Recordset
