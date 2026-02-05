@@ -22,6 +22,9 @@ On Error GoTo Err_Handler
 
 Call setTheme(Me)
 
+Me.allowEdits = TempVars!capAdd = "True"
+Me.AllowAdditions = TempVars!capAdd = "True"
+
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
@@ -86,7 +89,7 @@ If TempVars!capAdd = "True" Then
         DoCmd.SetWarnings False
         If Nz(Me.recordId) <> "" Then DoCmd.RunCommand acCmdDeleteRecord
         DoCmd.SetWarnings True
-    Else 'passes validation! new record being saved
+    ElseIf Not IsNull(Me.recordId) Then 'passes validation! new record being saved
         Dim body As String
         body = emailContentGen("New Capacity Request", _
             "New " & Me.requestType.column(1), _
@@ -131,7 +134,7 @@ End If
 If currentUnit <> "" Then
     Dim unitId
     unitId = Nz(DLookup("recordId", "tblUnits", "unitName = '" & currentUnit & "'"), 0)
-    Me.unit = unitId
+    Me.Unit = unitId
 End If
 
 'Dim rs1 As DAO.Recordset

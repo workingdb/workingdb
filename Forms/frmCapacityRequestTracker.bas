@@ -42,6 +42,9 @@ On Error GoTo Err_Handler
 
 Call setTheme(Me)
 
+Me.filter = "Requestor = " & DLookup("ID", "tblPermissions", "user = '" & Environ("username") & "'")
+Me.FilterOn = True
+
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
@@ -193,7 +196,7 @@ End Sub
 Private Sub Unit_Label_Click()
 On Error GoTo Err_Handler
 
-Me.unit.SetFocus
+Me.Unit.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub

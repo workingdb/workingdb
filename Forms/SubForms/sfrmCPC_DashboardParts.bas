@@ -191,7 +191,7 @@ If rs1.RecordCount = 0 Then
 End If
 
 Me.DESCRIPTION = rs1("DESCRIPTION")
-Me.unit = rs1("SEGMENT1")
+Me.Unit = rs1("SEGMENT1")
 
 rs1.CLOSE
 Set rs1 = Nothing
