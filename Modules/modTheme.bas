@@ -177,6 +177,10 @@ For Each ctl In setForm.Controls 'simply loop through all controls on the form
             ctl.BackColor = backCol
             If ctl.tag Like "*txtTransFore*" Then
                 ctl.ForeColor = backCol
+            ElseIf ctl.tag Like "*txtErr*" Then
+                ctl.BorderColor = btnXback
+                ctl.BorderStyle = 1
+                ctl.ForeColor = foreBase
             Else
                 ctl.ForeColor = foreBase
             End If

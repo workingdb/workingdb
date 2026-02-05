@@ -61,6 +61,7 @@ End Sub
 Private Sub newRequest_Click()
 On Error GoTo Err_Handler
 
+TempVars.Add "capAdd", "True"
 DoCmd.OpenForm "frmCapacityRequestDetails", , , , acFormAdd
 
 Exit Sub
@@ -71,6 +72,7 @@ End Sub
 Private Sub openDetails_Click()
 On Error GoTo Err_Handler
 
+TempVars.Add "capAdd", "False"
 DoCmd.OpenForm "frmCapacityRequestDetails", , , "RecordID = " & Me.recordId
 
 Exit Sub

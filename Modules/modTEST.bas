@@ -1,17 +1,20 @@
 Option Compare Database
 Option Explicit
 
-Function whatever()
+Function renameLabels()
 
-Dim db As Database
-Set db = CurrentDb()
+Dim frm As Form, ctl As Control
 
-Dim qdf As QueryDef, tempRS As Recordset
-
-Set qdf = db.QueryDefs("qryFindNextPIllar")
-Debug.Print qdf.sql
-
-Set db = Nothing
+Set frm = forms("frmCapacityRequestDetails")
+For Each ctl In frm.Controls
+    Select Case ctl.ControlType
+        Case acLabel
+            If Left(ctl.Parent.name, 3) = "frm" Then GoTo nextLabel
+            
+            ctl.name = "lbl" & ctl.Parent.name
+nextLabel:
+    End Select
+Next ctl
 
 End Function
 
