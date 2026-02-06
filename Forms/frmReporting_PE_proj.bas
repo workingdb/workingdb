@@ -28,6 +28,8 @@ Call setTheme(Me)
 
 Me.sfrmReporting_PE_proj_lateSteps.Form.filter = ""
 Me.sfrmReporting_PE_proj_lateSteps.Form.FilterOn = False
+Me.sfrmReporting_PE_proj_closedSteps.Form.filter = ""
+Me.sfrmReporting_PE_proj_closedSteps.Form.FilterOn = False
 
 Exit Sub
 Err_Handler:
