@@ -351,13 +351,13 @@ Private Sub pvtp_incPastStart_Click()
 On Error GoTo Err_Handler
 
 Dim filt As String
-filt = "tblPartTesting.plannedStart < Date() AND tblPartTesting.testStatus < 3" 'Not Started or In Progress
+filt = "tblPartTesting.plannedStart < Date() AND tblPartTesting.actualStart is null AND tblPartTesting.testStatus < 3" 'Not Started or In Progress
 
 If Nz(Me.pvtp_fltUnit) <> "" Then
     filt = filt & " AND unitId = " & Me.pvtp_fltUnit
 End If
 
-Call pvtp_applyFilter(filt, "Incomplete, Past Planned Start")
+Call pvtp_applyFilter(filt, "Past Planned Start, No Actual Start")
 
 Exit Sub
 Err_Handler:
