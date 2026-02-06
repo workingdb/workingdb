@@ -101,6 +101,54 @@ Me.events_lblTitle.Caption = filterName
 
 End Function
 
+Function pvtp_applyFilter(filterCond As String, filterName As String)
+
+If Nz(Me.pvtp_fltUnit) <> "" Then
+    filterCond = Split(filterCond, " AND unitId")(0) 'remove unit filter if present
+    filterCond = filterCond & " AND unitId = " & Me.pvtp_fltUnit
+    
+    filterName = Split(filterName, " [")(0) 'remove unit from caption if present
+    filterName = filterName & " [" & Me.pvtp_fltUnit.column(1) & "]"
+End If
+
+Me.sfrmReporting_NMQ_daily_pvtp.Form.filter = filterCond
+Me.sfrmReporting_NMQ_daily_pvtp.Form.FilterOn = True
+
+Dim db As Database
+Set db = CurrentDb()
+
+Dim qdf As QueryDef
+Set qdf = db.QueryDefs("frmReporting_NMQ_daily_pvtp_chart1_sub")
+
+qdf.sql = Split(qdf.sql, "WHERE")(0) & " WHERE " & filterCond
+
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+Set db = Nothing
+
+Me.pvtp_chart1.Requery
+
+Me.pvtp_lblTitle.Caption = filterName
+
+End Function
+
+Private Sub events_export_Click()
+On Error GoTo Err_Handler
+
+Dim FileName As String, sqlString As String, filt As String
+FileName = "H:\Reporting_NMQ_daily_events_" & nowString & ".xlsx"
+filt = " WHERE " & Me.sfrmReporting_NMQ_daily_events.Form.filter
+If Me.sfrmReporting_NMQ_daily_events.Form.FilterOn = False Then filt = ""
+sqlString = "SELECT * FROM sfrmReporting_NMQ_daily_events " & filt
+                    
+Call exportSQL(sqlString, FileName)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub events_fltModel_AfterUpdate()
 On Error GoTo Err_Handler
 
@@ -145,6 +193,22 @@ If Nz(Me.events_fltModel) <> "" Then
 End If
 
 Call events_applyFilter(filt, "Past Events")
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub ppap_export_Click()
+On Error GoTo Err_Handler
+
+Dim FileName As String, sqlString As String, filt As String
+FileName = "H:\Reporting_NMQ_daily_PPAP_" & nowString & ".xlsx"
+filt = " WHERE " & Me.sfrmReporting_NMQ_daily_PPAP.Form.filter
+If Me.sfrmReporting_NMQ_daily_PPAP.Form.FilterOn = False Then filt = ""
+sqlString = "SELECT * FROM sfrmReporting_NMQ_daily_PPAP " & filt
+                    
+Call exportSQL(sqlString, FileName)
 
 Exit Sub
 Err_Handler:
@@ -227,6 +291,89 @@ If Nz(Me.PPAP_fltUnit) <> "" Then
 End If
 
 Call PPAP_applyFilter(filt, "Upcoming (<3 months) and Late")
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub pvtp_empty_Click()
+On Error GoTo Err_Handler
+
+Dim filt As String
+filt = "tblPartProject.recordId NOT IN (SELECT projectId From tblPartTesting GROUP BY projectId HAVING (Count(recordId)>0))" 'no tests found
+
+If Nz(Me.pvtp_fltUnit) <> "" Then
+    filt = filt & " AND unitId = " & Me.pvtp_fltUnit
+End If
+
+Call pvtp_applyFilter(filt, "Parts with No Testing Enterred")
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub pvtp_export_Click()
+On Error GoTo Err_Handler
+
+Dim FileName As String, sqlString As String, filt As String
+FileName = "H:\Reporting_NMQ_daily_pvtp_" & nowString & ".xlsx"
+filt = " WHERE " & Me.sfrmReporting_NMQ_daily_pvtp.Form.filter
+If Me.sfrmReporting_NMQ_daily_pvtp.Form.FilterOn = False Then filt = ""
+sqlString = "SELECT * FROM sfrmReporting_NMQ_daily_pvtp " & filt
+                    
+Call exportSQL(sqlString, FileName)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub pvtp_incPastPlan_Click()
+On Error GoTo Err_Handler
+
+Dim filt As String
+filt = "tblPartTesting.plannedEnd < Date() AND tblPartTesting.testStatus < 3" 'Not Started or In Progress
+
+If Nz(Me.pvtp_fltUnit) <> "" Then
+    filt = filt & " AND unitId = " & Me.pvtp_fltUnit
+End If
+
+Call pvtp_applyFilter(filt, "Incomplete, Past Planned End")
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub pvtp_incPastStart_Click()
+On Error GoTo Err_Handler
+
+Dim filt As String
+filt = "tblPartTesting.plannedStart < Date() AND tblPartTesting.testStatus < 3" 'Not Started or In Progress
+
+If Nz(Me.pvtp_fltUnit) <> "" Then
+    filt = filt & " AND unitId = " & Me.pvtp_fltUnit
+End If
+
+Call pvtp_applyFilter(filt, "Incomplete, Past Planned Start")
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub trials_export_Click()
+On Error GoTo Err_Handler
+
+Dim FileName As String, sqlString As String, filt As String
+FileName = "H:\Reporting_NMQ_daily_trials_" & nowString & ".xlsx"
+filt = " WHERE " & Me.sfrmReporting_NMQ_daily_trials.Form.filter
+If Me.sfrmReporting_NMQ_daily_trials.Form.FilterOn = False Then filt = ""
+sqlString = "SELECT * FROM sfrmReporting_NMQ_daily_trials " & filt
+                    
+Call exportSQL(sqlString, FileName)
 
 Exit Sub
 Err_Handler:
