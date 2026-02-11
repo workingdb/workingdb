@@ -2714,9 +2714,9 @@ CATIA.ActiveWindow.ActiveViewer.Reframe
 'Dim ws As Excel.Worksheet
 'Dim objParam As Object
 '
-''on error goto paramError UNCOMMENT LATER
+''On Error GoTo paramError UNCOMMENT LATER
 'Set objParam = CATIA.ActiveDocument.Parameters.RootParameterSet.DirectParameters
-''on error goto err_handler UNCOMMENT LATER
+''On Error GoTo err_handler UNCOMMENT LATER
 '
 'Set fso = CreateObject("Scripting.FileSystemObject")
 'fso.CopyFile "\\nas01\lab\lab\LABDOCS\Lab Forms\Blank ISIR.xls", "H:\Documents\" & Left(CATIA.ActiveDocument.name, 5) & "_ISIR.xls"

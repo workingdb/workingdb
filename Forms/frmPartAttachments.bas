@@ -55,6 +55,7 @@ Private Sub newAttachment_Click()
 On Error GoTo Err_Handler
 
 DoCmd.OpenForm "frmDropFile"
+Form_frmDropFile.customName.Locked = True
 Form_frmDropFile.customName.Visible = False
 Form_frmDropFile.Label62.Visible = False
 Form_frmDropFile.Command63.Visible = False
@@ -73,7 +74,7 @@ If IsNull(Me.TtestId) Then
         Form_frmDropFile.documentType.Locked = True
     Else
         Form_frmDropFile.documentType = 30
-        Form_frmDropFile.documentType.Locked = True
+        Form_frmDropFile.documentType.Locked = False
         Form_frmDropFile.customName.Visible = True
         Form_frmDropFile.Label62.Visible = True
         Form_frmDropFile.Command63.Visible = True

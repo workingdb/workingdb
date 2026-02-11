@@ -16,7 +16,7 @@ TempVars.Add "woTimeId", db.OpenRecordset("SELECT @@identity")(0).Value
 
 Set db = Nothing
 
-Call registerLabUpdates("tbllab_wo_time", TempVars!woTimeId, "WO Time", "", "Created", Me.woid, Me.name)
+Call registerLabUpdates("tbllab_wo_time", TempVars!woTimeId, "WO Time", "", "Created", Form_frmLab_WO_details.recordId, Me.name)
 Me.Requery
 
 Exit Sub

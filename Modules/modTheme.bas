@@ -226,16 +226,6 @@ Err_Handler:
     Call handleError("modTheme", "setTheme", Err.DESCRIPTION, Err.number)
 End Function
 
-Function themeCommandButton()
-On Error GoTo Err_Handler
-
-
-
-Exit Function
-Err_Handler:
-    Call handleError("modTheme", "themeCommandButton", Err.DESCRIPTION, Err.number)
-End Function
-
 Function findColorLevel(tagText As String) As Long
 On Error GoTo Err_Handler
 
