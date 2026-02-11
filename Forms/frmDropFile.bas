@@ -5,8 +5,82 @@ Attribute VB_Exposed = False
 Option Compare Database
 Option Explicit
 
-Private Sub btnSave_Click()
-On Error GoTo Err_Handler
+Function saveStratPlanDoc()
+
+Dim errorText As String
+If Nz(Me.customName, "") = "" Then errorText = "Please add a title"
+If Nz(Me.dragDrop) = "" Then errorText = "Please select a document to upload..."
+
+If errorText <> "" Then
+    MsgBox errorText, vbCritical, "Hold up"
+    Exit Function
+End If
+
+Dim fso As Object
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+Dim fileExt As String, currentLoc As String, fullPath As String, attchFullFileName As String, tempFold As String, newFile As String
+currentLoc = TempVars!dragDropLocation.Value
+
+'transfer file to temp location
+tempFold = getTempFold
+fileExt = fso.GetExtensionName(currentLoc)
+newFile = tempFold & "tempUpload" & nowString & "." & fileExt
+
+If FolderExists(tempFold) = False Then MkDir (tempFold)
+Call fso.CopyFile(currentLoc, newFile)
+
+currentLoc = newFile
+
+Me.attachName = Me.customName & "-" & DMax("ID", "tblStratPlanAttachmentsSP") + 1
+
+attchFullFileName = Replace(Me.attachName, " ", "_") & "." & fileExt
+
+Dim db As DAO.Database
+Dim rsAtt As DAO.Recordset
+Dim rsAttChild As DAO.Recordset2
+Set db = CurrentDb
+Set rsAtt = db.OpenRecordset("tblStratPlanAttachmentsSP", dbOpenDynaset)
+
+rsAtt.addNew
+rsAtt!fileStatus = "Created"
+
+rsAtt.Update
+rsAtt.MoveLast
+
+rsAtt.Edit
+Set rsAttChild = rsAtt.Fields("Attachments").Value
+
+rsAttChild.addNew
+Dim fld As DAO.Field2
+Set fld = rsAttChild.Fields("FileData")
+fld.LoadFromFile (currentLoc)
+rsAttChild.Update
+
+rsAtt!uploadedBy = Environ("username")
+rsAtt!uploadedDate = Now()
+rsAtt!attachName = Me.attachName
+rsAtt!attachFullFileName = attchFullFileName
+rsAtt!fileStatus = "Uploading"
+rsAtt!referenceId = Me.TprojectId
+rsAtt!referenceTable = Me.TpartNumber
+rsAtt!documentLibrary = Me.TdocumentLibary
+rsAtt.Update
+
+Call registerStratPlanUpdates("tblStratPlanAttachmentsSP", Me.TprojectId, "File Attachment", Me.attachName, "Uploaded", Me.TprojectId, Me.name)
+
+On Error Resume Next
+Set fld = Nothing
+rsAttChild.CLOSE: Set rsAttChild = Nothing
+rsAtt.CLOSE: Set rsAtt = Nothing
+Set db = Nothing
+
+DoCmd.CLOSE acForm, "frmDropFile"
+Form_frmStratPlanAttachments.Requery
+
+End Function
+
+Function savePartDoc()
 
 Dim errorText As String
 If Nz(Me.documentType, 0) = 0 Then errorText = "Need to select document type"
@@ -14,7 +88,7 @@ If Nz(Me.dragDrop) = "" Then errorText = "Please select a document to upload..."
 
 If errorText <> "" Then
     MsgBox errorText, vbCritical, "Hold up"
-    Exit Sub
+    Exit Function
 End If
 
 Dim fso As Object
@@ -112,6 +186,17 @@ Set db = Nothing
 
 DoCmd.CLOSE acForm, "frmDropFile"
 Form_frmPartAttachments.Requery
+
+End Function
+
+Private Sub btnSave_Click()
+On Error GoTo Err_Handler
+
+If Me.lblDocCategory.Caption = "Strategic Planning Document" Then
+    Call saveStratPlanDoc
+Else
+    Call savePartDoc
+End If
 
 Exit Sub
 Err_Handler:

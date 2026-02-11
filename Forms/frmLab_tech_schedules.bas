@@ -174,7 +174,7 @@ TempVars.Add "techSchedule", db.OpenRecordset("SELECT @@identity")(0).Value
 
 Set db = Nothing
 
-Call registerLabUpdates("tbllab_tech_schedule_template", TempVars!techSchedule, "Tech Schedule", "", "Created", "", Me.name)
+Call registerLabUpdates("tbllab_tech_schedule_template", TempVars!techSchedule, "Tech Schedule", "", "Created", TempVars!techSchedule, Me.name)
 
 Me.Requery
 

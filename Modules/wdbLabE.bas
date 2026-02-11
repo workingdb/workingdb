@@ -2,8 +2,8 @@ Option Compare Database
 Option Explicit
 
 Public Function registerLabUpdates(table As String, ID As Variant, column As String, _
-    oldVal As Variant, newVal As Variant, referenceid As String, _
-    formname As String, Optional tag0 As Variant = "")
+    oldVal As Variant, newVal As Variant, referenceId As String, _
+    formName As String, Optional tag0 As Variant = "")
 On Error GoTo Err_Handler
 
 Dim sqlColumns As String, sqlValues As String
@@ -30,8 +30,8 @@ With rs1
         !columnName = column
         !previousData = StrQuoteReplace(CStr(Nz(oldVal, "")))
         !newData = StrQuoteReplace(CStr(Nz(newVal, "")))
-        !referenceid = referenceid
-        !formname = StrQuoteReplace(formname)
+        !referenceId = referenceId
+        !formName = StrQuoteReplace(formName)
         !dataTag0 = StrQuoteReplace(tag0)
     .Update
     .Bookmark = .lastModified

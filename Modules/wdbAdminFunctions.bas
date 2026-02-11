@@ -23,7 +23,7 @@ Private Declare PtrSafe Function ShowWindow Lib "user32" (ByVal hwnd As Long, By
 Dim AppX As Long, AppY As Long, AppTop As Long, AppLeft As Long, WinRECT As RECT
 
 'Public Function localizeTblDropDownsSP()
-'on error goto Err_Handler
+'On Error GoTo Err_Handler
 '
 'Dim db As DAO.Database
 'Dim tdf As DAO.TableDef
@@ -48,7 +48,7 @@ Dim AppX As Long, AppY As Long, AppTop As Long, AppLeft As Long, WinRECT As RECT
 'End Function
 '
 'Public Function reconnectTblDropDownsSP()
-'on error goto Err_Handler
+'On Error GoTo Err_Handler
 '
 'Dim db As DAO.Database
 'Dim tdf As DAO.TableDef
@@ -64,7 +64,7 @@ Dim AppX As Long, AppY As Long, AppTop As Long, AppLeft As Long, WinRECT As RECT
 '' Check if the linked table already exists
 'on error Resume Next
 'Set tdf = db.TableDefs(strLinkedTableName)
-'on error goto 0
+'On Error GoTo 0
 '
 'If Not tdf Is Nothing Then db.TableDefs.Delete strLinkedTableName
 '
@@ -117,7 +117,7 @@ Err_Handler:
     Call handleError("wdbAdminFunctions", "readyForPublish", Err.DESCRIPTION, Err.number)
 End Function
 
-Function logClick(modName As String, formname As String, Optional dataTag0 = "")
+Function logClick(modName As String, formName As String, Optional dataTag0 = "")
 On Error Resume Next
 
 If DLookup("paramVal", "tblDBinfoBE", "parameter = '" & "recordAnalytics'") = False Then Exit Function
@@ -130,7 +130,7 @@ Set rs1 = db.OpenRecordset("tblAnalytics")
 With rs1
     .addNew
         !module = modName
-        !Form = formname
+        !Form = formName
         !userName = Environ("username")
         !dateUsed = Now()
         !dataTag0 = StrQuoteReplace(dataTag0)
@@ -277,7 +277,7 @@ If (IsZoomed(h) = False) Then ShowWindow h, SW_SHOWMAXIMIZED
 
 Exit Sub
 Err_Handler:
-    Call handleError("wdbAdminFunctions", "SizeAccess", Err.DESCRIPTION, Err.number)
+    Call handleError("wdbAdminFunctions", "maximizeAccess", Err.DESCRIPTION, Err.number)
 End Sub
 
 Sub SizeAccess(ByVal dx As Long, ByVal dy As Long)

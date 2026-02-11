@@ -57,7 +57,7 @@ Dim bypass As Boolean, bypassInfo As String, bypassOrg As String
 'can be an ORG, or an individual
 If DLookup("paramVal", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") = True Then 'if enabled, then check conditions
     bypassInfo = DLookup("Message", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") 'what is the condition?
-    bypassOrg = DLookup("developingLocation", "tblPartInfo", "partNumber = '" & Me.partNumber & "'")
+    bypassOrg = Nz(DLookup("developingLocation", "tblPartInfo", "partNumber = '" & Me.partNumber & "'"), "SLB")
     
     If Len(bypassInfo) = 3 Then 'ORG bypass
         If bypassInfo = "LVG" Then bypassInfo = "CNL" 'CNL will include LVG by default

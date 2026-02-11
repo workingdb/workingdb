@@ -148,7 +148,7 @@ End Function
 
 Public Sub Link_ODBCTbl(serverConn As String, rstrTblSrc As String, rstrTblDest As String, db As DAO.Database)
 
-'on error goto err_handler
+'On Error GoTo err_handler
 
     Dim tdf As TableDef
     Dim connOptions As String

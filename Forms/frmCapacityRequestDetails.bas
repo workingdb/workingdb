@@ -17,6 +17,19 @@ Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub capFiles_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmStratPlanAttachments", , , "referenceTable = 'tblCapacityRequests' AND referenceId = " & Me.recordId
+Form_frmStratPlanAttachments.TreferenceId = Me.recordId
+Form_frmStratPlanAttachments.TreferenceTable = "tblCapacityRequests"
+Form_frmStratPlanAttachments.TdocLibrary = "WDB_Capacity_Requests"
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub Form_Load()
 On Error GoTo Err_Handler
 
@@ -29,6 +42,17 @@ Exit Sub
 Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
+
+Function trackUpdate()
+On Error GoTo Err_Handler
+
+If IsNull(Me.recordId) Then Exit Function
+Call registerStratPlanUpdates("tblCapacityRequestDetails", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Me.recordId, Me.name)
+
+Exit Function
+Err_Handler:
+    Call handleError(Me.name, "trackUpdate", Err.DESCRIPTION, Err.number)
+End Function
 
 Function validate() As Boolean
 
@@ -98,7 +122,8 @@ If TempVars!capAdd = "True" Then
             "Requested: " & CStr(Date) & ", by: " & Me.Requestor.column(1), _
             Me.volumeTiming.column(1) & " Volume: " & Me.Volume, _
             "Vehicle: " & Me.Program.column(1))
-        Call sendNotification("capacityrequest@us.nifco.com", 6, 2, "New Capacity Request", body, customEmail:=True)
+        Call registerStratPlanUpdates("tblCapacityRequestDetails", Me.recordId, "Submission", "", "New Request", Me.recordId, Me.name)
+        'Call sendNotification("capacityrequest@us.nifco.com", 6, 2, "New Capacity Request", body, customEmail:=True)
     End If
 End If
 
@@ -134,7 +159,7 @@ End If
 If currentUnit <> "" Then
     Dim unitId
     unitId = Nz(DLookup("recordId", "tblUnits", "unitName = '" & currentUnit & "'"), 0)
-    Me.unit = unitId
+    Me.Unit = unitId
 End If
 
 'Dim rs1 As DAO.Recordset
