@@ -20,6 +20,11 @@ End Sub
 Private Sub capFiles_Click()
 On Error GoTo Err_Handler
 
+If IsNull(Me.recordId) Then
+    MsgBox "Please put more info in so there's a RecordID on the top right, then try again.", vbInformation, "Woops"
+    Exit Sub
+End If
+
 DoCmd.OpenForm "frmStratPlanAttachments", , , "referenceTable = 'tblCapacityRequests' AND referenceId = " & Me.recordId
 Form_frmStratPlanAttachments.TreferenceId = Me.recordId
 Form_frmStratPlanAttachments.TreferenceTable = "tblCapacityRequests"
