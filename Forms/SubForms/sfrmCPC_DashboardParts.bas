@@ -75,7 +75,7 @@ Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
 
-Private Sub partnumber_AfterUpdate()
+Private Sub partNumber_AfterUpdate()
 On Error GoTo Err_Handler
 
 Insert_Single_Description
