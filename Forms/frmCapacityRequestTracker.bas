@@ -7,7 +7,7 @@ Option Compare Database
 Private Sub Capacity_Results_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Capacity_Results.SetFocus
+Me.capacityResults.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -108,7 +108,7 @@ End Sub
 Private Sub Production_Type_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Production_Type.SetFocus
+Me.productionType.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -141,7 +141,7 @@ End Sub
 Private Sub Request_Date_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Request_Date.SetFocus
+Me.requestDate.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -152,7 +152,7 @@ End Sub
 Private Sub Request_Type_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Request_Type.SetFocus
+Me.requestType.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -174,7 +174,7 @@ End Sub
 Private Sub Response_Date_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Response_Date.SetFocus
+Me.responseDate.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -229,7 +229,7 @@ End Sub
 Private Sub Volume_Timing_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Volume_Timing.SetFocus
+Me.volumeTiming.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -240,7 +240,7 @@ End Sub
 Private Sub Volume_Type_Label_Click()
 On Error GoTo Err_Handler
 
-Me.Volume_Type.SetFocus
+Me.volumeType.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub

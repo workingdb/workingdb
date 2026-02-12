@@ -46,7 +46,7 @@ Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
 
-Private Sub partnumber_AfterUpdate()
+Private Sub partNumber_AfterUpdate()
 On Error GoTo Err_Handler
 
 Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)

@@ -118,7 +118,7 @@ If TempVars!capAdd = "True" Then
         body = emailContentGen("New Capacity Request", _
             "New " & Me.requestType.column(1), _
             "Notes: " & Me.Notes, _
-             "PN: " & Me.NAM & " on Program: " & Me.Program.column(0), _
+             "PN: " & Me.partNumber & " on Program: " & Me.Program.column(0), _
             "Requested: " & CStr(Date) & ", by: " & Me.Requestor.column(1), _
             Me.volumeTiming.column(1) & " Volume: " & Me.Volume, _
             "Vehicle: " & Me.Program.column(1))
@@ -134,16 +134,16 @@ Err_Handler:
     Call handleError(Me.name, "Form_Unload", Err.DESCRIPTION, Err.number)
 End Sub
 
-Private Sub NAM_AfterUpdate()
+Private Sub partNumber_AfterUpdate()
 On Error GoTo Err_Handler
 
-If Nz(Me.NAM, "") = "" Then Exit Sub
+If Nz(Me.partNumber, "") = "" Then Exit Sub
 
 'find current unit
 Dim db As Database
 Set db = CurrentDb()
 Dim invId, currentUnit As String, rsCat As Recordset
-invId = Nz(idNAM(Me.NAM, "NAM"), "")
+invId = Nz(idNAM(Me.partNumber, "NAM"), "")
 
 currentUnit = ""
 
