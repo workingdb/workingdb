@@ -1,0 +1,5 @@
+SELECT tblOrgs.Org, sfrm_sqryBOM.ASSY, sfrm_sqryBOM.COMPT, sfrm_sqryBOM.IMPLEMENTATION_DATE, sfrm_sqryBOM.ORGANIZATION_ID, sfrm_sqryBOM.DISABLE_DATE, sfrm_sqryBOM.QTY, sfrm_sqryBOM.INVERSE_QTY, sfrm_sqryBOM.ASSYDESCRIPTION, sfrm_sqryBOM.ASSYSTATUS, sfrm_sqryBOM.COMPDESCRIPTION, sfrm_sqryBOM.COMPSTATUS, sfrm_sqryBOM.COMPONENT_ITEM_ID, sfrm_sqryBOM.ASSEMBLY_ITEM_ID
+FROM tblOrgs RIGHT JOIN sfrm_sqryBOM ON tblOrgs.ID = sfrm_sqryBOM.ORGANIZATION_ID
+GROUP BY tblOrgs.Org, sfrm_sqryBOM.ASSY, sfrm_sqryBOM.COMPT, sfrm_sqryBOM.IMPLEMENTATION_DATE, sfrm_sqryBOM.ORGANIZATION_ID, sfrm_sqryBOM.DISABLE_DATE, sfrm_sqryBOM.QTY, sfrm_sqryBOM.INVERSE_QTY, sfrm_sqryBOM.ASSYDESCRIPTION, sfrm_sqryBOM.ASSYSTATUS, sfrm_sqryBOM.COMPDESCRIPTION, sfrm_sqryBOM.COMPSTATUS, sfrm_sqryBOM.COMPONENT_ITEM_ID, sfrm_sqryBOM.ASSEMBLY_ITEM_ID
+HAVING (((tblOrgs.Org) Is Not Null));
+

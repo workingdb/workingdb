@@ -128,7 +128,7 @@ If TempVars!capAdd = "True" Then
             Me.volumeTiming.column(1) & " Volume: " & Me.Volume, _
             "Vehicle: " & Me.Program.column(1))
         Call registerStratPlanUpdates("tblCapacityRequestDetails", Me.recordId, "Submission", "", "New Request", Me.recordId, Me.name)
-        'Call sendNotification("capacityrequest@us.nifco.com", 6, 2, "New Capacity Request", body, customEmail:=True)
+        Call sendNotification("capacityrequest@us.nifco.com", 6, 2, "New Capacity Request", body, customEmail:=True)
     End If
 End If
 

@@ -1,0 +1,5 @@
+SELECT Count(frmReporting_NMQ_daily_pvtp_chart1_sub.tblPartTesting.recordId) AS CountOfrecordId, frmReporting_NMQ_daily_pvtp_chart1_sub.tblDropDownsSP_2.teststatus
+FROM frmReporting_NMQ_daily_pvtp_chart1_sub
+WHERE partNumber IN (SELECT partNumber FROM tblPartProject WHERE projectStatus = 1)
+GROUP BY frmReporting_NMQ_daily_pvtp_chart1_sub.tblDropDownsSP_2.teststatus;
+

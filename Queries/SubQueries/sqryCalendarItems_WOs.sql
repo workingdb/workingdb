@@ -1,0 +1,5 @@
+SELECT dbo_tblDRS.Control_Number AS ID, "Design WO" AS type, dbo_tblDRS.Part_Number AS partNumber, tblDropDownssp.drs_type AS [Action], IIf([dbo_tblDRS]![Adjusted_Due_Date] Is Null,[dbo_tblDRS]![Due_Date],[dbo_tblDRS]![Adjusted_Due_Date]) AS due, tblPermissions.User AS Person
+FROM (tblDRStrackerExtras RIGHT JOIN ((dbo_tblDRS LEFT JOIN tblDropDownssp ON dbo_tblDRS.Request_Type = tblDropDownssp.recordid) LEFT JOIN tblDropDownssp AS tblDropDownssp_1 ON dbo_tblDRS.Approval_Status = tblDropDownssp_1.recordid) ON tblDRStrackerExtras.Control_Number = dbo_tblDRS.Control_Number) LEFT JOIN tblPermissions ON dbo_tblDRS.Assignee = tblPermissions.ID
+GROUP BY dbo_tblDRS.Control_Number, "Design WO", dbo_tblDRS.Part_Number, tblDropDownssp.drs_type, IIf([dbo_tblDRS]![Adjusted_Due_Date] Is Null,[dbo_tblDRS]![Due_Date],[dbo_tblDRS]![Adjusted_Due_Date]), tblPermissions.User, tblDropDownssp_1.drs_approvalstatus, dbo_tblDRS.Completed_Date
+HAVING (((tblPermissions.User) Is Not Null) AND ((tblDropDownssp_1.drs_approvalstatus)="Approved" Or (tblDropDownssp_1.drs_approvalstatus)="Pending") AND ((dbo_tblDRS.Completed_Date) Is Null));
+

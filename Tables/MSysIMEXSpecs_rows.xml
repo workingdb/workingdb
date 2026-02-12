@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataroot xmlns:od="urn:schemas-microsoft-com:officedata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:noNamespaceSchemaLocation="MSysIMEXSpecs_def.xml" generated="2026-02-12T14:31:30">
+<MSysIMEXSpecs>
+<DateDelim>/</DateDelim>
+<DateFourDigitYear>0</DateFourDigitYear>
+<DateLeadingZeros>0</DateLeadingZeros>
+<DateOrder>2</DateOrder>
+<DecimalPoint></DecimalPoint>
+<FieldSeparator></FieldSeparator>
+<FileType>0</FileType>
+<SpecID>1</SpecID>
+<SpecName></SpecName>
+<SpecType>0</SpecType>
+<StartRow>1</StartRow>
+<TextDelim></TextDelim>
+<TimeDelim>:</TimeDelim>
+</MSysIMEXSpecs>
+</dataroot>
