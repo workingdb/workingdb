@@ -1,0 +1,3 @@
+SELECT tbllab_updatetracking.tableName, tbllab_updatetracking.tableRecordId, tbllab_updatetracking.updatedBy, tbllab_updatetracking.updatedDate, tbllab_updatetracking.columnName, tbllab_updatetracking.previousData AS previous, tbllab_updatetracking.newData AS new, tbllab_updatetracking.formname AS datatag2, tbllab_updatetracking.datatag0, tbllab_updatetracking.referenceid AS datatag1, tbllab_updatetracking.referenceid
+FROM tbllab_updatetracking;
+

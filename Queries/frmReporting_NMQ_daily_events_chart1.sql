@@ -1,0 +1,4 @@
+SELECT Count(frmReporting_NMQ_daily_events_chart1_sub.programId) AS CountOfprogramId, frmReporting_NMQ_daily_events_chart1_sub.submission
+FROM frmReporting_NMQ_daily_events_chart1_sub
+GROUP BY frmReporting_NMQ_daily_events_chart1_sub.submission;
+

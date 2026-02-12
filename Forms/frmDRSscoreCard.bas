@@ -118,10 +118,11 @@ Q.Add "Q2"
 Q.Add "Q3"
 Q.Add "Q4"
 
-Dim qFilt As String, all As String, assigneeFilt As String, adjFlt As String, jdgFlt As String, qPrevFilt As String
+Dim qFilt As String, all As String, assigneeFilt As String, adjFlt As String, jdgFlt As String, qPrevFilt As String, checkFilt As String
 Dim cNum As String
 cNum = "[Control_Number]"
 assigneeFilt = "[Assignee] = " & iUser
+checkFilt = "([Checker_1] = " & iUser & " OR [Checker_2] = " & iUser & ")"
 all = "qryApprovedAll"
 adjFlt = "Adjusted_Due_Date is not null"
 jdgFlt = "[Judgment] = 'Late'"
@@ -132,7 +133,7 @@ For Each ITEM In Q
     
     Select Case ITEM
         Case "Q1"
-            qFilt = "[Completed_Date] Between #10/1/" & strCurYr - 1 & "# And #12/31/" & strCurYr & "#"
+            qFilt = "[Completed_Date] Between #10/1/" & strCurYr - 1 & "# And #12/31/" & strCurYr - 1 & "#"
             qPrevFilt = "[Completed_Date] Between #10/1/" & strPrevYr - 1 & "# And #12/31/" & strPrevYr & "#"
         Case "Q2"
             qFilt = "[Completed_Date] Between #1/1/" & strCurYr & "# And #3/31/" & strCurYr & "#"
@@ -222,6 +223,19 @@ For Each ITEM In Q
     
     Me.Controls("txt" & ITEM & "IntAdj") = _
         Nz(DCount(cNum, "qryApprovedInternal", assigneeFilt & " AND " & adjFlt & " AND " & qFilt), 0)
+        
+    Me.Controls("txt" & ITEM & "checked") = _
+        Nz(DCount(cNum, all, checkFilt & " AND " & qFilt), 0)
+        
+    Me.Controls("txt" & ITEM & "checkedLate") = _
+        Nz(DCount(cNum, all, checkFilt & " AND " & jdgFlt & " AND " & qFilt), 0)
+    
+    Me.Controls("txt" & ITEM & "checkedPct") = _
+        Format(1 - (Me.Controls("txt" & ITEM & "checkedLate") / _
+        IIf(Me.Controls("txt" & ITEM & "checked") = 0, 1, Me.Controls("txt" & ITEM & "checked"))), "Percent")
+        
+    Me.Controls("txt" & ITEM & "checkedAdj") = _
+        Nz(DCount(cNum, all, checkFilt & " AND " & adjFlt & " AND " & qFilt & " AND Adjusted_Reason = 2"), 0)
     
 Next ITEM
     

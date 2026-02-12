@@ -1,0 +1,4 @@
+SELECT Count(frmReporting_NMQ_daily_trials_chart1_sub.recordId) AS CountOfrecordId, frmReporting_NMQ_daily_trials_chart1_sub.tblDropDownsSP.trialresult
+FROM frmReporting_NMQ_daily_trials_chart1_sub
+GROUP BY frmReporting_NMQ_daily_trials_chart1_sub.tblDropDownsSP.trialresult;
+

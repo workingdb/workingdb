@@ -1,0 +1,4 @@
+SELECT tblPartSteps.partNumber, tblPartSteps.stepType, tblPartSteps.stepDescription, tblPartSteps.responsible, tblPartSteps.dueDate, tblPartSteps.closeDate, tblPrograms.modelCode, tblDropDownsSP.parttype, Count(tblPartComponents.assemblyNumber) AS CountOfassemblyNumber, tblPartSteps.lastUpdatedBy
+FROM tblPartComponents RIGHT JOIN (((tblPartSteps LEFT JOIN tblPartInfo ON tblPartSteps.partNumber = tblPartInfo.partNumber) LEFT JOIN tblPrograms ON tblPartInfo.programId = tblPrograms.ID) LEFT JOIN tblDropDownsSP ON tblPartInfo.partType = tblDropDownsSP.recordid) ON tblPartComponents.componentNumber = tblPartInfo.partNumber
+GROUP BY tblPartSteps.partNumber, tblPartSteps.stepType, tblPartSteps.stepDescription, tblPartSteps.responsible, tblPartSteps.dueDate, tblPartSteps.closeDate, tblPrograms.modelCode, tblDropDownsSP.parttype, tblPartSteps.lastUpdatedBy;
+
