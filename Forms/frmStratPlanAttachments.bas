@@ -58,6 +58,11 @@ Form_frmDropFile.TprojectId = Me.TreferenceId
 Form_frmDropFile.TpartNumber = Me.TreferenceTable
 Form_frmDropFile.documentType = 30
 Form_frmDropFile.documentType.Locked = True
+Form_frmDropFile.documentType.Visible = False
+Form_frmDropFile.docTypeCard.Visible = False
+Form_frmDropFile.Label51.Visible = False
+Form_frmDropFile.Box57.Visible = False
+Form_frmDropFile.Command58.Visible = False
 
 Exit Sub
 Err_Handler:
