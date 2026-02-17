@@ -124,22 +124,15 @@ If DLookup("paramVal", "tblDBinfoBE", "parameter = '" & "recordAnalytics'") = Fa
 
 Dim db As Database
 Set db = CurrentDb()
-Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("tblAnalytics")
 
-With rs1
-    .addNew
-        !module = modName
-        !Form = formName
-        !userName = Environ("username")
-        !dateUsed = Now()
-        !dataTag0 = StrQuoteReplace(dataTag0)
-        !dataTag1 = TempVars!wdbVersion
-    .Update
-End With
+db.Execute ("INSERT INTO tblAnalytics(module,form,username,dateused,datatag0,datatag1) VALUES('" & _
+    modName & "','" & _
+    formName & "','" & _
+    Environ("username") & "','" & _
+    Now() & "','" & _
+    StrQuoteReplace(dataTag0) & "','" & _
+    TempVars!wdbVersion & "')")
 
-rs1.CLOSE
-Set rs1 = Nothing
 Set db = Nothing
 
 End Function

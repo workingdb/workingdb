@@ -121,12 +121,13 @@ For Each ctl In setForm.Controls 'simply loop through all controls on the form
             ctl.BackColor = backCol
             
             '---this is for swapping out button icons for light / dark theme icons - turned off by default---
-            '            If (ctl.Picture = "") Then GoTo skipAhead0
-            '            If darkMode Then
-            '                If InStr(ctl.Picture, "\Core_theme_light\") Then ctl.Picture = Replace(ctl.Picture, "\Core_theme_light\", "\Core\")
-            '            Else
-            '                If InStr(ctl.Picture, "\Core\") Then ctl.Picture = Replace(ctl.Picture, "\Core\", "\Core_theme_light\")
-            '            End If
+                        If (ctl.Picture = "") Then GoTo skipAhead0
+                        If darkMode Then
+                            If InStr(ctl.Picture, "\Core_theme_light\") Then ctl.Picture = Replace(ctl.Picture, "\Core_theme_light\", "\Core\")
+                        Else
+                            If InStr(ctl.Picture, "\Core\") Then ctl.Picture = Replace(ctl.Picture, "\Core\", "\Core_theme_light\")
+                        End If
+skipAhead0:
             '---
             
             

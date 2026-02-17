@@ -524,6 +524,127 @@ Err_Handler:
     Call handleError(Me.name, "grabQuoteNum", Err.DESCRIPTION, Err.number)
 End Function
 
+Function searchOracle()
+On Error GoTo Err_Handler
+
+Dim partNumber As String
+Dim partRev As String
+Dim partStatus As String
+Dim partType As String
+Dim parDescription As String
+
+partNumber = Me.partNumberSearch
+
+Dim db As Database
+Set db = CurrentDb()
+
+Dim rs1 As Recordset
+Dim rsAssy As Recordset
+Dim rsMold As Recordset
+
+On Error GoTo checkForOracle
+
+'use global function for rev
+partRev = findPartRev(partNumber)
+
+'FIRST, search Master Items Table using a passthrough query to directly query Oracl
+Dim qdf As QueryDef
+Set qdf = db.QueryDefs("qrySystemItemsInfo")
+
+Dim queryParts() As String
+queryParts = Split(qdf.sql, "SEGMENT1 = '")
+qdf.sql = queryParts(0) & "SEGMENT1 = '" & partNumber & "'" & Split(queryParts(1), "'")(1)
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+
+Dim rsMasterItem As Recordset
+Set rsMasterItem = db.OpenRecordset("qrySystemItemsInfo")
+
+If rsMasterItem.RecordCount > 0 Then
+    parDescription = rsMasterItem("DESCRIPTION")
+    partStatus = rsMasterItem("INVENTORY_ITEM_STATUS_CODE")
+    partType = rsMasterItem("ITEM_TYPE")
+    partNumber = rsMasterItem("SEGMENT1")
+    Call showOracleTags(True)
+    GoTo setItems
+End If
+
+'Search SIF union query if no master item found
+Set qdf = db.QueryDefs("qryUnionPartDescriptions")
+
+Dim queryPartsU() As String
+queryPartsU() = Split(qdf.sql, "UNION")
+
+Dim ITEM, fullQuery As String
+fullQuery = ""
+
+For Each ITEM In queryParts
+    fullQuery = fullQuery & " " & ITEM & " WHERE SIFTBL.NIFCO_PART_NUMBER = '" & partNumber & "'"
+Next ITEM
+
+qdf.sql = fullQuery
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+
+Dim rsSIF As Recordset
+Set rsSIF = db.OpenRecordset("qryFindPartRevision")
+
+If rsSIF.RecordCount > 0 Then
+    partStatus = rsAssy![sifNum]
+    partType = "SIF ASSY"
+    parDescription = rsAssy!PART_DESCRIPTION
+    Call showOracleTags(True)
+    GoTo setItems
+End If
+
+'IF NO SIF FOUND
+Call setErrorText("Part not found in Oracle")
+Call showOracleTags(False)
+
+'AFTER SIF STUFF
+GoTo exitThis
+
+setItems:
+Me.NAM = partNumber
+Me.MaxOfMaxOfNEW_ITEM_REVISION = partRev
+Me.INVENTORY_ITEM_STATUS_CODE = partStatus
+Me.ITEM_TYPE = partType
+Me.DESCRIPTION = parDescription
+
+Call showOracleTags(True)
+
+exitThis:
+On Error Resume Next
+rsMold.CLOSE
+rsAssy.CLOSE
+rs1.CLOSE
+rsSIF.CLOSE
+Set rsMold = Nothing
+Set rsAssy = Nothing
+Set rs1 = Nothing
+Set rsSIF = Nothing
+
+Exit Function
+checkForOracle:
+DoCmd.Echo True
+Me.Painting = True
+DoCmd.Hourglass False
+If Err.number = 3151 Then
+    Call setErrorText("No connection to Oracle")
+    TempVars.Add "oracleConnectionFailed", "True"
+    Me.NAM = partNumber
+    GoTo exitThis
+Else
+    GoTo Err_Handler
+End If
+
+Exit Function
+Err_Handler:
+    Call handleError(Me.name, "searchOracle", Err.DESCRIPTION, Err.number)
+End Function
+
 Public Sub filterbyPN_Click()
 On Error GoTo Err_Handler
 
@@ -551,8 +672,6 @@ Me.openProgram.Visible = False
 Dim db As Database
 Set db = CurrentDb()
 
-errorTracker = "db"
-
 'check if you typed something in
 Dim partNum As String
 If Nz(Me.partNumberSearch) = "" Then
@@ -560,20 +679,24 @@ If Nz(Me.partNumberSearch) = "" Then
     GoTo exitFunc
 End If
 
-errorTracker = "partNum"
 partNum = Me.partNumberSearch
-errorTracker = "partNum0"
-Call logClick("filterbyPN", Me.name, partNum)
-errorTracker = "partNum1"
+
+'simplify / speed up log click function with current db object
+db.Execute ("INSERT INTO tblAnalytics(module,form,username,dateused,datatag0,datatag1) VALUES('" & _
+    "filterbyPN" & "','" & _
+    Me.name & "','" & _
+    Environ("username") & "','" & _
+    Now() & "','" & _
+    StrQuoteReplace(partNum) & "','" & _
+    TempVars!wdbVersion & "')")
+
 If DCount("ID", "tblSessionVariables", "searchHistory = '" & StrQuoteReplace(partNum) & "'") <> 0 Then db.Execute "DELETE FROM tblSessionVariables WHERE searchHistory= '" & partNum & "'"
-errorTracker = "partNum2"
 
 On Error Resume Next
 db.Execute "Insert into tblSessionVariables (searchHistory) values ('" & partNum & "');" 'UPDATEABLE QUERY ERROR, not sure why
 On Error GoTo Err_Handler
 
 TempVars.Add "partNumber", partNum
-errorTracker = "tempVar"
 
 If partNum Like "D*" Then
     Call setErrorText("Cannot Search Oracle for D#")
@@ -590,66 +713,8 @@ If TempVars!oracleConnectionFailed = "True" Then
     GoTo skipOracle
 End If
 
-errorTracker = "notSpecial"
-
 searchBnum:
-Dim rs1 As DAO.Recordset
-On Error GoTo checkForOracle
-Set rs1 = db.OpenRecordset("SELECT INVENTORY_ITEM_ID, SEGMENT1, INVENTORY_ITEM_STATUS_CODE, ITEM_TYPE, DESCRIPTION FROM APPS_MTL_SYSTEM_ITEMS WHERE SEGMENT1 = '" & partNum & "'", dbOpenSnapshot)
-errorTracker = "oracle1"
-If rs1.RecordCount = 0 Then 'not in main Oracle table, now look through SIFs
-    If DCount("[ROW_ID]", "APPS_Q_SIF_NEW_ASSEMBLED_PART_V", "[NIFCO_PART_NUMBER] = '" & partNum & "'") > 0 Then 'is it in assy table?
-        errorTracker = "oracle2"
-        Dim rsAssy As Recordset
-        Set rsAssy = db.OpenRecordset("SELECT SIFNUM, PART_DESCRIPTION FROM APPS_Q_SIF_NEW_ASSEMBLED_PART_V WHERE NIFCO_PART_NUMBER = '" & partNum & "'", dbOpenSnapshot)
-        rsAssy.MoveLast
-        Me.NAM = partNum
-        Me.MaxOfMaxOfNEW_ITEM_REVISION = "00"
-        Me.INVENTORY_ITEM_STATUS_CODE = rsAssy![sifNum]
-        Me.ITEM_TYPE = "SIF ASSY"
-        Me.DESCRIPTION = rsAssy!PART_DESCRIPTION
-        Call showOracleTags(True)
-    ElseIf DCount("[ROW_ID]", "APPS_Q_SIF_NEW_MOLDED_PART_V ", "[NIFCO_PART_NUMBER] = '" & partNum & "'") > 0 Then 'is it in molded table?
-        errorTracker = "oracle3"
-        Dim rsMold As Recordset
-        Set rsMold = db.OpenRecordset("SELECT SIFNUM, PART_DESCRIPTION FROM APPS_Q_SIF_NEW_MOLDED_PART_V WHERE NIFCO_PART_NUMBER = '" & partNum & "'", dbOpenSnapshot)
-        rsMold.MoveLast
-        Me.NAM = partNum
-        Me.MaxOfMaxOfNEW_ITEM_REVISION = "00"
-        Me.INVENTORY_ITEM_STATUS_CODE = rsMold![sifNum]
-        Me.ITEM_TYPE = "SIF MLD"
-        Me.DESCRIPTION = rsMold!PART_DESCRIPTION
-        Call showOracleTags(True)
-    Else
-        errorTracker = "oracle4"
-        Call setErrorText("Part not found in Oracle")
-        Call showOracleTags(False)
-    End If
-    GoTo skipOracle
-End If
-Dim rs2 As DAO.Recordset
-Set rs2 = db.OpenRecordset("SELECT MAX(NEW_ITEM_REVISION) AS REV FROM ENG_ENG_REVISED_ITEMS WHERE REVISED_ITEM_ID = " & rs1("INVENTORY_ITEM_ID") & " AND IMPLEMENTATION_DATE IS NOT NULL", dbOpenSnapshot)
-errorTracker = "oracle5"
-If rs2.RecordCount = 0 Then GoTo skipOracle
-If rs2("REV") = "" Or IsNull(rs2("REV")) Then
-    Me.MaxOfMaxOfNEW_ITEM_REVISION = "00"
-Else
-    Me.MaxOfMaxOfNEW_ITEM_REVISION = rs2("REV")
-End If
-errorTracker = "oracle6"
-Me.DESCRIPTION = rs1("DESCRIPTION")
-Me.INVENTORY_ITEM_STATUS_CODE = rs1("INVENTORY_ITEM_STATUS_CODE")
-Me.ITEM_TYPE = rs1("ITEM_TYPE")
-Me.NAM = rs1("SEGMENT1")
-
-rs1.CLOSE
-rs2.CLOSE
-Set rs1 = Nothing
-Set rs2 = Nothing
-
-errorTracker = "afterOracle"
-
-Call showOracleTags(True)
+Call searchOracle
 
 skipOracle:
 On Error GoTo Err_Handler
@@ -860,21 +925,6 @@ Me.Painting = True
 DoCmd.Hourglass False
 Set db = Nothing
 errorTracker = "madeIt"
-Exit Sub
-
-checkForOracle:
-errorTracker = "oracleError"
-DoCmd.Echo True
-Me.Painting = True
-DoCmd.Hourglass False
-If Err.number = 3151 Then
-    Call setErrorText("No connection to Oracle")
-    TempVars.Add "oracleConnectionFailed", "True"
-    Me.NAM = partNum
-    GoTo skipOracle
-Else
-    GoTo Err_Handler
-End If
 
 Exit Sub
 Err_Handler:
