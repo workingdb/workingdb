@@ -7,6 +7,30 @@ Declare PtrSafe Sub ChooseColor Lib "msaccess.exe" Alias "#53" (ByVal hwnd As Lo
 Declare PtrSafe Function LoadCursorFromFile Lib "user32" Alias "LoadCursorFromFileA" (ByVal lpFileName As String) As Long
 Declare PtrSafe Function setCursor Lib "user32" Alias "SetCursor" (ByVal hCursor As Long) As Long
 
+Public Function findCost(partNumber As String, costType As String, Org As String) As Double
+On Error GoTo Err_Handler
+
+findCost = 0
+
+Dim db As Database
+Dim rs As Recordset
+
+Set db = CurrentDb()
+Set rs = db.OpenRecordset("SELECT CT.ITEM_NUMBER, O.Org, CT.COST_TYPE, CT.ITEM_COST " & _
+    "From tblOrgs As O INNER JOIN APPS_CST_ITEM_COST_TYPE_V as CT ON O.ID = CT.ORGANIZATION_ID " & _
+    "WHERE ((CT.ITEM_NUMBER = '" & partNumber & "') AND (O.Org = '" & Org & "') AND (CT.COST_TYPE = '" & costType & "'));")
+
+If rs.RecordCount > 0 Then findCost = Nz(rs!ITEM_COST, 0)
+
+rs.CLOSE
+Set rs = Nothing
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "findCost", Err.DESCRIPTION, Err.number)
+End Function
+
 Function setSplashLoading(label As String)
 On Error GoTo Err_Handler
 
@@ -520,6 +544,42 @@ rsNoti.CLOSE
 Set rsNoti = Nothing
 Set db = Nothing
 
+End Function
+
+Function findPartRev(partNumber As String) As String
+On Error GoTo Err_Handler
+
+Dim db As Database
+Set db = CurrentDb()
+
+Dim qdf As QueryDef
+Set qdf = db.QueryDefs("qryFindPartRevision")
+
+qdf.sql = Split(qdf.sql, "SI.SEGMENT1")(0) & "SI.SEGMENT1='" & partNumber & "'));"
+
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+
+Dim rs2 As Recordset
+Set rs2 = db.OpenRecordset("qryFindPartRevision")
+
+If rs2.RecordCount = 0 Then GoTo exitThis
+If rs2("REV") = "" Or IsNull(rs2("REV")) Then
+    findPartRev = "00"
+Else
+    findPartRev = rs2("REV")
+End If
+
+
+exitThis:
+rs2.CLOSE
+Set rs2 = Nothing
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbGlobalFunctions", "findPartRev", Err.DESCRIPTION, Err.number)
 End Function
 
 Function loadECOtype(changeNotice As String) As String

@@ -11,7 +11,7 @@
 
 ### 1. Drive Setup
 - Map Prod Location of the database
-- For Strategic Planning, use this: "\\\data\mdbdata\WorkingDB\Strategic_Planning_FE\" to Drive Letter: B
+- For WorkingDB, use this: "\\\data\mdbdata\WorkingDB\build\" to Drive Letter: A
   
 ### 2. Gain [GitHub](https://github.com/) Access
 - Log in/Sign Up
@@ -26,8 +26,8 @@
    
 ### Clone Repositories
 - First, clone Code Review : https://github.com/vbadecoded/ms-access-code-review-git-wrapper
-- Then, clone the repository you want to work on: i.e. Strategic Planning : https://github.com/workingdb/strategic_planning
-- *Name folder to match the repository name - i.e. "strategic_planning"*
+- Then, clone the repository you want to work on: i.e. WorkingDB : https://github.com/workingdb/workingdb
+- *Name folder to match the repository name - i.e. "workingdb"*
 
 ---
 | # | Steps to Publish New Changes |
