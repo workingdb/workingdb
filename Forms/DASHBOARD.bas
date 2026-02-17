@@ -571,7 +571,7 @@ If rsMasterItem.RecordCount > 0 Then
 End If
 
 'Search SIF union query if no master item found
-Set qdf = db.QueryDefs("qryUnionPartDescriptions")
+Set qdf = db.QueryDefs("qrySIFpartDescriptions")
 
 Dim queryPartsU() As String
 queryPartsU() = Split(qdf.sql, "UNION")
