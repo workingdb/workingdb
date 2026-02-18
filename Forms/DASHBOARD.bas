@@ -71,7 +71,7 @@ Private Sub appCapacity_Click()
 On Error GoTo Err_Handler
 Call logClick(Me.ActiveControl.name, Me.name)
 
-If userData("Dept") = "Sales" Or userData("Developer") Or userData("Dept") = "Strategic Planning" Then
+If (Environ("username") = DLookup("message", "tblDBinfoBE", "parameter = 'allowCapacityRequests' AND paramVal = True")) Or userData("Developer") Or userData("Dept") = "Strategic Planning" Then
     Call setApp("frmCapacityRequestTracker", "Capacity")
 Else
     Call snackBox("error", "You don't have access.", "You must a beta tester to open this app", Me.name)
