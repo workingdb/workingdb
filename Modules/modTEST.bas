@@ -1,6 +1,13 @@
 Option Compare Database
 Option Explicit
 
+Function testReport()
+
+DoCmd.OpenReport "rptTransferCoverPage", acViewPreview, , "partNumber = '30075'", acHidden
+DoCmd.OutputTo acOutputReport, "rptTransferCoverPage", acFormatPDF, "H:\test.pdf", False
+
+End Function
+
 Function renameLabels()
 
 Dim frm As Form, ctl As Control
