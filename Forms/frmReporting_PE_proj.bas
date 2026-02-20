@@ -36,6 +36,22 @@ Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub latePillars_export_Click()
+On Error GoTo Err_Handler
+
+Dim FileName As String, sqlString As String, filt As String
+FileName = "H:\Reporting_PE_proj_latePillars_" & nowString & ".xlsx"
+filt = " WHERE " & Me.sfrmReporting_PE_proj_latePillars.Form.filter
+If Me.sfrmReporting_PE_proj_latePillars.Form.FilterOn = False Then filt = ""
+sqlString = "SELECT * FROM sfrmReporting_PE_proj_latePillars " & filt
+                    
+Call exportSQL(sqlString, FileName)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub lateSteps_export_Click()
 On Error GoTo Err_Handler
 

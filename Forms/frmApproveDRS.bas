@@ -349,7 +349,6 @@ Dim SendItems As New clsOutlookCreateItem               ' outlook class
     
     Set SendItems = New clsOutlookCreateItem
     strRequesttype = DLookup("[drs_type]", "tblDropDownsSP", "[recordid] = " & Me.Request_Type)
-    strFilePath = "\\cifs\PDFrepos\db\PreProdData\archive\"
     strFileName = Me.Control_Number & " DRS for " & Me.Part_Number & " " & strRequesttype & " Due " & Format(Me.Due_Date, "mmddyyyy") & ".pdf"
     strReportName = "rptDesignRequest"
     If IsNull(Me.Assignee) Then

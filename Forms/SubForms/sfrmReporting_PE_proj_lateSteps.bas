@@ -15,21 +15,10 @@ Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
 
-Private Sub lblCorGate_Click()
+Private Sub lblDevLoc_Click()
 On Error GoTo Err_Handler
 
-Me.Correlated_Gate.SetFocus
-DoCmd.RunCommand acCmdFilterMenu
-
-Exit Sub
-Err_Handler:
-    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
-End Sub
-
-Private Sub lblCurGate_Click()
-On Error GoTo Err_Handler
-
-Me.currentGate.SetFocus
+Me.developingLocation.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -95,7 +84,7 @@ End Sub
 Private Sub lblStepType_Click()
 On Error GoTo Err_Handler
 
-Me.stepType.SetFocus
+Me.Action.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
