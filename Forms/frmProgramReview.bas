@@ -33,14 +33,14 @@ End Sub
 
 Private Sub editMasterSchedule_Click()
 On Error GoTo Err_Handler
-Dim masterSched, X As String
+Dim masterSched, x As String
 
 masterSched = Nz(Me.masterSchedule, "")
 
-X = InputBox("Paste Link to Master Schedule Here", "Edit Master Schedule Link", masterSched)
-If StrPtr(X) = 0 Then Exit Sub
-If X = "" Then If MsgBox("Nothing entered. Would you like to clear the master schedule?", vbYesNo, "You didn't type anything") = vbNo Then Exit Sub
-Me.masterSchedule = X
+x = InputBox("Paste Link to Master Schedule Here", "Edit Master Schedule Link", masterSched)
+If StrPtr(x) = 0 Then Exit Sub
+If x = "" Then If MsgBox("Nothing entered. Would you like to clear the master schedule?", vbYesNo, "You didn't type anything") = vbNo Then Exit Sub
+Me.masterSchedule = x
 Call registerPartUpdates("tblPrograms", Me.ID, Me.masterSchedule.name, Me.masterSchedule.OldValue, Me.masterSchedule, "", Me.modelCode)
 
 Exit Sub

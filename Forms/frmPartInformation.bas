@@ -371,7 +371,7 @@ Me.quoteNumber = rs1!ENG_QUOTE_LOG_NUM
 
 Me.sellingPrice = rs1!PIECE_PRICE
 Call registerPartUpdates("tblPartInfo", Me.recordId, "sellingPrice", Me.sellingPrice.OldValue, Me.sellingPrice, Me.partNumber, Me.name)
-Me.customerId = rs1!Customer_ID
+Me.customerId = rs1!CUSTOMER_ID
 Call registerPartUpdates("tblPartInfo", Me.recordId, "customerId", Me.customerId.OldValue, Me.customerId, Me.partNumber, Me.name)
 Me.DESCRIPTION = rs1!PART_DESCRIPTION
 Call registerPartUpdates("tblPartInfo", Me.recordId, "Description", Me.DESCRIPTION.OldValue, Me.DESCRIPTION, Me.partNumber, Me.name)

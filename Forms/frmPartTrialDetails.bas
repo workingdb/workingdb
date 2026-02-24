@@ -445,15 +445,15 @@ If Me.trialStatus = 3 Then 'complete
         Dim redReason
         
 enterStuff:
-        Dim X
-        X = InputBox("Please enter a reason for SPH being less previous", "Please add information")
-        If StrPtr(X) = 0 Then
+        Dim x
+        x = InputBox("Please enter a reason for SPH being less previous", "Please add information")
+        If StrPtr(x) = 0 Then
             Me.trialStatus = Me.trialStatus.OldValue
             Exit Sub
         End If
-        If X = "" Then GoTo enterStuff
+        If x = "" Then GoTo enterStuff
         
-        redReason = X
+        redReason = x
         
         Call registerPartUpdates("tblPartTrials", Me.recordId, "SPH Decrease", Nz(Me.shotsPerHour, 0) & " -> " & Round(Nz(Me.currentSPH, 0), 2), "REASON: " & redReason, Me.partNumber, Me.name, Nz(Me.projectId))
     End If

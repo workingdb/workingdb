@@ -42,8 +42,9 @@ On Error GoTo Err_Handler
 
 Call setTheme(Me)
 
-'Me.filter = "Requestor = " & DLookup("ID", "tblPermissions", "user = '" & Environ("username") & "'")
-'Me.FilterOn = True
+Me.filter = "Requestor = " & DLookup("ID", "tblPermissions", "user = '" & Environ("username") & "'")
+Me.filter = "Requestor = 146"
+Me.FilterOn = True
 
 Exit Sub
 Err_Handler:

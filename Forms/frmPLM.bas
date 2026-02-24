@@ -185,13 +185,13 @@ If Nz(Me.Full_Design_No) = "" Or Nz(Me.Design_No) = "" Then
     Me.Left_DesignNo = ""
     Exit Sub
 End If
-Dim X, Y
-X = Len(Me.Design_No)
+Dim x, Y
+x = Len(Me.Design_No)
 Y = Len(Me.Full_Design_No)
 If InStr(Me.Full_Design_No, "-") Then
-    Me.Left_DesignNo = Left(Me.Full_Design_No, Y - X - 3)
+    Me.Left_DesignNo = Left(Me.Full_Design_No, Y - x - 3)
 Else
-    Me.Left_DesignNo = Left(Me.Full_Design_No, Y - X)
+    Me.Left_DesignNo = Left(Me.Full_Design_No, Y - x)
 End If
 Exit Sub
 Err_Handler:

@@ -48,7 +48,7 @@ End Sub
 Function getCheckFolder() As String
 On Error GoTo Err_Handler
 
-Dim chkFold As String, X, controlNum
+Dim chkFold As String, x, controlNum
 chkFold = Nz(Me.Check_Folder)
 controlNum = Me.Control_Number
 
@@ -140,27 +140,27 @@ End Function
 
 Private Sub btnEditChkFold_Click()
 On Error GoTo Err_Handler
-Dim chkFold As String, X As String
+Dim chkFold As String, x As String
 
 chkFold = Nz(Me.Check_Folder)
 If chkFold = "" Or chkFold = "\" Then chkFold = findCheckFolder
 
-X = InputBox("Paste Link to Check Folder Here", "Add Check Folder Link", chkFold)
+x = InputBox("Paste Link to Check Folder Here", "Add Check Folder Link", chkFold)
 
-If StrPtr(X) = 0 Then Exit Sub
-If X = "" Then
+If StrPtr(x) = 0 Then Exit Sub
+If x = "" Then
     If MsgBox("Nothing entered. Would you like to clear your check folder?", vbYesNo, "You didn't type anything") = vbNo Then Exit Sub
 End If
 
-X = replaceDriveLetters(addLastSlash(X))
+x = replaceDriveLetters(addLastSlash(x))
 
-If InStr(X, "C:\Users\" & Environ("username") & "\Nifco America Corporation\") Then
-    X = Replace(X, Environ("username"), "CUST_USER")
+If InStr(x, "C:\Users\" & Environ("username") & "\Nifco America Corporation\") Then
+    x = Replace(x, Environ("username"), "CUST_USER")
 End If
 
-Call registerDRSUpdates("tblDRStrackerExtras", Me.Control_Number, "Check_Folder", chkFold, X)
+Call registerDRSUpdates("tblDRStrackerExtras", Me.Control_Number, "Check_Folder", chkFold, x)
 
-Me.Check_Folder = X
+Me.Check_Folder = x
 If Me.Dirty Then Me.Dirty = False
 
 Exit Sub

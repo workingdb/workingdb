@@ -56,6 +56,18 @@ Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub searchPN_Click()
+On Error GoTo Err_Handler
+
+Form_DASHBOARD.partNumberSearch = Me.partNumber
+Form_DASHBOARD.filterbyPN_Click
+Form_DASHBOARD.SetFocus
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub worktype_AfterUpdate()
 On Error GoTo Err_Handler
 

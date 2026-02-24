@@ -71,6 +71,8 @@ If IsNull(Me.recordId) Then
     Me.createdBy = Environ("username")
     Me.createdDate = Date
     Me.WOStatus = 1
+    Me.Requestor = Environ("username")
+    Me.Facility = userData("org")
 End If
 
 
@@ -136,7 +138,7 @@ End Sub
 Private Sub sfrmLab_WO_details_resources_Enter()
 On Error GoTo Err_Handler
 
-Form_sfrmLab_WO_details_resources.workid.RowSource = "SELECT tbllab_wo_work.recordid, tbllab_wo_work.partnumber, tblDropDownsSP.lab_work_type " & _
+Me.sfrmLab_WO_details_resources.Form.workid.RowSource = "SELECT tbllab_wo_work.recordid, tbllab_wo_work.partnumber & "" - "" & tblDropDownsSP.lab_work_type AS work " & _
     "FROM tbllab_wo_work LEFT JOIN tblDropDownsSP ON tbllab_wo_work.worktype = tblDropDownsSP.recordid WHERE tbllab_wo_work.woid = " & Form_frmLab_WO_details.recordId
     
 Exit Sub

@@ -367,20 +367,20 @@ If partInfoId = "" Then
         GoTo exit_handler
     End If
     
-    Dim X, defaultT As String
+    Dim x, defaultT As String
     If Right(Me.fltPartNumber, 1) <> "T" Then
         defaultT = Me.fltPartNumber & "T"
     Else
         defaultT = Me.fltPartNumber
     End If
-    X = InputBox("Please confirm the tool number", "Tool Number", defaultT)
-    If X = "" Or X = vbCancel Then Exit Sub
+    x = InputBox("Please confirm the tool number", "Tool Number", defaultT)
+    If x = "" Or x = vbCancel Then Exit Sub
     
     'first, does this tool exist? if so, find it and put it in.
     Dim moldInfoId
-    moldInfoId = Nz(DLookup("recordId", "tblPartMoldingInfo", "toolNumber = '" & X & "'"), "")
+    moldInfoId = Nz(DLookup("recordId", "tblPartMoldingInfo", "toolNumber = '" & x & "'"), "")
     If moldInfoId = "" Then
-        db.Execute "INSERT INTO tblPartMoldingInfo(toolNumber) VALUES ('" & X & "')"
+        db.Execute "INSERT INTO tblPartMoldingInfo(toolNumber) VALUES ('" & x & "')"
         moldInfoId = db.OpenRecordset("SELECT @@identity")(0).Value
     End If
     

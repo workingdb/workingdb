@@ -221,14 +221,14 @@ End Sub
 Private Sub newPartProject_Click()
 On Error GoTo Err_Handler
 
-Dim X
-X = InputBox("Enter part number", "Input Part Number", Form_DASHBOARD.partNumberSearch)
-If StrPtr(X) = 0 Or X = "" Then Exit Sub
+Dim x
+x = InputBox("Enter part number", "Input Part Number", Form_DASHBOARD.partNumberSearch)
+If StrPtr(x) = 0 Or x = "" Then Exit Sub
 
-Form_DASHBOARD.partNumberSearch = X
+Form_DASHBOARD.partNumberSearch = x
 Call Form_DASHBOARD.filterbyPN_Click
 
-openPartProject (X)
+openPartProject (x)
 
 Exit Sub
 Err_Handler:

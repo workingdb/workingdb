@@ -17,13 +17,13 @@ End Type
 Private Declare PtrSafe Function GetDesktopWindow Lib "user32" () As Long
 Private Declare PtrSafe Function GetWindowRect Lib "user32" (ByVal hwnd As Long, r As RECT) As Long
 Public Declare PtrSafe Function IsZoomed Lib "user32" (ByVal hwnd As Long) As Long
-Private Declare PtrSafe Function moveWindow Lib "user32" Alias "MoveWindow" (ByVal hwnd As Long, ByVal X As Long, ByVal Y As Long, ByVal dx As Long, ByVal dy As Long, ByVal fRepaint As Long) As Long
+Private Declare PtrSafe Function moveWindow Lib "user32" Alias "MoveWindow" (ByVal hwnd As Long, ByVal x As Long, ByVal Y As Long, ByVal dx As Long, ByVal dy As Long, ByVal fRepaint As Long) As Long
 Private Declare PtrSafe Function ShowWindow Lib "user32" (ByVal hwnd As Long, ByVal nCmdShow As Long) As Long
 
 Dim AppX As Long, AppY As Long, AppTop As Long, AppLeft As Long, WinRECT As RECT
 
 'Public Function localizeTblDropDownsSP()
-'On Error GoTo Err_Handler
+'on error GoTo Err_Handler
 '
 'Dim db As DAO.Database
 'Dim tdf As DAO.TableDef
@@ -48,7 +48,7 @@ Dim AppX As Long, AppY As Long, AppTop As Long, AppLeft As Long, WinRECT As RECT
 'End Function
 '
 'Public Function reconnectTblDropDownsSP()
-'On Error GoTo Err_Handler
+'on error GoTo Err_Handler
 '
 'Dim db As DAO.Database
 'Dim tdf As DAO.TableDef
@@ -64,7 +64,7 @@ Dim AppX As Long, AppY As Long, AppTop As Long, AppLeft As Long, WinRECT As RECT
 '' Check if the linked table already exists
 'on error Resume Next
 'Set tdf = db.TableDefs(strLinkedTableName)
-'On Error GoTo 0
+'on error GoTo 0
 '
 'If Not tdf Is Nothing Then db.TableDefs.Delete strLinkedTableName
 '

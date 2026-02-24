@@ -8,7 +8,7 @@ Option Explicit
 Private Declare PtrSafe Function SelectObject Lib "gdi32" (ByVal hdc As Long, ByVal hObject As Long) As Long
 Private Declare PtrSafe Function CreateCompatibleDC Lib "gdi32" (ByVal hdc As Long) As Long
 Private Declare PtrSafe Function DeleteDC Lib "gdi32" (ByVal hdc As Long) As Long
-Private Declare PtrSafe Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare PtrSafe Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal x As Long, ByVal Y As Long) As Long
 
 Dim CATIA As Object
 
@@ -26,11 +26,11 @@ Next
 
 End Function
 
-Private Function PixelTest(objPict As Object, ByVal X As Long, ByVal Y As Long) As Long
+Private Function PixelTest(objPict As Object, ByVal x As Long, ByVal Y As Long) As Long
  Dim lDC As Variant
  lDC = CreateCompatibleDC(0)
  SelectObject lDC, objPict.Handle
- PixelTest = GetPixel(lDC, X, Y)
+ PixelTest = GetPixel(lDC, x, Y)
  DeleteDC lDC
 End Function
 
@@ -123,7 +123,7 @@ If bool3DMaster Then
     arr3DMaster = Split("0,13.77,7.5,16.5,7.5,16.5,15,13.77,15,13.77,7.5,11.04,7.5,11.04,0,13.77,0,13.77,0,4.77,7.5,11.04,7.5,2.04,15,13.77,15,4.77,0,4.77,7.5,2.04,7.5,2.04,15,4.77,15,8.5,17,8.5,17,8.5,17,0,17,0,5,0,5,0,5,2.95", ",")
     Set myView = detailSheet.Views.Add("3D Is Master")
     myView.Activate
-    myView.X = 336
+    myView.x = 336
     myView.Y = 396
 
     i = 0
@@ -654,7 +654,7 @@ Dim firstPoint(1) As Double
 Dim startPoint(1) As Double, midPoint(1) As Double, endPoint(1) As Double
 Dim vector1(1) As Double, vector2(1) As Double
 Dim magnitude1 As Double, magnitude2 As Double
-Dim X As Double, myAngle As Double
+Dim x As Double, myAngle As Double
 Dim splinePoints()
 Dim mySpline
 Dim myLine
@@ -854,8 +854,8 @@ For i = 0 To UBound(inputTextArray)
         vector2(1) = midPoint(1) - endPoint(1)
         magnitude1 = Sqr((vector1(0) ^ 2) + (vector1(1) ^ 2))
         magnitude2 = Sqr((vector2(0) ^ 2) + (vector2(1) ^ 2))
-        X = ((vector1(0) * vector2(0)) + (vector1(1) * vector2(1))) / (Abs(magnitude1) * Abs(magnitude2))
-        myAngle = Acos(X) * (180 / pi)
+        x = ((vector1(0) * vector2(0)) + (vector1(1) * vector2(1))) / (Abs(magnitude1) * Abs(magnitude2))
+        myAngle = Acos(x) * (180 / pi)
         
         'If the angle is close to 180 and the lines are less then 0.2mm, use these points to create a spline
         If Abs(myAngle) > 170 And Abs(myAngle) < 190 And magnitude1 < (0.05 * charHeight) And magnitude2 < (0.05 * charHeight) Then
@@ -1391,7 +1391,7 @@ formStatus (True)
 Dim USelCopy, USelPaste
 Dim InputObject(0)
 Dim oStatusCopy, oStatusPaste
-Dim X, oStatus
+Dim x, oStatus
 
 InputObject(0) = "AnyObject"
 Set USelCopy = CATIA.ActiveDocument.Selection
@@ -1401,13 +1401,13 @@ On Error Resume Next
 Do While oStatus <> "Cancel"
     oStatusCopy = USelCopy.SelectElement2(InputObject, "Select COPY element", True)
 
-    X = USelCopy.ITEM(1).Value.Text
+    x = USelCopy.ITEM(1).Value.Text
     USelCopy.clear
     
     oStatusPaste = USelPaste.SelectElement2(InputObject, "Select PASTE element", True)
     If (oStatusPaste = "Cancel") Then GoTo exit_handler
 
-    USelPaste.ITEM(1).Value.Text = X
+    USelPaste.ITEM(1).Value.Text = x
     USelPaste.clear
 Loop
 
@@ -1693,7 +1693,7 @@ formStatus (True)
 Dim USel
 Dim InputObject(0)
 Dim oStatus
-Dim X As String
+Dim x As String
 
 InputObject(0) = "AnyObject"
 Set USel = CATIA.ActiveDocument.Selection
@@ -1701,23 +1701,23 @@ Set USel = CATIA.ActiveDocument.Selection
 Do While oStatus <> "Cancel"
     oStatus = USel.SelectElement2(InputObject, "Select element", True)
 
-    X = USel.ITEM(1).Value.Text
+    x = USel.ITEM(1).Value.Text
     
     Dim arrLines() As String
 
-    X = Replace(X, vbCrLf, vbCr)
-    X = Replace(X, vbLf, vbCr)
-    arrLines = Split(X, vbCr)
-    X = arrLines(1)
+    x = Replace(x, vbCrLf, vbCr)
+    x = Replace(x, vbLf, vbCr)
+    arrLines = Split(x, vbCr)
+    x = arrLines(1)
     
     If UBound(arrLines) > 1 Then
         Dim j As Long
         For j = 2 To UBound(arrLines)
-           X = X & vbNewLine & arrLines(j)
+           x = x & vbNewLine & arrLines(j)
         Next
     End If
 
-    USel.ITEM(1).Value.Text = StrConv(X, vbUpperCase)
+    USel.ITEM(1).Value.Text = StrConv(x, vbUpperCase)
     USel.clear
 Loop
 
@@ -1892,10 +1892,10 @@ End If
 GoTo paramOK
 
 paramError:
-Dim X
-X = InputBox("Enter Part Number", "Enter Part Number (not found in properties)")
-If X = "" Or X = vbCancel Then Exit Sub
-partNum = CStr(X)
+Dim x
+x = InputBox("Enter Part Number", "Enter Part Number (not found in properties)")
+If x = "" Or x = vbCancel Then Exit Sub
+partNum = CStr(x)
 
 paramOK:
 Dim ppt As New PowerPoint.Application
@@ -2176,7 +2176,7 @@ formStatus (True)
 Dim USel
 Dim InputObject(0)
 Dim oStatus
-Dim X As String
+Dim x As String
 Dim myDimension
 
 Dim iIndex As Long
@@ -2201,8 +2201,8 @@ Do While oStatus <> "Cancel"
     GoTo nextOne
     
 CheckText:
-    X = USel.ITEM(1).Value.Text
-    USel.ITEM(1).Value.Text = StrConv(X, vbUpperCase)
+    x = USel.ITEM(1).Value.Text
+    USel.ITEM(1).Value.Text = StrConv(x, vbUpperCase)
     
 nextOne:
     USel.clear
@@ -2714,9 +2714,9 @@ CATIA.ActiveWindow.ActiveViewer.Reframe
 'Dim ws As Excel.Worksheet
 'Dim objParam As Object
 '
-''On Error GoTo paramError UNCOMMENT LATER
+''on error GoTo paramError UNCOMMENT LATER
 'Set objParam = CATIA.ActiveDocument.Parameters.RootParameterSet.DirectParameters
-''On Error GoTo err_handler UNCOMMENT LATER
+''on error GoTo err_handler UNCOMMENT LATER
 '
 'Set fso = CreateObject("Scripting.FileSystemObject")
 'fso.CopyFile "\\nas01\lab\lab\LABDOCS\Lab Forms\Blank ISIR.xls", "H:\Documents\" & Left(CATIA.ActiveDocument.name, 5) & "_ISIR.xls"
@@ -2762,11 +2762,11 @@ For i = 1 To oSelection.count
                 If oDimension.Leaders.ITEM(1).AnchorPoint < 10 Then
                     distFromDim = (2.5 + Len(CStr(balloonCount)) + 7 + (3.5 * Len(tolValue)) + (6.3 * refCount)) / oView.Scale
                     'This number ---^ controls the distance from the right edge of the GD&T box to the center of the balloon
-                    Set balloon = oView.Texts.Add(CStr(balloonCount), oDimension.X + distFromDim, oDimension.Y - (3.5 / oView.Scale))
+                    Set balloon = oView.Texts.Add(CStr(balloonCount), oDimension.x + distFromDim, oDimension.Y - (3.5 / oView.Scale))
                 Else
                     distFromDim = (2.2 + Len(CStr(balloonCount))) / oView.Scale
                     'This number ---^ controls the distance from the left edge of the GD&T box to the center of the balloon
-                    Set balloon = oView.Texts.Add(CStr(balloonCount), oDimension.X - distFromDim, oDimension.Y - (3.5 / oView.Scale))
+                    Set balloon = oView.Texts.Add(CStr(balloonCount), oDimension.x - distFromDim, oDimension.Y - (3.5 / oView.Scale))
                 End If
                 
                 balloon.AnchorPosition = 5
@@ -3162,7 +3162,7 @@ Dim i As Long
 
 Set oSelection = CATIA.ActiveDocument.Selection
 Set myView = fMark.Parent.Parent
-markX = fMark.X
+markX = fMark.x
 noteX = markX
 
 For i = 1 To myView.Texts.count
@@ -3176,7 +3176,7 @@ For i = 1 To myView.Texts.count
         oSelection.Add myText
         oSelection.VisProperties.GetShow showState
         If showState = 0 Then
-            noteX = myText.X
+            noteX = myText.x
         End If
     End If
 Next i
@@ -3281,7 +3281,7 @@ For i = 0 To UBound(fMarksCount)
         Next j
         If IsEmpty(fQuantitySymbol) Then
             Set fQuantitySymbol = detailSheet.Views.Add(fMarks(i) & " Quantity")
-            fQuantitySymbol.X = 151
+            fQuantitySymbol.x = 151
             fQuantitySymbol.Y = 124 - (18 * i)
             fQuantitySymbol.Texts.Add fMarks(i) & " x " & fMarksCount(i), 0.94287109375, 5.67923736572266
         End If
@@ -3310,7 +3310,7 @@ If criticalCount > 0 Then
     Next i
     If IsEmpty(critQuantitySymbol) Then
         Set critQuantitySymbol = detailSheet.Views.Add("Critical Quantity")
-        critQuantitySymbol.X = 160.31
+        critQuantitySymbol.x = 160.31
         critQuantitySymbol.Y = 138.46
         critQuantitySymbol.Texts.Add "x " & criticalCount, 3.94, 5.82
         critQuantitySymbol.Texts.ITEM(1).SetParameterOnSubString 7, 1, Len(critQuantitySymbol.Texts.ITEM(1).Text), 3500

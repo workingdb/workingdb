@@ -7,6 +7,45 @@ Declare PtrSafe Sub ChooseColor Lib "msaccess.exe" Alias "#53" (ByVal hwnd As Lo
 Declare PtrSafe Function LoadCursorFromFile Lib "user32" Alias "LoadCursorFromFileA" (ByVal lpFileName As String) As Long
 Declare PtrSafe Function setCursor Lib "user32" Alias "SetCursor" (ByVal hCursor As Long) As Long
 
+Public Function getCustomer(partNumber) As String
+On Error GoTo Err_Handler
+
+getCustomer = ""
+
+If Nz(partNumber, "") = "" Then Exit Function
+
+Dim db As Database
+Set db = CurrentDb()
+
+Dim qdf As QueryDef, tempRS As Recordset
+
+Set qdf = db.QueryDefs("qryFindCustomer")
+qdf.sql = Replace(qdf.sql, "{PART_NUMBER}", partNumber)
+    
+db.QueryDefs.refresh
+
+Dim rsGet As Recordset
+Set rsGet = db.OpenRecordset("qryFindCustomer")
+
+Do While Not rsGet.EOF
+    getCustomer = getCustomer & rsGet!CUSTOMER_NAME & vbNewLine
+    rsGet.MoveNext
+Loop
+
+qdf.sql = Replace(qdf.sql, partNumber, "{PART_NUMBER}")
+    
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+rsGet.CLOSE
+Set rsGet = Nothing
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "getCustomer", Err.DESCRIPTION, Err.number)
+End Function
+
 Public Function findCost(partNumber As String, costType As String, Org As String) As Double
 On Error GoTo Err_Handler
 
@@ -183,32 +222,12 @@ Err_Handler:
     Call handleError("wdbGlobalFunctions", "dbExecute", Err.DESCRIPTION, Err.number, sql)
 End Function
 
-Function dbPGExecute(sql As String)
-On Error GoTo Err_Handler
-
-Dim db As Database
-Set db = CurrentDb()
-
-Dim qdf As QueryDef, tempRS As Recordset
-
-Set qdf = db.QueryDefs("dbPGExecute")
-qdf.sql = sql
-    
-db.QueryDefs.refresh
-
-qdf.Execute
-
-Set db = Nothing
-
-Exit Function
-Err_Handler:
-    Call handleError("wdbGlobalFunctions", "dbExecute", Err.DESCRIPTION, Err.number, sql)
-End Function
-
-Function findDescription(partNumber As String) As String
+Function findDescription(partNumber) As String
 On Error GoTo Err_Handler
 
 findDescription = ""
+
+If Nz(partNumber, "") = "" Then Exit Function
 
 'first, check Oracle, then check SIFs
 

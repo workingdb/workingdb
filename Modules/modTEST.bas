@@ -3,8 +3,32 @@ Option Explicit
 
 Function testReport()
 
-DoCmd.OpenReport "rptTransferCoverPage", acViewPreview, , "partNumber = '30075'", acHidden
+DoCmd.OpenReport "rptTransferCoverPage", acViewPreview, , "partNumber = '29846'", acHidden
 DoCmd.OutputTo acOutputReport, "rptTransferCoverPage", acFormatPDF, "H:\test.pdf", False
+
+End Function
+
+Function testthis()
+
+Dim i, ctrl
+For i = 0 To 2
+    Set ctrl = Form_frmHelp.Controls("lbl" & i)
+    ctrl.Visible = True
+Next i
+
+End Function
+
+
+Public Function createTextBox()
+
+Dim i
+For i = 0 To 100
+    'Call Application.DeleteControl("frmHelp", "lbl" & i)
+    With Application.CreateControl("frmHelp", acImage, acDetail, , , 200, 200, 200, 250)
+        .name = "pic" & i
+        .tag = "pic.L0"
+    End With
+Next i
 
 End Function
 
@@ -155,7 +179,7 @@ End Function
 
 Public Sub Link_ODBCTbl(serverConn As String, rstrTblSrc As String, rstrTblDest As String, db As DAO.Database)
 
-'On Error GoTo err_handler
+'on error GoTo err_handler
 
     Dim tdf As TableDef
     Dim connOptions As String

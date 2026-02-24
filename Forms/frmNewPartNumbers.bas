@@ -180,11 +180,11 @@ End Sub
 
 Private Sub lblCreatedBy_DblClick(Cancel As Integer)
 On Error GoTo Err_Handler
-Dim X
-X = InputBox("Enter Creator", "Search by Creator")
-If X = "" Or X = vbCancel Then Exit Sub
+Dim x
+x = InputBox("Enter Creator", "Search by Creator")
+If x = "" Or x = vbCancel Then Exit Sub
     
-Me.Form.filter = "[creator] Like '*" & X & "*'"
+Me.Form.filter = "[creator] Like '*" & x & "*'"
 Me.Form.FilterOn = True
 
 Exit Sub
@@ -226,11 +226,11 @@ End Sub
 
 Private Sub lblNewPartDescription_DblClick(Cancel As Integer)
 On Error GoTo Err_Handler
-Dim X
-X = InputBox("Enter Part Description", "Search by Part Description")
-If X = "" Or X = vbCancel Then Exit Sub
+Dim x
+x = InputBox("Enter Part Description", "Search by Part Description")
+If x = "" Or x = vbCancel Then Exit Sub
     
-Me.Form.filter = "[partDescription] Like '*" & X & "*'"
+Me.Form.filter = "[partDescription] Like '*" & x & "*'"
 Me.Form.FilterOn = True
 
 Exit Sub
@@ -256,11 +256,11 @@ End Sub
 
 Private Sub lblNewPartNumber_DblClick(Cancel As Integer)
 On Error GoTo Err_Handler
-Dim X
-X = InputBox("Enter Part Number", "Filter by Part Number")
-If X = "" Or X = vbCancel Then Exit Sub
+Dim x
+x = InputBox("Enter Part Number", "Filter by Part Number")
+If x = "" Or x = vbCancel Then Exit Sub
     
-Me.Form.filter = "[newPartNumber] = " & X
+Me.Form.filter = "[newPartNumber] = " & x
 Me.Form.FilterOn = True
 
 Exit Sub

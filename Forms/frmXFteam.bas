@@ -7,42 +7,42 @@ Option Explicit
 
 Private Sub Form_Load()
 On Error Resume Next
-Dim X
+Dim x
 Dim TE As String
 Dim rs As DAO.Recordset, rsEmployee As Recordset, rsFiltered As Recordset
 Dim db As DAO.Database
-X = Form_DASHBOARD.partNumberSearch
+x = Form_DASHBOARD.partNumberSearch
 
 Call setTheme(Me)
 
 Dim projId
-projId = Nz(DLookup("projectId", "tblPartProjectPartNumbers", "childPartNumber = '" & X & "'"))
+projId = Nz(DLookup("projectId", "tblPartProjectPartNumbers", "childPartNumber = '" & x & "'"))
 
 If projId <> "" Then
-    X = DLookup("partNumber", "tblPartProject", "recordId = " & projId)
+    x = DLookup("partNumber", "tblPartProject", "recordId = " & projId)
 End If
 
-Me.partNumber = X
+Me.partNumber = x
 
-Me.sfrmPartTeam.Form.filter = "partNumber = '" & X & "'"
+Me.sfrmPartTeam.Form.filter = "partNumber = '" & x & "'"
 Me.sfrmPartTeam.Form.FilterOn = True
 
-Me.filter = "primaryPN = '" & X & "' OR relatedPN = '" & X & "'"
+Me.filter = "primaryPN = '" & x & "' OR relatedPN = '" & x & "'"
 Me.FilterOn = True
 
-Me.currentPN = X
+Me.currentPN = x
 
 Set db = CurrentDb
 
-If X Like "D*" Then
+If x Like "D*" Then
     Me.toolingEngineer = "Not Found"
     Exit Sub
 End If
 
-TE = Nz(DLookup("[Tooling Engineer]", "tblToolsMain", "[Tool Number] = '" & X & "'"))
+TE = Nz(DLookup("[Tooling Engineer]", "tblToolsMain", "[Tool Number] = '" & x & "'"))
 If IsNull(TE) Or TE = "" Then
     Me.lblDB.Caption = "CNL Project DB"
-    Set rs = db.OpenRecordset("SELECT Design_Engineer_ID, Project_Engineer_ID, Account_Manager_ID, Manufacturing_Engineer_ID, Quality_Engineer_ID, Tooling_Engineer_ID FROM [Main Table1] WHERE [Part Number] = '" & X & "'", dbOpenSnapshot)
+    Set rs = db.OpenRecordset("SELECT Design_Engineer_ID, Project_Engineer_ID, Account_Manager_ID, Manufacturing_Engineer_ID, Quality_Engineer_ID, Tooling_Engineer_ID FROM [Main Table1] WHERE [Part Number] = '" & x & "'", dbOpenSnapshot)
     If rs.RecordCount = 0 Then Exit Sub
     Set rsEmployee = db.OpenRecordset("SELECT EMPLOYEE, PERSON_ID from APPS_XXCUS_USER_EMPLOYEES_V")
     
@@ -72,11 +72,11 @@ If IsNull(TE) Or TE = "" Then
 Else
     Me.lblDB.Caption = "SLB Tooling DB"
     Me.toolingEngineer = StrConv(TE, vbProperCase)
-    Me.qualityEngineer = StrConv(DLookup("[Quality Engineer]", "tblToolsMain", "[Tool Number] = '" & X & "'"), vbProperCase)
-    Me.projectEngineer = StrConv(DLookup("[Project Engineer]", "tblToolsMain", "[Tool Number] = '" & X & "'"), vbProperCase)
-    Me.designEngineer = StrConv(DLookup("[DevDesignEng]", "tblToolsMain", "[Tool Number] = '" & X & "'"), vbProperCase)
+    Me.qualityEngineer = StrConv(DLookup("[Quality Engineer]", "tblToolsMain", "[Tool Number] = '" & x & "'"), vbProperCase)
+    Me.projectEngineer = StrConv(DLookup("[Project Engineer]", "tblToolsMain", "[Tool Number] = '" & x & "'"), vbProperCase)
+    Me.designEngineer = StrConv(DLookup("[DevDesignEng]", "tblToolsMain", "[Tool Number] = '" & x & "'"), vbProperCase)
     Me.mfgEngineer = ""
-    Me.sales = StrConv(DLookup("[Sales]", "tblToolsMain", "[Tool Number] = '" & X & "'"), vbProperCase)
+    Me.sales = StrConv(DLookup("[Sales]", "tblToolsMain", "[Tool Number] = '" & x & "'"), vbProperCase)
 End If
 
 On Error Resume Next
