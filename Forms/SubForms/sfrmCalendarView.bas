@@ -25,7 +25,7 @@ Me.prevMonth.SetFocus
 Me.today.Visible = True
 
 Dim MonthDayOne As Date, MonthDayLast As Date, MonthLength As Integer, DayOfWeek As Integer
-Dim i As Integer, Y As Integer, X As Integer, btn As CommandButton
+Dim i As Integer, Y As Integer, x As Integer, btn As CommandButton
 Dim OutOfCurrentMonth As Boolean, OutOfDate As Date, intMaxWeek As Integer, curDate As Date
 Dim countT As Long
 
@@ -46,13 +46,13 @@ MonthLength = DatePart("d", DateAdd("d", -1, DateAdd("m", 1, MonthDayOne)))
 
 i = 2 - DayOfWeek
 For Y = 0 To 5 'for each week
-    For X = 0 To 6 'each each weekday
-        Set btn = Me.Controls("d" & Y & X)
+    For x = 0 To 6 'each each weekday
+        Set btn = Me.Controls("d" & Y & x)
         btn.Visible = True
-        Me.Controls("bd" & Y & X).Visible = True
+        Me.Controls("bd" & Y & x).Visible = True
         curDate = DateSerial(TempVars!selYear, TempVars!selMonth, i)
         
-        If X = 6 Then 'for the last day of each week, find the week number
+        If x = 6 Then 'for the last day of each week, find the week number
             Me.Controls("lblW" & Y) = DatePart("ww", curDate)
             Me.Controls("lblW" & Y).Visible = True
         End If
@@ -60,10 +60,10 @@ For Y = 0 To 5 'for each week
         rsHolidays.FindFirst "holidayDate = #" & curDate & "#"
         
         countT = 0
-        Me.Controls("bd" & Y & X).Visible = False
+        Me.Controls("bd" & Y & x).Visible = False
         
-        If curDate < Date Then Me.Controls("bd" & Y & X).BackColor = rgb(230, 0, 0)
-        Me.Controls("bd" & Y & X).Caption = countT
+        If curDate < Date Then Me.Controls("bd" & Y & x).BackColor = rgb(230, 0, 0)
+        Me.Controls("bd" & Y & x).Caption = countT
         
         'If i falls within legal days for this month, show  this button.
         If (i > 0) And (i <= MonthLength) Then
@@ -73,7 +73,7 @@ For Y = 0 To 5 'for each week
             
             'get row value for final day of selected month
             If i = MonthLength Then intMaxWeek = Y
-            If X = 0 Or X = 6 Then btn.tag = "btnDisContrastBorder.L2"
+            If x = 0 Or x = 6 Then btn.tag = "btnDisContrastBorder.L2"
             If Not rsHolidays.noMatch Then btn.tag = "btnXcontrastBorder.L0" ' IF HOLIDAY -> show it
         Else
             btn.tag = "btnDis.L1"
@@ -83,7 +83,7 @@ For Y = 0 To 5 'for each week
             If i > MonthLength And Y > intMaxWeek Then 'wk6
                 btn.Visible = False
                 Me.lblW5.Visible = False
-                Me.Controls("bd" & Y & X).Visible = False
+                Me.Controls("bd" & Y & x).Visible = False
             End If
             If Not rsHolidays.noMatch Then btn.tag = "btnXdis.L0" ' IF HOLIDAY -> show it
         End If
@@ -119,7 +119,7 @@ Me.prevMonth.SetFocus
 Me.today.Visible = True
 
 Dim MonthDayOne As Date, MonthDayLast As Date, MonthLength As Integer, DayOfWeek As Integer
-Dim i As Integer, Y As Integer, X As Integer, btn As CommandButton
+Dim i As Integer, Y As Integer, x As Integer, btn As CommandButton
 Dim OutOfCurrentMonth As Boolean, OutOfDate As Date, intMaxWeek As Integer, curDate As Date
 Dim countT As Long
 
@@ -159,13 +159,13 @@ MonthLength = DatePart("d", DateAdd("d", -1, DateAdd("m", 1, MonthDayOne)))
 
 i = 2 - DayOfWeek
 For Y = 0 To 5 'for each week
-    For X = 0 To 6 'each each weekday
-        Set btn = Me.Controls("d" & Y & X)
+    For x = 0 To 6 'each each weekday
+        Set btn = Me.Controls("d" & Y & x)
         btn.Visible = True
-        Me.Controls("bd" & Y & X).Visible = True
+        Me.Controls("bd" & Y & x).Visible = True
         curDate = DateSerial(TempVars!selYear, TempVars!selMonth, i)
         
-        If X = 6 Then 'for the last day of each week, find the week number
+        If x = 6 Then 'for the last day of each week, find the week number
             Me.Controls("lblW" & Y) = DatePart("ww", curDate)
             Me.Controls("lblW" & Y).Visible = True
         End If
@@ -181,17 +181,17 @@ For Y = 0 To 5 'for each week
         
         Select Case countT
             Case Is > 9
-                Me.Controls("bd" & Y & X).Caption = "9+"
-                Me.Controls("bd" & Y & X).BackColor = rgb(230, 0, 0)
+                Me.Controls("bd" & Y & x).Caption = "9+"
+                Me.Controls("bd" & Y & x).BackColor = rgb(230, 0, 0)
             Case 0
-                Me.Controls("bd" & Y & X).Visible = False
+                Me.Controls("bd" & Y & x).Visible = False
             Case Else
-                Me.Controls("bd" & Y & X).Caption = countT
-                Me.Controls("bd" & Y & X).BackColor = rgb(60, 170, 60)
+                Me.Controls("bd" & Y & x).Caption = countT
+                Me.Controls("bd" & Y & x).BackColor = rgb(60, 170, 60)
         End Select
         
-        If curDate < Date Then Me.Controls("bd" & Y & X).BackColor = rgb(230, 0, 0)
-        Me.Controls("bd" & Y & X).Caption = countT
+        If curDate < Date Then Me.Controls("bd" & Y & x).BackColor = rgb(230, 0, 0)
+        Me.Controls("bd" & Y & x).Caption = countT
         
         'If i falls within legal days for this month, show  this button.
         If (i > 0) And (i <= MonthLength) Then
@@ -201,7 +201,7 @@ For Y = 0 To 5 'for each week
             
             'get row value for final day of selected month
             If i = MonthLength Then intMaxWeek = Y
-            If X = 0 Or X = 6 Then btn.tag = "btnDisContrastBorder.L2"
+            If x = 0 Or x = 6 Then btn.tag = "btnDisContrastBorder.L2"
             If Not rsHolidays.noMatch Then btn.tag = "btnXcontrastBorder.L0" ' IF HOLIDAY -> show it
         Else
             btn.tag = "btnDis.L1"
@@ -211,7 +211,7 @@ For Y = 0 To 5 'for each week
             If i > MonthLength And Y > intMaxWeek Then 'wk6
                 btn.Visible = False
                 Me.lblW5.Visible = False
-                Me.Controls("bd" & Y & X).Visible = False
+                Me.Controls("bd" & Y & x).Visible = False
             End If
             If Not rsHolidays.noMatch Then btn.tag = "btnXdis.L0" ' IF HOLIDAY -> show it
         End If

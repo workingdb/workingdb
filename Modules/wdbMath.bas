@@ -11,16 +11,16 @@ Err_Handler:
     Call handleError("wdbMath", "pi", Err.DESCRIPTION, Err.number)
 End Function
 
-Function Asin(X) As Double
+Function Asin(x) As Double
 On Error GoTo Err_Handler
 
-Select Case X
+Select Case x
     Case 1
         Asin = pi / 2
     Case -1
         Asin = (3 * pi) / 2
     Case Else
-        Asin = Atn(X / Sqr(-X * X + 1))
+        Asin = Atn(x / Sqr(-x * x + 1))
 End Select
 
 Exit Function
@@ -28,16 +28,16 @@ Err_Handler:
     Call handleError("wdbMath", "Asin", Err.DESCRIPTION, Err.number)
 End Function
 
-Function Acos(X) As Double
+Function Acos(x) As Double
 On Error GoTo Err_Handler
 
-Select Case X
+Select Case x
     Case 1
         Acos = 0
     Case -1
         Acos = pi
     Case Else
-        Acos = Atn(-X / Sqr(-X * X + 1)) + 2 * Atn(1)
+        Acos = Atn(-x / Sqr(-x * x + 1)) + 2 * Atn(1)
 End Select
 
 Exit Function

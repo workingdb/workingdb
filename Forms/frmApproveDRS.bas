@@ -810,11 +810,6 @@ If DCount("[Description]", "APPS_MTL_SYSTEM_ITEMS", "[SEGMENT1] = '" & partNum &
     GoTo exitThis
 End If
 
-If DCount("newPartNumber", "tblPartNumbers", "newPartNumber = " & partNum) > 0 Then 'NEW PART LOG
-    Me.PART_DESCRIPTION = Nz(DLookup("[partDescription]", "tblPartNumbers", "[newPartNumber] = '" & partNum & "'"))
-    GoTo exitThis
-End If
-
 If DCount("[Nifco_Part_Number]", "qryUnionPartDescriptions", "[Nifco_Part_Number] = '" & partNum & "'") > 0 Then   'SIFS
     Me.PART_DESCRIPTION = Nz(DLookup("[Part_Description]", "qryUnionPartDescriptions", "[Nifco_Part_Number] = '" & partNum & "'"))
     GoTo exitThis

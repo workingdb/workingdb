@@ -185,7 +185,7 @@ Dim Joke As String
 Joke = Nz(DLookup("[factText]", "tblFacts", "[factDate] = #" & Date & "#"))
 
 If Nz(Joke) = "" Then
-    Dim X, Y, z, C
+    Dim x, Y, z, C
 getAnotherOne:
     C = getAPI("https://icanhazdadjoke.com/", "Accept: text/plain", "User-Agent: Jacob Brown  (jbrow4@gmail.com")
     Y = Split(C, "<p class=" & Chr(34) & "subtitle" & Chr(34) & ">")(1)

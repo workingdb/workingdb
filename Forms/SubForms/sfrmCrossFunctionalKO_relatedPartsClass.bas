@@ -21,15 +21,15 @@ On Error GoTo Err_Handler
 Dim db As Database
 Set db = CurrentDb()
 
-Dim X As String
+Dim x As String
 
-X = InputBox("Please enter a part number to copy from", "Enter Part Number", Form_frmCrossFunctionalKO.partNumber)
+x = InputBox("Please enter a part number to copy from", "Enter Part Number", Form_frmCrossFunctionalKO.partNumber)
 
-If StrPtr(X) = 0 Then GoTo exit_handler
-If X = "" Then GoTo exit_handler
+If StrPtr(x) = 0 Then GoTo exit_handler
+If x = "" Then GoTo exit_handler
 
 Dim rsPI As Recordset
-Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & X & "'")
+Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & x & "'")
 
 If rsPI.RecordCount = 0 Then
     MsgBox "No class info found"

@@ -29,13 +29,25 @@ End Sub
 Private Sub Custsrch_Click()
 On Error GoTo Err_Handler
 
-Me.Form.filter = "[CUSTOMER_ITEM_NUMBER] LIKE '" & Me.CustsrchBox & "'"
-Me.Form.FilterOn = True
+Dim db As Database
+Set db = CurrentDb()
 
-If Me.RecordsetClone.RecordCount = 0 Then
-        MsgBox "No Results.", vbInformation + vbOKOnly, "No records returned"
-        Exit Sub
+Dim qdf As QueryDef
+Set qdf = db.QueryDefs("frmCustomerXref")
+
+If Nz(Me.NAMsrchBox, "") <> "" Then
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (CUSTOMER_ITEM_NUMBER LIKE '" & Me.CustsrchBox & "');"
+Else
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (si.SEGMENT1 is not null);"
 End If
+    
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+Set db = Nothing
+
+Me.Requery
+
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
@@ -55,13 +67,25 @@ End Sub
 Private Sub NAMsrch_Click()
 On Error GoTo Err_Handler
 
-Me.Form.filter = "[NAM] = '" & Me.NAMsrchBox & "'"
-Me.Form.FilterOn = True
+Dim db As Database
+Set db = CurrentDb()
 
-If Me.RecordsetClone.RecordCount = 0 Then
-    MsgBox "No Results.", vbInformation + vbOKOnly, "No records returned"
-    Exit Sub
+Dim qdf As QueryDef
+Set qdf = db.QueryDefs("frmCustomerXref")
+
+If Nz(Me.NAMsrchBox, "") <> "" Then
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 = '" & Me.NAMsrchBox & "');"
+Else
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 is not null);"
 End If
+    
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+Set db = Nothing
+
+Me.Requery
+
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)

@@ -538,10 +538,6 @@ partNumber = Me.partNumberSearch
 Dim db As Database
 Set db = CurrentDb()
 
-Dim rs1 As Recordset
-Dim rsAssy As Recordset
-Dim rsMold As Recordset
-
 On Error GoTo checkForOracle
 
 'use global function for rev
@@ -549,17 +545,16 @@ partRev = findPartRev(partNumber)
 
 'FIRST, search Master Items Table using a passthrough query to directly query Oracl
 Dim qdf As QueryDef
+Dim qdf1 As QueryDef
+
 Set qdf = db.QueryDefs("qrySystemItemsInfo")
 
-Dim queryParts() As String
-queryParts = Split(qdf.sql, "SEGMENT1 = '")
-qdf.sql = queryParts(0) & "SEGMENT1 = '" & partNumber & "'" & Split(queryParts(1), "'")(1)
+qdf.sql = Replace(qdf.sql, "{PART_NUMBER}", partNumber)
 db.QueryDefs.refresh
-
-Set qdf = Nothing
 
 Dim rsMasterItem As Recordset
 Set rsMasterItem = db.OpenRecordset("qrySystemItemsInfo")
+qdf.sql = Replace(qdf.sql, partNumber, "{PART_NUMBER}")
 
 If rsMasterItem.RecordCount > 0 Then
     parDescription = rsMasterItem("DESCRIPTION")
@@ -571,30 +566,19 @@ If rsMasterItem.RecordCount > 0 Then
 End If
 
 'Search SIF union query if no master item found
-Set qdf = db.QueryDefs("qrySIFpartDescriptions")
+Set qdf1 = db.QueryDefs("qrySIFpartDescriptions")
 
-Dim queryPartsU() As String
-queryPartsU() = Split(qdf.sql, "UNION")
-
-Dim ITEM, fullQuery As String
-fullQuery = ""
-
-For Each ITEM In queryParts
-    fullQuery = fullQuery & " " & ITEM & " WHERE SIFTBL.NIFCO_PART_NUMBER = '" & partNumber & "'"
-Next ITEM
-
-qdf.sql = fullQuery
+qdf1.sql = Replace(qdf1.sql, "{PART_NUMBER}", partNumber)
 db.QueryDefs.refresh
 
-Set qdf = Nothing
-
 Dim rsSIF As Recordset
-Set rsSIF = db.OpenRecordset("qryFindPartRevision")
+Set rsSIF = db.OpenRecordset("qrySIFpartDescriptions")
+qdf1.sql = Replace(qdf1.sql, partNumber, "{PART_NUMBER}")
 
 If rsSIF.RecordCount > 0 Then
-    partStatus = rsAssy![sifNum]
-    partType = "SIF ASSY"
-    parDescription = rsAssy!PART_DESCRIPTION
+    partStatus = rsSIF!sifNum
+    partType = rsSIF!SIF_TYPE
+    parDescription = rsSIF!PART_DESCRIPTION
     Call showOracleTags(True)
     GoTo setItems
 End If
@@ -615,15 +599,13 @@ Me.DESCRIPTION = parDescription
 
 Call showOracleTags(True)
 
+db.QueryDefs.refresh
+Set qdf = Nothing
+Set qdf1 = Nothing
+
 exitThis:
 On Error Resume Next
-rsMold.CLOSE
-rsAssy.CLOSE
-rs1.CLOSE
-rsSIF.CLOSE
-Set rsMold = Nothing
-Set rsAssy = Nothing
-Set rs1 = Nothing
+If Not rsSIF Is Nothing Then rsSIF.CLOSE
 Set rsSIF = Nothing
 
 Exit Function

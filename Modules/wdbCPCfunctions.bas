@@ -76,7 +76,7 @@ closeCPCstep = False
 Dim db As Database
 Set db = CurrentDb()
 Dim rsStep As Recordset, projectOwner As String
-Dim errorText As String, testThis
+Dim errorText As String, testthis
 errorText = ""
 Set rsStep = db.OpenRecordset("SELECT * from tblCPC_Steps WHERE ID = " & stepId)
 
