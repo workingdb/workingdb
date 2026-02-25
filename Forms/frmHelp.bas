@@ -96,12 +96,12 @@ Do While Not rsSections.EOF
             ctlItem.Picture = "\\data\mdbdata\WorkingDB\Pictures\help\" & rsItems!helpContentImage & ".png"
             ctlItem.Top = xRunning
             ctlItem.Left = 0
-            ctlItem.Height = 3500
+            ctlItem.Height = 5000
             ctlItem.Width = 15840
             ctlItem.tag = "pic.L0"
             ctlItem.Visible = True
             
-            xRunning = xRunning + 3500 + 300
+            xRunning = xRunning + 5000 + 300
         End If
         
         rsItems.MoveNext
