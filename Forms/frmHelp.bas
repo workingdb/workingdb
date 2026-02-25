@@ -14,7 +14,7 @@ Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
 
-Public Function setHelpScreen()
+Public Function setHelpScreen(topicId As Long)
 
 Dim db As Database
 Set db = CurrentDb()
@@ -25,12 +25,15 @@ Dim rsItems As Recordset
 
 Dim h As Long, lineHeight As Long
 Dim xRunning As Long
-Dim ctlTopic As Control, ctlSection As Control, ctlItem As Control
+Dim ctlTopic As Control, ctlSection As Control, ctlItem As Control, ctlBtn As Control
 Dim i As Long
+Dim xMargin As Long, pageWidth As Long
+xMargin = 2300
+pageWidth = 15840
 
-Set rsTopic = db.OpenRecordset("SELECT * from tblHelpTopics WHERE recordId = " & 1)
+Set rsTopic = db.OpenRecordset("SELECT * from tblHelpTopics WHERE recordId = " & topicId)
 
-xRunning = 100
+xRunning = 200
 lineHeight = 500
 
 Set ctlTopic = Me.Controls("lbl" & i)
@@ -40,7 +43,7 @@ ctlTopic.Left = 0
 ctlTopic.fontSize = 24
 ctlTopic.FontBold = 1
 ctlTopic.Height = 700
-ctlTopic.Width = 15840
+ctlTopic.Width = pageWidth
 ctlTopic.tag = "lbl.L0"
 ctlTopic.TextAlign = 2
 ctlTopic.Visible = True
@@ -54,11 +57,12 @@ Do While Not rsSections.EOF
     Set ctlSection = Me.Controls("lbl" & i)
     ctlSection.Caption = rsSections!sectionTitle
     ctlSection.Top = xRunning
-    ctlSection.Left = 0
+    ctlSection.Left = xMargin
+    ctlSection.TopMargin = 50
     ctlSection.fontSize = 14
     ctlSection.FontBold = 1
     ctlSection.Height = 500
-    ctlSection.Width = 15840
+    ctlSection.Width = pageWidth - xMargin * 2
     ctlSection.tag = "lbl_wBack.L1"
     ctlSection.BackStyle = 1
     ctlSection.TextAlign = 2
@@ -77,36 +81,54 @@ Do While Not rsSections.EOF
         
         ctlItem.Caption = rsItems!helpContentText
         ctlItem.Top = xRunning
-        ctlItem.Left = 0
+        ctlItem.Left = xMargin
         ctlItem.fontSize = 12
         ctlItem.FontBold = 0
         ctlItem.Height = h
-        ctlItem.Width = 15840
+        ctlItem.Width = pageWidth - xMargin * 2
+        ctlItem.TopMargin = 100
+        ctlItem.LeftMargin = 100
+        ctlItem.RightMargin = 100
         ctlItem.tag = "lbl_wBack.L1"
         ctlItem.BackStyle = 1
         ctlItem.TextAlign = 2
-        ctlItem.LeftMargin = 2500
-        ctlItem.RightMargin = 2500
         ctlItem.Visible = True
         
         xRunning = xRunning + h
         
         If Nz(rsItems!helpContentImage, "") <> "" Then
+            h = 5000
             Set ctlItem = Me.Controls("pic" & i)
             ctlItem.Picture = "\\data\mdbdata\WorkingDB\Pictures\help\" & rsItems!helpContentImage & ".png"
             ctlItem.Top = xRunning
-            ctlItem.Left = 0
-            ctlItem.Height = 5000
-            ctlItem.Width = 15840
-            ctlItem.tag = "pic.L0"
+            ctlItem.Left = xMargin
+            ctlItem.Height = h
+            ctlItem.Width = pageWidth - xMargin * 2
+            ctlItem.tag = "pic.L1"
+            ctlItem.BackStyle = 1
             ctlItem.Visible = True
             
-            xRunning = xRunning + 5000 + 300
+            xRunning = xRunning + h
         End If
         
         rsItems.MoveNext
     Loop
-    xRunning = xRunning + 200
+    
+    'set up cardBtn
+    i = i + 1
+    Set ctlBtn = Me.Controls("btnBack" & i)
+    ctlBtn.Top = (ctlSection.Top) - 25
+    ctlBtn.Left = (xMargin) - 25
+    ctlBtn.Height = (xRunning - ctlSection.Top) + 50
+    ctlBtn.Width = (pageWidth - xMargin * 2) + 50
+    ctlBtn.tag = "cardBtn.L1"
+    ctlBtn.BackStyle = 0
+    ctlBtn.BorderStyle = 1
+    ctlBtn.BorderWidth = 3
+    
+    ctlBtn.Visible = True
+    
+    xRunning = xRunning + 300
     
     rsSections.MoveNext
 Loop

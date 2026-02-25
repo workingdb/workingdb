@@ -565,7 +565,7 @@ If DLookup("paramVal", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") = T
     bypassOrg = Nz(DLookup("developingLocation", "tblPartInfo", "partNumber = '" & rsStep!partNumber & "'"), "SLB")
     
     If Len(bypassInfo) = 3 Then 'ORG bypass
-        If bypassInfo = "LVG" Then bypassInfo = "CNL" 'CNL will include LVG by default
+        If bypassOrg = "LVG" Then bypassOrg = "CNL" 'CNL will include LVG by default
         If bypassInfo = bypassOrg Then GoTo bypassGatePillar
     Else
         If bypassInfo = Environ("username") Then GoTo bypassGatePillar
