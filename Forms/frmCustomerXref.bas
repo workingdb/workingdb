@@ -35,7 +35,7 @@ Set db = CurrentDb()
 Dim qdf As QueryDef
 Set qdf = db.QueryDefs("frmCustomerXref")
 
-If Nz(Me.NAMsrchBox, "") <> "" Then
+If Nz(Me.CustsrchBox, "") <> "" Then
     qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (CUSTOMER_ITEM_NUMBER LIKE '" & Me.CustsrchBox & "');"
 Else
     qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (si.SEGMENT1 is not null);"
