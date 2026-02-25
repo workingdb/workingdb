@@ -36,7 +36,7 @@ Dim qdf As QueryDef
 Set qdf = db.QueryDefs("frmCustomerXref")
 
 If Nz(Me.NAMsrchBox, "") <> "" Then
-    qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (CUSTOMER_ITEM_NUMBER LIKE '%" & Me.CustsrchBox & "%');"
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (CUSTOMER_ITEM_NUMBER LIKE '" & Me.CustsrchBox & "');"
 Else
     qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (si.SEGMENT1 is not null);"
 End If
@@ -64,6 +64,61 @@ Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub lblCustomerName_Click()
+On Error GoTo Err_Handler
+
+Me.CUSTOMER_NAME.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblCustomerNumber_Click()
+On Error GoTo Err_Handler
+
+Me.CUSTOMER_ITEM_NUMBER.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblDescription_Click()
+On Error GoTo Err_Handler
+
+Me.DESCRIPTION.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblInactive_Click()
+On Error GoTo Err_Handler
+
+Me.INACTIVE_FLAG.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblNAM_Click()
+On Error GoTo Err_Handler
+
+Me.NAM.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub NAMsrch_Click()
 On Error GoTo Err_Handler
 
@@ -74,7 +129,7 @@ Dim qdf As QueryDef
 Set qdf = db.QueryDefs("frmCustomerXref")
 
 If Nz(Me.NAMsrchBox, "") <> "" Then
-    qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 Like '%" & Me.NAMsrchBox & "%');"
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 Like '" & Me.NAMsrchBox & "');"
 Else
     qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 is not null);"
 End If
