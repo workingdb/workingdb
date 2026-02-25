@@ -19,14 +19,13 @@ Next i
 End Function
 
 
-Public Function createTextBox()
+Public Function createControlTest()
 
 Dim i
 For i = 0 To 100
     'Call Application.DeleteControl("frmHelp", "lbl" & i)
-    With Application.CreateControl("frmHelp", acImage, acDetail, , , 200, 200, 200, 250)
-        .name = "pic" & i
-        .tag = "pic.L0"
+    With Application.CreateControl("frmHelp", acCommandButton, acDetail, , , 300, 300, 300, 500)
+        .name = "btnBack" & i
     End With
 Next i
 

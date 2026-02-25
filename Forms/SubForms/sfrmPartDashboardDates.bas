@@ -60,7 +60,7 @@ If DLookup("paramVal", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") = T
     bypassOrg = Nz(DLookup("developingLocation", "tblPartInfo", "partNumber = '" & Me.partNumber & "'"), "SLB")
     
     If Len(bypassInfo) = 3 Then 'ORG bypass
-        If bypassInfo = "LVG" Then bypassInfo = "CNL" 'CNL will include LVG by default
+        If bypassOrg = "LVG" Then bypassOrg = "CNL" 'CNL will include LVG by default
         If bypassInfo = bypassOrg Then
             msgCap = "Steps: " & Left(Me.gateTitle, 2) & " (BYPASS)"
             Call Form_sfrmPartDashboard.sfrmPartDashLock(False)

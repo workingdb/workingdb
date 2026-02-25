@@ -321,6 +321,7 @@ AppList.Add "NewParts", "NewParts"
 AppList.Add "Automation", "Automation"
 AppList.Add "Packaging", "Packaging"
 AppList.Add "Lab", "Lab"
+AppList.Add "Capacity", "Capacity"
 
 Dim element
 For Each element In AppList
