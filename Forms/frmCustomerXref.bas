@@ -36,7 +36,7 @@ Dim qdf As QueryDef
 Set qdf = db.QueryDefs("frmCustomerXref")
 
 If Nz(Me.NAMsrchBox, "") <> "" Then
-    qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (CUSTOMER_ITEM_NUMBER LIKE '" & Me.CustsrchBox & "');"
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (CUSTOMER_ITEM_NUMBER LIKE '%" & Me.CustsrchBox & "%');"
 Else
     qdf.sql = Split(qdf.sql, "HAVING")(0) & " HAVING (si.SEGMENT1 is not null);"
 End If
@@ -74,7 +74,7 @@ Dim qdf As QueryDef
 Set qdf = db.QueryDefs("frmCustomerXref")
 
 If Nz(Me.NAMsrchBox, "") <> "" Then
-    qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 = '" & Me.NAMsrchBox & "');"
+    qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 Like '%" & Me.NAMsrchBox & "%');"
 Else
     qdf.sql = Split(qdf.sql, "HAVING")(0) & "HAVING (si.SEGMENT1 is not null);"
 End If
