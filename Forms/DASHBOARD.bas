@@ -942,6 +942,28 @@ Call notificationsCount
 
 End Sub
 
+Private Sub help3_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmHelp"
+Form_frmHelp.setHelpScreen (3)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub help4_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmHelp"
+Form_frmHelp.setHelpScreen (4)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub hidecmd_Click()
 On Error GoTo Err_Handler
 
