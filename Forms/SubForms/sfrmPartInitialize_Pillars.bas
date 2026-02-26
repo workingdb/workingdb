@@ -81,6 +81,8 @@ Set db = CurrentDb()
 If Me.NewRecord Then GoTo exit_handler
 If MsgBox("Are you sure?", vbYesNo, "Just checking.") <> vbYes Then GoTo exit_handler
 
+Call registerPartUpdates("tblPartSteps", 0, "Pillar Step", "", "Pillar Deleted PRE PROJECT CREATION", Form_frmPartInitialize.partNumber, Me.pillarTitle, 0)
+
 db.Execute "DELETE * FROM tblSessionVariables WHERE ID = " & Me.ID
 Me.Requery
 
