@@ -33,7 +33,7 @@ Dim xMargin As Long, pageWidth As Long
 xMargin = 1000
 pageWidth = Me.Width
 
-Set rsTopic = db.OpenRecordset("SELECT * from tblHelpTopics WHERE recordId = " & topicId)
+Set rsTopic = db.OpenRecordset("SELECT * from tblHelpTopics WHERE recordId = " & topicId & " ORDER BY indexOrder")
 
 xRunning = 200
 lineHeight = 500
@@ -52,7 +52,7 @@ ctlTopic.Visible = True
 
 xRunning = xRunning + 1000
 
-Set rsSections = db.OpenRecordset("SELECT * from tblHelpSections WHERE helpTopicId = " & rsTopic!recordId)
+Set rsSections = db.OpenRecordset("SELECT * from tblHelpSections WHERE helpTopicId = " & rsTopic!recordId & " ORDER BY indexOrder")
 
 Do While Not rsSections.EOF
     i = i + 1
@@ -72,7 +72,7 @@ Do While Not rsSections.EOF
     
     xRunning = xRunning + 500
 
-    Set rsItems = db.OpenRecordset("SELECT * from tblHelpItems WHERE helpSectionId = " & rsSections!recordId)
+    Set rsItems = db.OpenRecordset("SELECT * from tblHelpItems WHERE helpSectionId = " & rsSections!recordId & " ORDER BY indexOrder")
     
     Do While Not rsItems.EOF
         i = i + 1
@@ -135,7 +135,7 @@ Do While Not rsSections.EOF
     rsSections.MoveNext
 Loop
 
-
+Me.Detail.Height = xRunning - 250
 
 If Not rsTopic Is Nothing Then rsTopic.CLOSE
 If Not rsSections Is Nothing Then rsSections.CLOSE
@@ -151,8 +151,16 @@ End Function
 
 Function resetLabels()
 
-Dim i, ctrl As Control
-For i = 0 To 100
+Dim ctrl As Control
+
+Set ctrl = Me.Controls("btnBack0")
+ctrl.Caption = ""
+ctrl.tag = "btn.L0"
+ctrl.Visible = True
+ctrl.SetFocus
+
+Dim i
+For i = 1 To 100
     Set ctrl = Me.Controls("lbl" & i)
     ctrl.tag = ""
     ctrl.Visible = False
