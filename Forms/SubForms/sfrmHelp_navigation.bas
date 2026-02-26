@@ -76,7 +76,8 @@ Do While Not rsTopic.EOF
     ctlTopic.fontSize = 14
     ctlTopic.BackStyle = 1
     ctlTopic.Alignment = 1
-    ctlBtn.OnClick = "=helpTopicClick()"
+    ctlTopic.OnClick = "=helpTopicClick()"
+    ctlTopic.CursorOnHover = 1
     
     ctlTopic.Visible = True
     
@@ -143,6 +144,7 @@ ctrl.Width = 1
 ctrl.Left = 1
 ctrl.Top = 1
 ctrl.Visible = True
+ctrl.CursorOnHover = 2
 ctrl.SetFocus
 
 Dim i
