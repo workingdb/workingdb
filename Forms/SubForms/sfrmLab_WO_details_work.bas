@@ -24,12 +24,26 @@ Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub annealing_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, "", Me.ActiveControl.column(1), Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub deleteItem_Click()
 On Error GoTo Err_Handler
 
-Call registerLabUpdates("tbllab_wo_work", Me.recordId, "WO Work", "", "Deleted", Form_frmLab_WO_details.recordId, Me.name)
-dbExecute "DELETE from tbllab_wo_work WHERE recordid = " & Me.recordId
-Me.Requery
+If MsgBox("Are you sure you want to delete this?", vbYesNo, "Please confirm") = vbYes Then
+   Call registerLabUpdates("tbllab_wo_work", Me.recordId, "WO Work", "", "Deleted", Form_frmLab_WO_details.recordId, Me.name)
+    dbExecute "DELETE from tbllab_wo_work WHERE recordid = " & Me.recordId
+    Me.Requery
+    Call snackBox("success", "Success!", "Work deleted", Me.Parent.name)
+End If
+
 
 Exit Sub
 Err_Handler:
@@ -46,7 +60,83 @@ Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub itemCount_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub materialNumber_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub materialNumber1_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub partNumber_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)
+
+If Nz(Me.toolNumber, "") = "" Then Me.toolNumber = Me.partNumber & "T"
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.toolNumber.name, Me.toolNumber.OldValue, Me.toolNumber, Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub perCavity_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)
+
+Me.sampleCount = Nz(Me.Cavities) * Nz(Me.perCavity)
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.sampleCount.name, Me.sampleCount.OldValue, Me.sampleCount, Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub reportFormat_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, "", Me.ActiveControl.column(1), Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub retain_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, "", Me.ActiveControl.column(1), Form_frmLab_WO_details.recordId, Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub sampleCount_AfterUpdate()
 On Error GoTo Err_Handler
 
 Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)
@@ -62,6 +152,16 @@ On Error GoTo Err_Handler
 Form_DASHBOARD.partNumberSearch = Me.partNumber
 Form_DASHBOARD.filterbyPN_Click
 Form_DASHBOARD.SetFocus
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub toolNumber_AfterUpdate()
+On Error GoTo Err_Handler
+
+Call registerLabUpdates("tbllab_wo_work", Me.recordId, Me.ActiveControl.name, Me.ActiveControl.OldValue, Me.ActiveControl, Form_frmLab_WO_details.recordId, Me.name)
 
 Exit Sub
 Err_Handler:

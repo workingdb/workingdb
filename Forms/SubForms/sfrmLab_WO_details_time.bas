@@ -27,9 +27,12 @@ End Sub
 Private Sub deleteItem_Click()
 On Error GoTo Err_Handler
 
-Call registerLabUpdates("tbllab_wo_time", Me.recordId, "WO Time", "", "Deleted", Form_frmLab_WO_details.recordId, Me.name)
-dbExecute "DELETE from tbllab_wo_time WHERE recordid = " & Me.recordId
-Me.Requery
+If MsgBox("Are you sure you want to delete this?", vbYesNo, "Please confirm") = vbYes Then
+    Call registerLabUpdates("tbllab_wo_time", Me.recordId, "WO Time", "", "Deleted", Form_frmLab_WO_details.recordId, Me.name)
+    dbExecute "DELETE from tbllab_wo_time WHERE recordid = " & Me.recordId
+    Me.Requery
+    Call snackBox("success", "Success!", "Time record deleted", Me.Parent.name)
+End If
 
 Exit Sub
 Err_Handler:
