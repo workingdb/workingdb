@@ -1151,7 +1151,7 @@ For Each ctlVar In Me.Controls
                 ctlVar.Top = ctlVar.Top - 1860 * neg '13920-12060
             Case InStr(ctlVar.tag, "g2") 'calendar stuff
                 ctlVar.Left = ctlVar.Left - 16000 * neg
-                ctlVar.Top = ctlVar.Top - 1740 * neg '9900-8160
+                ctlVar.Top = ctlVar.Top - 1400 * neg '9900-8160
             Case InStr(ctlVar.tag, "g3") 'packlist -->
                 ctlVar.Left = ctlVar.Left - 10260 * neg '16800-6540
                 ctlVar.Height = ctlVar.Height - 60 * neg '419-359
