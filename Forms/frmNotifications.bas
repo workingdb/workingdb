@@ -44,6 +44,17 @@ Err_Handler:
     Call handleError(Me.name, "Form_Unload", Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub help6_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmHelp"
+Form_frmHelp.setHelpScreen (6)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub imgSender_Click()
 On Error GoTo Err_Handler
 
