@@ -94,6 +94,17 @@ Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub help5_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmHelp"
+Form_frmHelp.setHelpScreen (5)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub smallScreenMode_Click()
 On Error GoTo Err_Handler
 
