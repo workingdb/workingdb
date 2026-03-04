@@ -557,6 +557,9 @@ Select Case DLookup("templateType", "tblPartProjectTemplate", "recordId = " & DL
         projectOwner = "Service"
 End Select
 
+Dim rsGate As Recordset
+Set rsGate = db.OpenRecordset("SELECT * FROM tblPartGates WHERE recordId = " & rsStep!partGateId)
+
 'CHECK PARAMETER FOR TEMP BYPASS
 Dim bypass As Boolean, bypassInfo As String, bypassOrg As String
 'can be an ORG, or an individual
@@ -573,9 +576,6 @@ If DLookup("paramVal", "tblDBinfoBE", "parameter = 'allowGatePillarBypass'") = T
 End If
 
 '---First, check if this step is in the current gate--- (you can only close it if true)
-Dim rsGate As Recordset
-Set rsGate = db.OpenRecordset("SELECT * FROM tblPartGates WHERE recordId = " & rsStep!partGateId)
-
 Dim gateId As Long 'show steps for current open gate
 gateId = Nz(DMin("[partGateId]", "tblPartSteps", "partProjectId = " & rsStep!partProjectId & " AND [status] <> 'Closed'"), DMin("[partGateId]", "tblPartSteps", "partProjectId = " & rsStep!partProjectId))
 
@@ -654,7 +654,13 @@ Dim rsStepAction As Recordset
 Set rsStepAction = db.OpenRecordset("SELECT * from tblPartStepActions WHERE recordId = " & rsStep!stepActionId)
 
 If rsStepAction.RecordCount = 0 Then GoTo stepActionOK 'no step action found
-If rsStepAction!whenToRun <> "closeStep" And rsStepAction!whenToRun <> "firstTimeRun" Then GoTo stepActionOK 'check if this action should be running now. Ones marked "closeStep" are checks on close, meant to run now
+
+'check if this action should be running now. Ones marked "closeStep" are checks on close, meant to run now
+Select Case rsStepAction!whenToRun
+    Case "closeStep", "firstTimeRun", "frmPartInformation_save,closeStep"
+    Case Else
+        GoTo stepActionOK
+End Select
 
 Dim rsMoldInfo As Recordset
 
@@ -739,6 +745,8 @@ Select Case rsStepAction!stepAction
                 GoTo errorOut
             End If
         End If
+    Case "deleteStep,emailBOMrequest"
+        If emailPartInfo(rsStep!partNumber, Nz(rsStep!stepDescription)) = False Then Err.Raise vbObjectError + 999, , "Email couldn't send..."
 End Select
 
 stepActionOK:
@@ -2122,7 +2130,7 @@ Dim rsSteps As Recordset, dFilt As String, eFilt As String, db As Database
 Set db = CurrentDb()
 
 'grab all steps that match this partNum and routine name, and are not closed
-dFilt = "SELECT * FROM tblPartSteps WHERE stepActionId IN (SELECT recordId FROM tblPartStepActions WHERE whenToRun = '" & routineName & "') AND status <> 'Closed'"
+dFilt = "SELECT * FROM tblPartSteps WHERE stepActionId IN (SELECT recordId FROM tblPartStepActions WHERE whenToRun Like '*" & routineName & "*') AND status <> 'Closed'"
 eFilt = ""
 If partNum <> "all" Then eFilt = " AND partNumber = '" & partNum & "'"
 
@@ -2398,6 +2406,27 @@ issueCount = DCount("recordId", "tblPartIssues", "partNumber = '" & partNum & "'
 Exit Function
 Err_Handler:
     Call handleError("wdbProjectE", "issueCount", Err.DESCRIPTION, Err.number)
+End Function
+
+Function emailBOMrequest(partNum As String, noteTxt As String, receivingOrg As String, sendingOrg As String) As Boolean
+On Error GoTo Err_Handler
+
+emailBOMrequest = False
+
+
+Dim emailBody As String, subjectLine As String, strTo As String
+subjectLine = partNum & " BOM Setup Request"
+emailBody = generateHTML(subjectLine, "Please setup the BOM in the receiving ORG", "Receiving ORG: " & receivingOrg, noteTxt, "Sending ORG: " & sendingOrg, "")
+
+strTo = "cost_team_mailbox@us.nifco.com"
+
+Call wdbEmail(strTo, "", "BOM Setup Request", emailBody)
+
+emailBOMrequest = True
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "emailBOMrequest", Err.DESCRIPTION, Err.number)
 End Function
 
 Function emailPartInfo(partNum As String, noteTxt As String) As Boolean
