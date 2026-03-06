@@ -4,6 +4,116 @@ Option Explicit
 Dim XL As Object, WB As Excel.Workbook, WKS As Excel.Worksheet
 Dim inV As Long
 
+Public Function scanAllParts()
+
+Dim db As Database
+
+Dim rsSteps As Recordset
+
+Set db = CurrentDb
+Set rsSteps = db.OpenRecordset("SELECT * from tblPartSteps WHERE stepType = 'Request BOM Setup in Receiving Org'")
+
+Do While Not rsSteps.EOF
+    Call scanSteps(rsSteps!partNumber, "frmPartInformation_save")
+    rsSteps.MoveNext
+Loop
+
+rsSteps.CLOSE
+Set rsSteps = Nothing
+Set db = Nothing
+
+End Function
+
+Public Function addStepToAllProjects()
+'On Error GoTo Err_Handler
+
+Dim db As Database
+Dim rsSteps As Recordset, rsProject As Recordset, rsGates As Recordset
+Dim rsGateTemp As Recordset, rsStepTemp As Recordset, rsApprovalsTemplate As Recordset
+Dim dueDate
+Dim indexOrder As Long
+
+Set db = CurrentDb()
+
+'THIRD
+'check the step before - - skip if complete
+'step before: "Logistics/Planning Evaluation"
+
+'look at each step
+'if gate is closed, skip
+'check if step is closed
+
+'check the project status - skip if > 2
+Set rsProject = db.OpenRecordset("SELECT * FROM tblPartProject WHERE projectStatus < 3")
+
+Do While Not rsProject.EOF
+    Set rsGates = db.OpenRecordset("SELECT * FROM tblPartGates WHERE projectId = " & rsProject!recordId & " AND actualDate is null AND gateTitle Like '*G3*'")
+    If rsGates.RecordCount = 0 Then GoTo nextProject
+    
+    Set rsSteps = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE partGateId = " & rsGates!recordId & " AND status <> 'Closed' ORDER BY indexOrder")
+    If rsSteps.RecordCount = 0 Then GoTo nextProject
+    
+    rsSteps.FindFirst "stepType = 'Logistics/Planning Evaluation'"
+    If rsSteps.noMatch Then
+        rsSteps.MoveLast
+    End If
+        
+    indexOrder = rsSteps!indexOrder + 1
+        
+    rsSteps.addNew
+
+    rsSteps!partNumber = rsGates!partNumber
+    rsSteps!partProjectId = rsProject!recordId
+    rsSteps!partGateId = rsGates!recordId
+    rsSteps!stepType = "Request BOM Setup in Receiving Org"
+    rsSteps!stepDescription = "populated due to template change"
+    rsSteps!openedBy = "automation"
+    rsSteps!status = "Not Started"
+    rsSteps!openDate = Now()
+    rsSteps!lastUpdatedDate = Now()
+    rsSteps!lastUpdatedBy = Environ("username")
+    rsSteps!stepActionId = 33
+    rsSteps!documentType = 0
+    rsSteps!responsible = "Project"
+    rsSteps!indexOrder = indexOrder
+    rsSteps!duration = 1
+    rsSteps!dueDate = Null
+
+    rsSteps.Update
+    
+    db.Execute "UPDATE tblPartSteps SET indexOrder = indexOrder + 1 WHERE partGateId = " & rsGates!recordId & " AND indexOrder >= " & indexOrder
+    
+'            '--ADD APPROVALS FOR THIS STEP
+'            TempVars.Add "stepId", db.OpenRecordset("SELECT @@identity")(0).Value
+'            Set rsApprovalsTemplate = db.OpenRecordset("SELECT * FROM tblPartStepTemplateApprovals WHERE [stepTemplateId] = " & rsStepTemp![recordId], dbOpenSnapshot)
+'
+'            Do While Not rsApprovalsTemplate.EOF
+'                db.Execute "INSERT INTO tblPartTrackingApprovals(partNumber,requestedBy,requestedDate,dept,reqLevel,tableName,tableRecordId) VALUES ('" & _
+'                    partNumber & "','" & Environ("username") & "','" & Now() & "','" & _
+'                    Nz(rsApprovalsTemplate![dept], "") & "','" & Nz(rsApprovalsTemplate![reqLevel], "") & "','tblPartSteps'," & TempVars!stepId & ");"
+'                rsApprovalsTemplate.MoveNext
+'            Loop
+
+    Debug.Print rsSteps!partNumber & " ADDED"
+    
+nextProject:
+    rsProject.MoveNext
+Loop
+
+rsProject.CLOSE
+Set rsProject = Nothing
+
+On Error Resume Next
+rsSteps.CLOSE
+Set rsSteps = Nothing
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "addStepToAllProjects", Err.DESCRIPTION, Err.number)
+End Function
+
+
 Public Function addMissingProjectSteps(partNumber As String) As Boolean
 On Error GoTo Err_Handler
 
@@ -2282,9 +2392,10 @@ Do While Not rsSteps.EOF
 '---now we have decided to perform the action---
 performAction:
     Select Case rsStepActions!stepAction 'everything matched - what should be done with this step??
-        Case "deleteStep" 'delete the step!
+        Case "deleteStep", "deleteStep,emailBOMrequest" 'delete the step!
             Call registerPartUpdates("tblPartSteps", rsSteps!recordId, "Deleted - stepAction", rsSteps!stepType, "", partNum, rsSteps!stepType, "stepAction")
             rsSteps.Delete
+            Debug.Print (partNum)
             If CurrentProject.AllForms("frmPartDashboard").IsLoaded Then Form_frmPartDashboard.partDash_refresh_Click
         Case "closeStep" 'close the step!
             Dim currentDate

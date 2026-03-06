@@ -7,6 +7,42 @@ Declare PtrSafe Sub ChooseColor Lib "msaccess.exe" Alias "#53" (ByVal hwnd As Lo
 Declare PtrSafe Function LoadCursorFromFile Lib "user32" Alias "LoadCursorFromFileA" (ByVal lpFileName As String) As Long
 Declare PtrSafe Function setCursor Lib "user32" Alias "SetCursor" (ByVal hCursor As Long) As Long
 
+Public Function getStandardCostOwner(partNumber) As String
+On Error GoTo Err_Handler
+
+getStandardCostOwner = ""
+
+If Nz(partNumber, "") = "" Then Exit Function
+
+Dim db As Database
+Set db = CurrentDb()
+
+Dim qdf As QueryDef, tempRS As Recordset
+
+Set qdf = db.QueryDefs("qryStandardCostOwner")
+qdf.sql = Replace(qdf.sql, "{PART_NUMBER}", partNumber)
+    
+db.QueryDefs.refresh
+
+Dim rsGet As Recordset
+Set rsGet = db.OpenRecordset("qryStandardCostOwner")
+
+getStandardCostOwner = rsGet!Standard_Cost_Owner
+
+qdf.sql = Replace(qdf.sql, partNumber, "{PART_NUMBER}")
+    
+db.QueryDefs.refresh
+
+Set qdf = Nothing
+rsGet.CLOSE
+Set rsGet = Nothing
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "getCustomer", Err.DESCRIPTION, Err.number)
+End Function
+
 Public Function getCustomer(partNumber) As String
 On Error GoTo Err_Handler
 

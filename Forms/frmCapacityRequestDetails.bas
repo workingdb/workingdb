@@ -139,7 +139,7 @@ Err_Handler:
     Call handleError(Me.name, "Form_Unload", Err.DESCRIPTION, Err.number)
 End Sub
 
-Private Sub partNumber_AfterUpdate()
+Private Sub partnumber_AfterUpdate()
 On Error GoTo Err_Handler
 
 If Nz(Me.partNumber, "") = "" Then Exit Sub
