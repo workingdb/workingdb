@@ -154,6 +154,11 @@ End If
 
 x = replaceDriveLetters(addLastSlash(x))
 
+If IsNull(Me.Completed_Date) = False Then
+    MsgBox "Woops. This WO is closed - you can't edit this.", vbCritical, "Darnit!"
+    Exit Sub
+End If
+
 If InStr(x, "C:\Users\" & Environ("username") & "\Nifco America Corporation\") Then
     x = Replace(x, Environ("username"), "CUST_USER")
 End If
@@ -851,7 +856,6 @@ If IsNull(Me.Completed_Date) = False Then
     Me.nudgeAssignee.Visible = False 'can't nudge
     Me.nudgeChecker.Visible = False 'can't nudge
     Me.nudgeApprover.Visible = False 'can't nudge
-    Me.btnEditChkFold.Enabled = False 'can't edit check folder
     Me.assigneeSign.Visible = False 'can't unsign
     Me.checker1Sign.Visible = False 'can't unsign
     Me.checker2Sign.Visible = False 'can't unsign
