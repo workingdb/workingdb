@@ -1,4 +1,4 @@
-SELECT tblPartInfo.partNumber, tblPartInfo.description, tblDropDownsSP.partType, tblPartInfo.SOPdate, tblPartOutsourceInfo.outsourceVendor, rnotes.reportNote, rnotes.recordId AS noteId, rnotes.updatedBy, rnotes.updateddate, rnotes.dataTag0
+SELECT tblPartInfo.partNumber, tblPartInfo.description, tblDropDownsSP.partType, tblPartInfo.SOPdate, tblPartOutsourceInfo.outsourceVendor, rnotes.reportNote, rnotes.recordId AS noteId, rnotes.updatedBy, rnotes.updateddate, rnotes.dataTag0, getCustomername([customerid]) AS customer, grabGatePlannedDate([partNumber],3) AS outsourcedate, getStandardCostOwner([partNumber]) AS costowner
 FROM ((tblPartInfo LEFT JOIN tblPartOutsourceInfo ON tblPartInfo.outsourceInfoId = tblPartOutsourceInfo.recordId) LEFT JOIN (SELECT
             recordId,
             refId,

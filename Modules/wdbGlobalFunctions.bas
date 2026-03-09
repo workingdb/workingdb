@@ -27,7 +27,9 @@ db.QueryDefs.refresh
 Dim rsGet As Recordset
 Set rsGet = db.OpenRecordset("qryStandardCostOwner", dbOpenSnapshot)
 
-getStandardCostOwner = rsGet!Standard_Cost_Owner
+If rsGet.RecordCount > 0 Then
+    getStandardCostOwner = rsGet!Standard_Cost_Owner
+End If
 
 qdf.sql = Replace(qdf.sql, partNumber, "{PART_NUMBER}")
     
