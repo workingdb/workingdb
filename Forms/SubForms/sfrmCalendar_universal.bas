@@ -27,7 +27,7 @@ Dim countT As Long
 Dim db As Database
 Set db = CurrentDb()
 Dim rsHolidays As Recordset, rsTasks As Recordset
-Set rsHolidays = db.OpenRecordset("tblHolidays")
+Set rsHolidays = db.OpenRecordset("tblHolidays", dbOpenSnapshot)
 
 Dim selYear As String, selMonth As String
 selYear = Me.selYear
@@ -36,7 +36,7 @@ selMonth = Me.selMonth
 Dim sqlStatement As String
 sqlStatement = "SELECT " & Me.sqlSel & " FROM " & Me.sqlFrom & " WHERE " & Me.sqlWhere & " GROUP BY " & Me.sqlGroupBy
 
-Set rsTasks = db.OpenRecordset(sqlStatement)
+Set rsTasks = db.OpenRecordset(sqlStatement, dbOpenSnapshot)
 
 Me.lblMonth.Caption = MonthName(selMonth)
 Me.lblYear.Caption = selYear

@@ -386,6 +386,7 @@ If partInfoId = "" Then
     
     Dim rsPartInfo As Recordset
     Set rsPartInfo = db.OpenRecordset("tblPartInfo")
+    'NEEDS CONVERTED TO ADODB
     
     rsPartInfo.addNew
     rsPartInfo!partNumber = Me.fltPartNumber
@@ -538,13 +539,13 @@ Do While Not rs1.EOF
     'find team members
     
     Dim TE, PE, NMQ, Material, rsPerm As Recordset
-    Set rsTeam = db.OpenRecordset("select * from tblPartTeam where partNumber = '" & rs1!partNumber & "' AND person is not null")
+    Set rsTeam = db.OpenRecordset("select * from tblPartTeam where partNumber = '" & rs1!partNumber & "' AND person is not null", dbOpenSnapshot)
     TE = ""
     PE = ""
     NMQ = ""
     
     Do While Not rsTeam.EOF
-        Set rsPerm = db.OpenRecordset("SELECT * from tblPermissions WHERE user = '" & rsTeam!person & "'")
+        Set rsPerm = db.OpenRecordset("SELECT * from tblPermissions WHERE user = '" & rsTeam!person & "'", dbOpenSnapshot)
         If rsPerm!Level = "Engineer" Then
             Select Case rsPerm!dept
                 Case "Tooling"

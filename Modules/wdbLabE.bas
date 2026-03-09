@@ -15,6 +15,7 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
 Set rs1 = db.OpenRecordset("tbllab_updatetracking")
+'NEEDS CONVERTED TO ADODB
 
 If Len(oldVal) > 255 Then oldVal = Left(oldVal, 255)
 If Len(newVal) > 255 Then newVal = Left(newVal, 255)

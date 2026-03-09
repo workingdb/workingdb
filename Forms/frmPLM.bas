@@ -21,7 +21,7 @@ End If
 Dim db As Database
 Dim rs1 As Recordset
 Set db = CurrentDb()
-Set rs1 = db.OpenRecordset("tblPLM", dbOpenDynaset, dbOpenSnapshot)
+Set rs1 = db.OpenRecordset("tblPLM", dbOpenDynaset)
 Dim fld As DAO.Field
 Dim j As Integer
 Dim startIt As Boolean
@@ -1006,7 +1006,7 @@ If cmdSetPropertyClick Then
     Set db = CurrentDb()
     Dim rsPI As Recordset
     
-    Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & Left(Me.Part_No, 5) & "'")
+    Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & Left(Me.Part_No, 5) & "'", dbOpenSnapshot)
     If rsPI.RecordCount = 1 Then
         'description
         If Nz(Me.Product_Name, "") <> "" And Nz(rsPI!DESCRIPTION, "") = "" Then

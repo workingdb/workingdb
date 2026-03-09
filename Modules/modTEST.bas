@@ -92,30 +92,30 @@ End Function
 
 Function doStuffApprovals()
 
-Dim db As Database
-Set db = CurrentDb()
-
-Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE stepType = 'Upload'")
-
-Dim rsApprovals As Recordset
-
-Do While Not rs1.EOF
-    Set rsApprovals = db.OpenRecordset("SELECT * FROM tblPartTrackingApprovals WHERE approvedOn is null AND tableRecordId = " & rs1!recordId)
-    
-    Do While Not rsApprovals.EOF
-        rsApprovals.Delete
-        rsApprovals.MoveNext
-    Loop
-    
-    rsApprovals.CLOSE
-    Set rsApprovals = Nothing
-    rs1.MoveNext
-Loop
-
-rs1.CLOSE
-Set rs1 = Nothing
-Set db = Nothing
+'Dim db As Database
+'Set db = CurrentDb()
+'
+'Dim rs1 As Recordset
+'Set rs1 = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE stepType = 'Upload'", dbOpenSnapshot)
+'
+'Dim rsApprovals As Recordset
+'
+'Do While Not rs1.EOF
+'    Set rsApprovals = db.OpenRecordset("SELECT * FROM tblPartTrackingApprovals WHERE approvedOn is null AND tableRecordId = " & rs1!recordId)
+'
+'    Do While Not rsApprovals.EOF
+'        rsApprovals.Delete
+'        rsApprovals.MoveNext
+'    Loop
+'
+'    rsApprovals.CLOSE
+'    Set rsApprovals = Nothing
+'    rs1.MoveNext
+'Loop
+'
+'rs1.CLOSE
+'Set rs1 = Nothing
+'Set db = Nothing
 
 End Function
 

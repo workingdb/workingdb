@@ -508,7 +508,8 @@ On Error GoTo Err_Handler
 Dim db As Database
 Set db = CurrentDb()
 Dim rsQuoteNum As Recordset
-Set rsQuoteNum = db.OpenRecordset("SELECT tblPartQuoteInfo.quoteNumber as QuoteNum FROM tblPartInfo INNER JOIN tblPartQuoteInfo ON tblPartInfo.quoteInfoId = tblPartQuoteInfo.recordId WHERE tblPartInfo.partNumber='" & partNum & "'")
+Set rsQuoteNum = db.OpenRecordset( _
+    "SELECT tblPartQuoteInfo.quoteNumber as QuoteNum FROM tblPartInfo INNER JOIN tblPartQuoteInfo ON tblPartInfo.quoteInfoId = tblPartQuoteInfo.recordId WHERE tblPartInfo.partNumber='" & partNum & "'", dbOpenSnapshot)
 
 If rsQuoteNum.RecordCount > 0 Then
     grabQuoteNum = Format(rsQuoteNum!quoteNum, "00000")
@@ -554,7 +555,7 @@ qdf.sql = Replace(qdf.sql, "{PART_NUMBER}", partNumber)
 db.QueryDefs.refresh
 
 Dim rsMasterItem As Recordset
-Set rsMasterItem = db.OpenRecordset("qrySystemItemsInfo")
+Set rsMasterItem = db.OpenRecordset("qrySystemItemsInfo", dbOpenSnapshot)
 qdf.sql = Replace(qdf.sql, partNumber, "{PART_NUMBER}")
 
 If rsMasterItem.RecordCount > 0 Then
@@ -573,7 +574,7 @@ qdf1.sql = Replace(qdf1.sql, "{PART_NUMBER}", partNumber)
 db.QueryDefs.refresh
 
 Dim rsSIF As Recordset
-Set rsSIF = db.OpenRecordset("qrySIFpartDescriptions")
+Set rsSIF = db.OpenRecordset("qrySIFpartDescriptions", dbOpenSnapshot)
 qdf1.sql = Replace(qdf1.sql, partNumber, "{PART_NUMBER}")
 
 If rsSIF.RecordCount > 0 Then
@@ -850,12 +851,12 @@ On Error GoTo Err_Handler
 errorTracker = "project"
 
 Dim rsProj As Recordset, rsRelProj As Recordset
-Set rsProj = db.OpenRecordset("SELECT recordId from tblPartProject WHERE partNumber = '" & partNum & "'")
+Set rsProj = db.OpenRecordset("SELECT recordId from tblPartProject WHERE partNumber = '" & partNum & "'", dbOpenSnapshot)
 If rsProj.RecordCount > 0 Then
     Me.openDash.BorderStyle = bordStyle
     Me.openDash.BorderColor = bordCol
 Else
-    Set rsRelProj = db.OpenRecordset("SELECT recordId from tblPartProjectPartNumbers WHERE childPartNumber = '" & partNum & "'")
+    Set rsRelProj = db.OpenRecordset("SELECT recordId from tblPartProjectPartNumbers WHERE childPartNumber = '" & partNum & "'", dbOpenSnapshot)
     If rsRelProj.RecordCount > 0 Then
         Me.openDash.BorderStyle = bordStyle
         Me.openDash.BorderColor = bordCol
@@ -870,7 +871,7 @@ rsProj.CLOSE
 Set rsProj = Nothing
 
 Dim rsPI As Recordset
-Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & partNum & "' AND programId is not null")
+Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & partNum & "' AND programId is not null", dbOpenSnapshot)
 
 If rsPI.RecordCount > 0 Then
     If Nz(rsPI!programId, 0) = 0 Then GoTo noProgram
@@ -1263,7 +1264,7 @@ End If
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT max(ID), DatabaseVersion FROM tblReleaseNotes WHERE databaseName = 'WorkingDB_FE.accdb' group by databaseversion")
+Set rs1 = db.OpenRecordset("SELECT max(ID), DatabaseVersion FROM tblReleaseNotes WHERE databaseName = 'WorkingDB_FE.accdb' group by databaseversion", dbOpenSnapshot)
 rs1.MoveLast
 
 If grabVersion() <> rs1!DatabaseVersion Then

@@ -84,11 +84,11 @@ If errorText <> "" Then GoTo errorOut
 
 'is there a file required? If so, only allow approvals after it is uploaded
 Set db = CurrentDb()
-Set rsStep = db.OpenRecordset("SELECT * FROM tblCPC_Steps WHERE ID = " & Me.stepId)
+Set rsStep = db.OpenRecordset("SELECT * FROM tblCPC_Steps WHERE ID = " & Me.stepId, dbOpenSnapshot)
 
 If Nz(rsStep!documentType, 0) <> 0 Then
     Dim rsAttach As Recordset, rsProjPNs As Recordset, rsUpdates As Recordset
-    Set rsAttach = db.OpenRecordset("SELECT * FROM tblPartAttachmentsSP WHERE partstepId = " & rsStep!ID)
+    Set rsAttach = db.OpenRecordset("SELECT * FROM tblPartAttachmentsSP WHERE partstepId = " & rsStep!ID, dbOpenSnapshot)
     
     'if 0 attachments then autofail
     If rsAttach.RecordCount = 0 Then
@@ -97,7 +97,7 @@ If Nz(rsStep!documentType, 0) <> 0 Then
     End If
     
     'if file found, check if it has been opened
-    Set rsUpdates = db.OpenRecordset("SELECT * FROM tblCPC_UpdateTracking WHERE tableName = 'tblPartAttachmentsSP' AND columnName = 'Step Attachment' AND newData = 'Opened' AND tableID = " & rsAttach!ID)
+    Set rsUpdates = db.OpenRecordset("SELECT * FROM tblCPC_UpdateTracking WHERE tableName = 'tblPartAttachmentsSP' AND columnName = 'Step Attachment' AND newData = 'Opened' AND tableID = " & rsAttach!ID, dbOpenSnapshot)
     If rsUpdates.RecordCount = 0 Then
         If MsgBox("You have not opened the attached file. Are you sure you want to approve this step? Seems kinda lazy.", vbYesNo, "Check Yourself...") = vbNo Then
             errorText = "Approval cancelled because you are a good person"
@@ -202,9 +202,9 @@ body = emailContentGen("You've been nudged...", "Nudge Notification", "You've be
 
 If Nz(sendTo) = "" Then 'a general Department / Level approval
     Dim rs1 As Recordset, rs2 As Recordset
-    Set rs1 = db.OpenRecordset("select * from tblCPC_XFteams where projectId = " & Me.projId)
+    Set rs1 = db.OpenRecordset("select * from tblCPC_XFteams where projectId = " & Me.projId, dbOpenSnapshot)
     Do While Not rs1.EOF
-        Set rs2 = db.OpenRecordset("select * from tblPermissions where user = '" & rs1!memberName & "'")
+        Set rs2 = db.OpenRecordset("select * from tblPermissions where user = '" & rs1!memberName & "'", dbOpenSnapshot)
         If rs2!dept <> Me.dept Or rs2!Level <> Me.reqLevel Then GoTo nextOne 'if dept/level isn't a match, this person isn't qualified.
         sendTo = rs2!User
         If sendTo = Environ("username") Then GoTo nextOne 'dont send a nudge to yourself

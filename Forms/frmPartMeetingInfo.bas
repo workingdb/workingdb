@@ -127,7 +127,7 @@ strTo = ""
 Dim pplStr As String
 pplStr = "Attendees: "
 Do While Not rs2.EOF
-    Set rs3 = db.OpenRecordset("SELECT * from tblPermissions WHERE user = '" & rs2!attendeeUsername & "'")
+    Set rs3 = db.OpenRecordset("SELECT * from tblPermissions WHERE user = '" & rs2!attendeeUsername & "'", dbOpenSnapshot)
     pplStr = pplStr & "<br/>" & rs3!firstName & " " & rs3!lastName
     
     If rs2!attendeeUsername = Environ("username") Then GoTo nextOne
@@ -138,7 +138,7 @@ nextOne:
 Loop
 
 Dim rsMeetingItems As Recordset, meetingItems As String
-Set rsMeetingItems = db.OpenRecordset("SELECT * FROM tblPartMeetingInfo WHERE checkItem is not null AND meetingId = " & Me.recordId)
+Set rsMeetingItems = db.OpenRecordset("SELECT * FROM tblPartMeetingInfo WHERE checkItem is not null AND meetingId = " & Me.recordId, dbOpenSnapshot)
 
 meetingItems = ""
 

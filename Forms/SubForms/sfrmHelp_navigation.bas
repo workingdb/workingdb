@@ -47,7 +47,7 @@ xMargin = 100
 
 pageWidth = Me.Width
 
-Set rsTopic = db.OpenRecordset("SELECT * FROM tblHelpTopics ORDER BY indexOrder")
+Set rsTopic = db.OpenRecordset("SELECT * FROM tblHelpTopics ORDER BY indexOrder", dbOpenSnapshot)
 
 xRunning = 200
 
@@ -84,7 +84,7 @@ Do While Not rsTopic.EOF
     xRunning = xRunning + h + 50
     
     If currentTopic Then
-        Set rsSections = db.OpenRecordset("SELECT * from tblHelpSections WHERE helpTopicId = " & rsTopic!recordId & " ORDER BY indexOrder")
+        Set rsSections = db.OpenRecordset("SELECT * from tblHelpSections WHERE helpTopicId = " & rsTopic!recordId & " ORDER BY indexOrder", dbOpenSnapshot)
         
         Do While Not rsSections.EOF
             'set up btn

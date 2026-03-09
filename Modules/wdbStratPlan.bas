@@ -20,6 +20,7 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
 Set rs1 = db.OpenRecordset("tblStratPlan_UpdateTracking")
+'NEEDS CONVERTED TO ADODB
 
 Dim updatedBy As String
 updatedBy = Environ("username")

@@ -11,7 +11,7 @@ Dim db As Database
 Dim rsSteps As Recordset
 
 Set db = CurrentDb
-Set rsSteps = db.OpenRecordset("SELECT * from tblPartSteps WHERE stepType = 'Request BOM Setup in Receiving Org'")
+Set rsSteps = db.OpenRecordset("SELECT * from tblPartSteps WHERE stepType = 'Request BOM Setup in Receiving Org'", dbOpenSnapshot)
 
 Do While Not rsSteps.EOF
     Call scanSteps(rsSteps!partNumber, "frmPartInformation_save")
@@ -44,13 +44,14 @@ Set db = CurrentDb()
 'check if step is closed
 
 'check the project status - skip if > 2
-Set rsProject = db.OpenRecordset("SELECT * FROM tblPartProject WHERE projectStatus < 3")
+Set rsProject = db.OpenRecordset("SELECT * FROM tblPartProject WHERE projectStatus < 3", dbOpenSnapshot)
 
 Do While Not rsProject.EOF
-    Set rsGates = db.OpenRecordset("SELECT * FROM tblPartGates WHERE projectId = " & rsProject!recordId & " AND actualDate is null AND gateTitle Like '*G3*'")
+    Set rsGates = db.OpenRecordset("SELECT * FROM tblPartGates WHERE projectId = " & rsProject!recordId & " AND actualDate is null AND gateTitle Like '*G3*'", dbOpenSnapshot)
     If rsGates.RecordCount = 0 Then GoTo nextProject
     
     Set rsSteps = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE partGateId = " & rsGates!recordId & " AND status <> 'Closed' ORDER BY indexOrder")
+    'NEEDS CONVERTED TO ADODB
     If rsSteps.RecordCount = 0 Then GoTo nextProject
     
     rsSteps.FindFirst "stepType = 'Logistics/Planning Evaluation'"
@@ -129,15 +130,16 @@ Set db = CurrentDb()
 'look at each step
 'if gate is closed, skip
 'check if step is closed
-Set rsProject = db.OpenRecordset("SELECT * FROM tblPartProject WHERE partNumber = '" & partNumber & "'")
-Set rsGates = db.OpenRecordset("SELECT * FROM tblPartGates WHERE projectId = " & rsProject!recordId & " AND actualDate is null")
+Set rsProject = db.OpenRecordset("SELECT * FROM tblPartProject WHERE partNumber = '" & partNumber & "'", dbOpenSnapshot)
+Set rsGates = db.OpenRecordset("SELECT * FROM tblPartGates WHERE projectId = " & rsProject!recordId & " AND actualDate is null", dbOpenSnapshot)
 
 Do While Not rsGates.EOF
-    Set rsGateTemp = db.OpenRecordset("SELECT * FROM tblPartGateTemplate WHERE projectTemplateId = " & rsProject!projectTemplateId & " AND gateTitle = '" & rsGates!gateTitle & "'")
-    Set rsStepTemp = db.OpenRecordset("SELECT * FROM tblPartStepTemplate WHERE gateTemplateId = " & rsGateTemp!recordId)
+    Set rsGateTemp = db.OpenRecordset("SELECT * FROM tblPartGateTemplate WHERE projectTemplateId = " & rsProject!projectTemplateId & " AND gateTitle = '" & rsGates!gateTitle & "'", dbOpenSnapshot)
+    Set rsStepTemp = db.OpenRecordset("SELECT * FROM tblPartStepTemplate WHERE gateTemplateId = " & rsGateTemp!recordId, dbOpenSnapshot)
     
     Do While Not rsStepTemp.EOF
         Set rsSteps = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE partGateId = " & rsGates!recordId & " AND stepType = '" & rsStepTemp!Title & "'")
+        'NEEDS CONVERTED TO ADODB
         If rsSteps.RecordCount = 0 Then
         
         'Debug.Print rsStepTemp!Title
@@ -262,7 +264,7 @@ Set db = CurrentDb()
 
 Set rs = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE partNumber = '" & partNumber & "' AND " & _
     "(recordId IN (Select tableRecordId FROM tblPartTrackingApprovals WHERE dept = '" & dept & "' AND reqLevel = 'Engineer' AND approvedOn is null) OR " & _
-    "((responsible = '" & dept & "') AND [status] <> 'Closed' ))")
+    "((responsible = '" & dept & "') AND [status] <> 'Closed' ))", dbOpenSnapshot)
 
 If rs.RecordCount = 0 Then GoTo skip
 
@@ -289,7 +291,7 @@ Dim db As Database
 Set db = CurrentDb()
 
 Dim rsDMS As Recordset
-Set rsDMS = db.OpenRecordset("SELECT * FROM NPIF WHERE [Part Number] = '" & partNumber & "' AND [Form Type] = 'NPIF' AND [Doc Status] = 'Active'")
+Set rsDMS = db.OpenRecordset("SELECT * FROM NPIF WHERE [Part Number] = '" & partNumber & "' AND [Form Type] = 'NPIF' AND [Doc Status] = 'Active'", dbOpenSnapshot)
 
 If rsDMS.RecordCount > 0 Then
     calcNPIFstatus = "Uploaded"
@@ -297,7 +299,7 @@ If rsDMS.RecordCount > 0 Then
 End If
 
 Dim rsDraft As Recordset, rsFinal As Recordset
-Set rsDraft = db.OpenRecordset("SELECT status FROM tblPartSteps WHERE partNumber = '" & partNumber & "' AND stepType = 'Create Draft NPIF'")
+Set rsDraft = db.OpenRecordset("SELECT status FROM tblPartSteps WHERE partNumber = '" & partNumber & "' AND stepType = 'Create Draft NPIF'", dbOpenSnapshot)
 If rsDraft.RecordCount > 0 Then
     rsDraft.MoveLast
     Select Case rsDraft!status
@@ -309,7 +311,7 @@ If rsDraft.RecordCount > 0 Then
     End Select
 End If
 
-Set rsFinal = db.OpenRecordset("SELECT status FROM tblPartSteps WHERE partNumber = '" & partNumber & "' AND stepType = 'Finalize NPIF'")
+Set rsFinal = db.OpenRecordset("SELECT status FROM tblPartSteps WHERE partNumber = '" & partNumber & "' AND stepType = 'Finalize NPIF'", dbOpenSnapshot)
 If rsFinal.RecordCount > 0 Then
     rsFinal.MoveLast
     Select Case rsFinal!status
@@ -346,7 +348,7 @@ Set db = CurrentDb()
 
 Dim rsStep As Recordset
 
-Set rsStep = db.OpenRecordset("SELECT status FROM tblPartSteps WHERE partNumber = '" & partNumber & "' AND stepType = '" & stepName & "'")
+Set rsStep = db.OpenRecordset("SELECT status FROM tblPartSteps WHERE partNumber = '" & partNumber & "' AND stepType = '" & stepName & "'", dbOpenSnapshot)
 
 If rsStep.RecordCount > 0 Then
     rsStep.MoveLast
@@ -379,8 +381,9 @@ Dim rsTemplate As Recordset
 db.Execute "DELETE * FROM tblPartMeetingInfo WHERE meetingId = " & meetingId
 
 'then find template and add all new items
-Set rsTemplate = db.OpenRecordset("SELECT * FROM tblPartMeetingTemplates WHERE meetingType = " & meetingType & " order By indexOrder")
+Set rsTemplate = db.OpenRecordset("SELECT * FROM tblPartMeetingTemplates WHERE meetingType = " & meetingType & " order By indexOrder", dbOpenSnapshot)
 Set rsMeetingInfo = db.OpenRecordset("tblPartMeetingInfo")
+'NEEDS CONVERTED TO ADODB
 
 Do While Not rsTemplate.EOF
     rsMeetingInfo.addNew
@@ -416,6 +419,7 @@ Set rsPIcopy = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '"
 
 If rsPIcopy.RecordCount = 1 Then
     Set rsPIpaste = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '" & toPN & "'") 'find paste recordset
+    'NEEDS CONVERTED TO ADODB
     rsPIpaste.Edit
     For Each fld In rsPIcopy.Fields
         If fld.name = "quoteInfoId" Or fld.name = "assemblyInfoId" Or fld.name = "outsourceInfoId" Or fld.name = "moldInfoId" Then GoTo nextFld
@@ -437,6 +441,7 @@ Set rsPQIcopy = db.OpenRecordset("SELECT * from tblPartQuoteInfo WHERE recordId 
 
 If rsPQIcopy.RecordCount > 0 Then
     Set rsPQIpaste = db.OpenRecordset("SELECT * from tblPartQuoteInfo WHERE recordId = " & Nz(rsPIpaste!quoteInfoId, 0))
+    'NEEDS CONVERTED TO ADODB
     If rsPQIpaste.RecordCount = 0 Then
         rsPQIpaste.addNew
     Else
@@ -464,6 +469,7 @@ Set rsPMIcopy = db.OpenRecordset("SELECT * from tblPartMoldingInfo WHERE recordI
 
 If rsPMIcopy.RecordCount > 0 Then
     Set rsPMIpaste = db.OpenRecordset("SELECT * from tblPartMoldingInfo WHERE recordId = " & Nz(rsPIpaste!moldInfoId, 0))
+    'NEEDS CONVERTED TO ADODB
     If rsPMIpaste.RecordCount = 0 Then
         rsPMIpaste.addNew
         rsPMIpaste!toolNumber = toPN & "T"
@@ -494,6 +500,7 @@ Set rsAIcopy = db.OpenRecordset("SELECT * from tblPartAssemblyInfo WHERE recordI
 
 If rsAIcopy.RecordCount > 0 Then
     Set rsAIpaste = db.OpenRecordset("SELECT * from tblPartAssemblyInfo WHERE recordId = " & Nz(rsPIpaste!assemblyInfoId, 0))
+    'NEEDS CONVERTED TO ADODB
     If rsAIpaste.RecordCount = 0 Then
         rsAIpaste.addNew
     Else
@@ -524,6 +531,7 @@ Set rsCOcopy = db.OpenRecordset("SELECT * FROM tblPartComponents WHERE assemblyN
 
 If rsCOcopy.RecordCount > 0 Then
     Set rsCOpaste = db.OpenRecordset("SELECT * FROM tblPartComponents WHERE assemblyNumber = '" & toPN & "'")
+    'NEEDS CONVERTED TO ADODB
     
     Do While Not rsCOcopy.EOF 'add all components!
         rsCOpaste.addNew
@@ -547,6 +555,7 @@ Set rsOSIcopy = db.OpenRecordset("SELECT * from tblPartOutsourceInfo where recor
 
 If rsOSIcopy.RecordCount > 0 Then
     Set rsOSIpaste = db.OpenRecordset("SELECT * from tblPartOutsourceInfo WHERE recordId = " & Nz(rsPIpaste!outsourceInfoId, 0))
+    'NEEDS CONVERTED TO ADODB
     If rsOSIpaste.RecordCount = 0 Then
         rsOSIpaste.addNew
     Else
@@ -575,6 +584,7 @@ Set rsPackIcopy = db.OpenRecordset("SELECT * FROM tblPartPackagingInfo WHERE par
 
 If rsPackIcopy.RecordCount > 0 Then
     Set rsPackIpaste = db.OpenRecordset("SELECT * from tblPartPackagingInfo WHERE partInfoId = " & rsPIpaste!recordId)
+    'NEEDS CONVERTED TO ADODB
     If rsPackIpaste.RecordCount > 0 Then GoTo skipPackaging
     Do While Not rsPackIcopy.EOF
         rsPackIpaste.addNew
@@ -591,6 +601,7 @@ If rsPackIcopy.RecordCount > 0 Then
         '---tblPartPackagingComponents---
         Set rsPackIcompCopy = db.OpenRecordset("SELECT * from tblPartPackagingComponents WHERE packagingInfoId = " & Nz(rsPackIcopy!recordId), dbOpenSnapshot)
         Set rsPackIcompPaste = db.OpenRecordset("SELECT * from tblPartPackagingComponents WHERE packagingInfoId = " & Nz(rsPackIpaste!recordId))
+        'NEEDS CONVERTED TO ADODB
         
         Do While Not rsPackIcompCopy.EOF
             rsPackIcompPaste.addNew
@@ -657,6 +668,7 @@ Dim rsStep As Recordset, projectOwner As String
 Dim errorText As String, testthis
 errorText = ""
 Set rsStep = db.OpenRecordset("SELECT * from tblPartSteps WHERE recordId = " & stepId)
+'NEEDS CONVERTED TO ADODB
 
 'TEMPORARY RESTRICTION OVERRIDE
 'Project engineers can close steps for other departments until all departments are fully in
@@ -669,6 +681,7 @@ End Select
 
 Dim rsGate As Recordset
 Set rsGate = db.OpenRecordset("SELECT * FROM tblPartGates WHERE recordId = " & rsStep!partGateId)
+'NEEDS CONVERTED TO ADODB
 
 'CHECK PARAMETER FOR TEMP BYPASS
 Dim bypass As Boolean, bypassInfo As String, bypassOrg As String
@@ -726,9 +739,9 @@ If Nz(rsStep!documentType, 0) <> 0 Then
     End If
     
     Dim rsAttach As Recordset, rsAttStd As Recordset, rsProjPNs As Recordset
-    Set rsAttach = db.OpenRecordset("SELECT * FROM tblPartAttachmentsSP WHERE partStepId = " & rsStep!recordId)
-    Set rsAttStd = db.OpenRecordset("SELECT uniqueFile FROM tblPartAttachmentStandards WHERE recordId = " & rsStep!documentType)
-    Set rsProjPNs = db.OpenRecordset("SELECT * from tblPartProjectPartNumbers WHERE projectId = " & rsStep!partProjectId)
+    Set rsAttach = db.OpenRecordset("SELECT * FROM tblPartAttachmentsSP WHERE partStepId = " & rsStep!recordId, dbOpenSnapshot)
+    Set rsAttStd = db.OpenRecordset("SELECT uniqueFile FROM tblPartAttachmentStandards WHERE recordId = " & rsStep!documentType, dbOpenSnapshot)
+    Set rsProjPNs = db.OpenRecordset("SELECT * from tblPartProjectPartNumbers WHERE projectId = " & rsStep!partProjectId, dbOpenSnapshot)
     
     'If unique files are needed AND there is more than one part number, then check for an attachment for EACH part number
     If rsAttStd!uniqueFile And rsProjPNs.RecordCount > 0 Then
@@ -761,7 +774,7 @@ If errorText <> "" Then GoTo errorOut
 If IsNull(rsStep!stepActionId) Then GoTo stepActionOK
 
 Dim rsStepAction As Recordset
-Set rsStepAction = db.OpenRecordset("SELECT * from tblPartStepActions WHERE recordId = " & rsStep!stepActionId)
+Set rsStepAction = db.OpenRecordset("SELECT * from tblPartStepActions WHERE recordId = " & rsStep!stepActionId, dbOpenSnapshot)
 
 If rsStepAction.RecordCount = 0 Then GoTo stepActionOK 'no step action found
 
@@ -783,7 +796,7 @@ Select Case rsStepAction!stepAction
         If moldInfoId = 0 Then errorText = "Need a tool associated with this part to close this step."
         If errorText <> "" Then GoTo errorOut
         
-        Set rsMoldInfo = db.OpenRecordset("select * from tblPartMoldingInfo where recordId = " & moldInfoId)
+        Set rsMoldInfo = db.OpenRecordset("select * from tblPartMoldingInfo where recordId = " & moldInfoId, dbOpenSnapshot)
         
         If IsNull(rsMoldInfo!toolNumber) Then errorText = "Need a tool associated with this part to send tool ship email!"
         If IsNull(rsMoldInfo!shipMethod) Then errorText = "Need to select ship method in molding info before closing this step!"
@@ -819,7 +832,7 @@ Select Case rsStepAction!stepAction
 
         'for these steps - check if the project is in NCM. for NCM folks, do NOT check Oracle data.
         Dim rsPI As Recordset
-        Set rsPI = db.OpenRecordset("SELECT developingLocation FROM tblPartInfo WHERE partNumber = '" & rsStep!partNumber & "'")
+        Set rsPI = db.OpenRecordset("SELECT developingLocation FROM tblPartInfo WHERE partNumber = '" & rsStep!partNumber & "'", dbOpenSnapshot)
         If rsPI!developingLocation <> "NCM" Then
             Call scanSteps(rsStep!partNumber, "firstTimeRun")
             Call snackBox("info", "FYI", "This step is automatically closed when specific data is present. Clicking 'Close' ran this check manually", frmActive)
@@ -954,11 +967,11 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rsAttStd As Recordset
 
-Set rsAttStd = db.OpenRecordset("SELECT uniqueFile FROM tblPartAttachmentStandards WHERE recordId = " & docType)
+Set rsAttStd = db.OpenRecordset("SELECT uniqueFile FROM tblPartAttachmentStandards WHERE recordId = " & docType, dbOpenSnapshot)
 
 If rsAttStd!uniqueFile Then
     Dim rsRelated As Recordset
-    Set rsRelated = db.OpenRecordset("SELECT count(recordId) as countIt FROM tblPartProjectPartNumbers WHERE projectId = " & projectId)
+    Set rsRelated = db.OpenRecordset("SELECT count(recordId) as countIt FROM tblPartProjectPartNumbers WHERE projectId = " & projectId, dbOpenSnapshot)
     getAttachmentsCountReq = rsRelated!countIt + 1 'count of all related parts on this project + 1 for master
     rsRelated.CLOSE
     Set rsRelated = Nothing
@@ -980,7 +993,7 @@ getAttachmentsCount = 0
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT count(ID) as countIt from tblPartAttachmentsSP WHERE [partStepId] = " & stepId)
+Set rs1 = db.OpenRecordset("SELECT count(ID) as countIt from tblPartAttachmentsSP WHERE [partStepId] = " & stepId, dbOpenSnapshot)
 
 getAttachmentsCount = Nz(rs1!countIt, 0)
 
@@ -1105,8 +1118,8 @@ If checkAIFfields(partNumber) Then
         Dim db As DAO.Database
         Set db = CurrentDb
         Dim rsStep As Recordset, rsDocType As Recordset, rsPartAtt As DAO.Recordset, rsPartAttChild As DAO.Recordset2
-        Set rsStep = db.OpenRecordset("SELECT * from tblPartSteps WHERE partProjectId = " & Form_frmPartDashboard.recordId & " AND documentType=" & docType & " AND status <> 'Closed' Order By dueDate Asc")
-        Set rsDocType = db.OpenRecordset("SELECT * FROM tblPartAttachmentStandards WHERE recordId = " & docType)
+        Set rsStep = db.OpenRecordset("SELECT * from tblPartSteps WHERE partProjectId = " & Form_frmPartDashboard.recordId & " AND documentType=" & docType & " AND status <> 'Closed' Order By dueDate Asc", dbOpenSnapshot)
+        Set rsDocType = db.OpenRecordset("SELECT * FROM tblPartAttachmentStandards WHERE recordId = " & docType, dbOpenSnapshot)
         
         If rsStep.RecordCount = 0 Then
             MsgBox "No open step found for this type of AIF!", vbInformation, "Sorry!"
@@ -1186,15 +1199,15 @@ If findDept(partNum, "Project", True) = "" Then
 End If
 
 '---Grab General Data---
-Set rsPI = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '" & partNum & "'")
+Set rsPI = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '" & partNum & "'", dbOpenSnapshot)
 
 If rsPI.RecordCount > 1 Then
     errorArray.Add "Rogue Part Info record. Please contact a WDB developer to have this fixed."
     GoTo sendMsg 'this shouldn't be necessary anymore, the table is restricted to unique values only
 End If
 
-Set rsPack = db.OpenRecordset("SELECT * from tblPartPackagingInfo WHERE partInfoId = " & Nz(rsPI!recordId, 0) & " AND (packType = 1 OR packType = 99)")
-Set rsU = db.OpenRecordset("SELECT * from tblUnits WHERE recordId = " & Nz(rsPI!unitId, 0))
+Set rsPack = db.OpenRecordset("SELECT * from tblPartPackagingInfo WHERE partInfoId = " & Nz(rsPI!recordId, 0) & " AND (packType = 1 OR packType = 99)", dbOpenSnapshot)
+Set rsU = db.OpenRecordset("SELECT * from tblUnits WHERE recordId = " & Nz(rsPI!unitId, 0), dbOpenSnapshot)
 
 If Nz(rsPI!dataStatus) = "" Then errorArray.Add "Data Status is blank" & vbTab & "(Part Info Page)"
 
@@ -1206,10 +1219,10 @@ If Nz(rsPI!focusAreaCode) = "" Then errorArray.Add "Focus Area Code is blank" & 
 
 'Also check that family parts match class codes. Cannot auto correct because we don't know which one is correct if they are different
 Dim rsRelatedParts As Recordset, rsRelPI As Recordset
-Set rsRelatedParts = db.OpenRecordset("SELECT * from sqryRelatedParts_ChildPNs WHERE primaryPN = '" & partNum & "' AND TYPE = 'LH/RH'")
+Set rsRelatedParts = db.OpenRecordset("SELECT * from sqryRelatedParts_ChildPNs WHERE primaryPN = '" & partNum & "' AND TYPE = 'LH/RH'", dbOpenSnapshot)
 
 Do While Not rsRelatedParts.EOF
-        Set rsRelPI = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '" & rsRelatedParts!relatedPN & "'")
+        Set rsRelPI = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '" & rsRelatedParts!relatedPN & "'", dbOpenSnapshot)
         If rsRelPI.RecordCount > 0 Then
             If Nz(rsRelPI!partClassCode) <> Nz(rsPI!partClassCode) Then errorArray.Add "Part Class Code for related PN " & _
                 rsRelatedParts!relatedPN & " does not match " & partNum & _
@@ -1257,7 +1270,7 @@ If rsPI!partType = 1 Or rsPI!partType = 4 Then 'molded / new color
         GoTo skipMold
     End If
     
-    Set rsPMI = db.OpenRecordset("SELECT * from tblPartMoldingInfo WHERE recordId = " & rsPI!moldInfoId)
+    Set rsPMI = db.OpenRecordset("SELECT * from tblPartMoldingInfo WHERE recordId = " & rsPI!moldInfoId, dbOpenSnapshot)
 
     'always required
     If Nz(rsPMI!inspection) = "" Then errorArray.Add "Tool Inspection Level is blank" & vbTab & "(Molding Info Page)"
@@ -1299,7 +1312,7 @@ If rsPI!partType = 2 Or rsPI!partType = 5 Then
         GoTo skipAssy
     End If
     
-    Set rsAI = db.OpenRecordset("SELECT * from tblPartAssemblyInfo WHERE recordId = " & rsPI!assemblyInfoId)
+    Set rsAI = db.OpenRecordset("SELECT * from tblPartAssemblyInfo WHERE recordId = " & rsPI!assemblyInfoId, dbOpenSnapshot)
 
     'always required
     If Nz(rsAI!assemblyType) = "" Then errorArray.Add "Assembly Type is blank" & vbTab & "(Assembly Info Page)"
@@ -1316,7 +1329,7 @@ If rsPI!partType = 2 Or rsPI!partType = 5 Then
     rsAI.CLOSE
     Set rsAI = Nothing
     
-    Set rsComp = db.OpenRecordset("SELECT * from tblPartComponents WHERE assemblyNumber = '" & partNum & "'")
+    Set rsComp = db.OpenRecordset("SELECT * from tblPartComponents WHERE assemblyNumber = '" & partNum & "'", dbOpenSnapshot)
     If rsComp.RecordCount = 0 Then
         errorArray.Add "Component Information is missing (req. for assembly / subassembly)"
         GoTo skipAssy
@@ -1351,7 +1364,7 @@ Else
         End If
 skipPackUCheck:
 
-        Set rsPackC = db.OpenRecordset("SELECT * from tblPartPackagingComponents WHERE packagingInfoId = " & rsPack!recordId)
+        Set rsPackC = db.OpenRecordset("SELECT * from tblPartPackagingComponents WHERE packagingInfoId = " & rsPack!recordId, dbOpenSnapshot)
         If rsPackC.RecordCount = 0 And rsPI!dataStatus = 2 Then errorArray.Add "Packaging Components missing (req. for transfer)" 'required for transfer
         
         Do While Not rsPackC.EOF 'always check available records to avoid null errors
@@ -1425,10 +1438,10 @@ Dim outsourceCost As String
 Dim mexFr As String, cartQty, mat0 As Double, mat1 As Double, resourceCSV() As String, ITEM, resID As Long, orgID As Long
 
 '---Grab General Data---
-Set rsPI = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '" & partNum & "'")
-Set rsPack = db.OpenRecordset("SELECT * from tblPartPackagingInfo WHERE partInfoId = " & rsPI!recordId)
-Set rsU = db.OpenRecordset("SELECT * from tblUnits WHERE recordId = " & rsPI!unitId)
-Set rsDevU = db.OpenRecordset("SELECT * from tblUnits WHERE recordId = " & Nz(rsPI!developingUnit, 0))
+Set rsPI = db.OpenRecordset("SELECT * from tblPartInfo WHERE partNumber = '" & partNum & "'", dbOpenSnapshot)
+Set rsPack = db.OpenRecordset("SELECT * from tblPartPackagingInfo WHERE partInfoId = " & rsPI!recordId, dbOpenSnapshot)
+Set rsU = db.OpenRecordset("SELECT * from tblUnits WHERE recordId = " & rsPI!unitId, dbOpenSnapshot)
+Set rsDevU = db.OpenRecordset("SELECT * from tblUnits WHERE recordId = " & Nz(rsPI!developingUnit, 0), dbOpenSnapshot)
 
 mexFr = "0"
 If rsU!Org = "CUU" And rsPI!dataStatus = 2 Then
@@ -1439,7 +1452,7 @@ End If
 
 outsourceCost = "0"
 If Nz(rsPI!outsourceInfoId) <> "" Then
-    Set rsOI = db.OpenRecordset("SELECT * from tblPartOutsourceInfo WHERE recordId = " & rsPI!outsourceInfoId)
+    Set rsOI = db.OpenRecordset("SELECT * from tblPartOutsourceInfo WHERE recordId = " & rsPI!outsourceInfoId, dbOpenSnapshot)
     outsourceCost = Nz(rsOI!outsourceCost)
     rsOI.CLOSE: Set rsOI = Nothing
 End If
@@ -1531,7 +1544,7 @@ Dim insLev As String, mpLev As String, anneal As String, laborType As String, pp
 Select Case rsPI!partType
     Case 1, 4 'molded / new color
         aifInsert "MOLDING INFORMATION", "", , , , True
-        Set rsPMI = db.OpenRecordset("SELECT * from tblPartMoldingInfo WHERE recordId = " & rsPI!moldInfoId)
+        Set rsPMI = db.OpenRecordset("SELECT * from tblPartMoldingInfo WHERE recordId = " & rsPI!moldInfoId, dbOpenSnapshot)
         weight100Pc = Nz(rsPI!itemWeight100Pc, 0)
         insLev = Nz(rsPMI!inspection)
         mpLev = Nz(rsPMI!measurePack)
@@ -1596,7 +1609,7 @@ Select Case rsPI!partType
         Set rsPMI = Nothing
     Case 2, 5 'Assembled / subassembly
         aifInsert "ASSEMBLY INFORMATION", "", , , , True
-        Set rsAI = db.OpenRecordset("SELECT * from tblPartAssemblyInfo WHERE recordId = " & rsPI!assemblyInfoId)
+        Set rsAI = db.OpenRecordset("SELECT * from tblPartAssemblyInfo WHERE recordId = " & rsPI!assemblyInfoId, dbOpenSnapshot)
         weight100Pc = Nz(rsAI!assemblyWeight100Pc, 0)
         laborType = DLookup("assemblyType", "tblDropDownsSP", "recordid = " & rsAI!assemblyType)
         anneal = Nz(rsAI!assemblyAnnealing, 0)
@@ -1628,7 +1641,7 @@ aifInsert "MsPack Lvl", mpLev, firstColBold:=True
 aifInsert "Annealing Lvl", anneal, firstColBold:=True
 
 '---Component Information---
-Set rsComp = db.OpenRecordset("SELECT * from tblPartComponents WHERE assemblyNumber = '" & partNum & "'")
+Set rsComp = db.OpenRecordset("SELECT * from tblPartComponents WHERE assemblyNumber = '" & partNum & "'", dbOpenSnapshot)
 If rsComp.RecordCount > 0 Then
     aifInsert "COMPONENT INFORMATION", "", , , , True
     aifInsert "Part Number", "Description", "Qty", "Locator", "Sub-Inventory", , True
@@ -1651,7 +1664,7 @@ If rsPack.RecordCount > 0 Then
 End If
 Do While Not rsPack.EOF
     packType = DLookup("packagingType", "tblDropDownsSP", "recordid = " & rsPack!packType)
-    Set rsPackC = db.OpenRecordset("SELECT * from tblPartPackagingComponents WHERE packagingInfoId = " & rsPack!recordId)
+    Set rsPackC = db.OpenRecordset("SELECT * from tblPartPackagingComponents WHERE packagingInfoId = " & rsPack!recordId, dbOpenSnapshot)
     If rsPackC.RecordCount > 0 Then aifInsert "Packaging Type", "Component Type", "Component Number", "Component Qty", , , True
     Do While Not rsPackC.EOF
         aifInsert packType, Nz(DLookup("packComponentType", "tblDropDownsSP", "recordid = " & rsPackC!componentType)), Nz(rsPackC!componentPN), Nz(rsPackC!componentQuantity)
@@ -1845,7 +1858,7 @@ dataValue = CDbl(dataValue)
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT " & columnName & " FROM tblDropDownsSP WHERE recordid = " & dataValue)
+Set rs1 = db.OpenRecordset("SELECT " & columnName & " FROM tblDropDownsSP WHERE recordid = " & dataValue, dbOpenSnapshot)
 
 grabHistoryRef = rs1(columnName)
 
@@ -1863,7 +1876,7 @@ getApprovalsComplete = 0
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT count(approvedOn) as appCount from tblPartTrackingApprovals WHERE [partNumber] = '" & partNumber & "' AND [tableRecordId] = " & stepId & " AND [tableName] = 'tblPartSteps'")
+Set rs1 = db.OpenRecordset("SELECT count(approvedOn) as appCount from tblPartTrackingApprovals WHERE [partNumber] = '" & partNumber & "' AND [tableRecordId] = " & stepId & " AND [tableName] = 'tblPartSteps'", dbOpenSnapshot)
 
 getApprovalsComplete = Nz(rs1!appCount, 0)
 
@@ -1881,7 +1894,7 @@ getTotalApprovals = 0
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT count(recordId) as appCount from tblPartTrackingApprovals WHERE [partNumber] = '" & partNumber & "' AND [tableRecordId] = " & stepId & " AND [tableName] = 'tblPartSteps'")
+Set rs1 = db.OpenRecordset("SELECT count(recordId) as appCount from tblPartTrackingApprovals WHERE [partNumber] = '" & partNumber & "' AND [tableRecordId] = " & stepId & " AND [tableName] = 'tblPartSteps'", dbOpenSnapshot)
 
 getTotalApprovals = Nz(rs1!appCount, 0)
 
@@ -1899,6 +1912,7 @@ Dim rsSteps As Recordset
 Dim db As Database
 Set db = CurrentDb()
 Set rsSteps = db.OpenRecordset("Select dueDate from tblPartSteps Where partProjectId = " & projId & " AND dueDate > #" & oldDueDate & "#")
+'NEEDS CONVERTED TO ADODB
 
 Do While Not rsSteps.EOF
     rsSteps.Edit
@@ -1921,7 +1935,7 @@ getCurrentStepDue = ""
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT Min(dueDate) as minDue from tblPartSteps WHERE partProjectId = " & projId & " AND status <> 'Closed'")
+Set rs1 = db.OpenRecordset("SELECT Min(dueDate) as minDue from tblPartSteps WHERE partProjectId = " & projId & " AND status <> 'Closed'", dbOpenSnapshot)
 
 getCurrentStepDue = Nz(rs1!minDue, "")
 
@@ -1942,7 +1956,7 @@ Dim rsProject As Recordset, rsStepTemplate As Recordset, rsApprovalsTemplate As 
 Dim strInsert As String, strInsert1 As String
 Dim projTempId As Long, pNum As String, runningDate As Date, G3planned As Date, runningDate_OLDTEMPLATE As Date
 
-Set rsProject = db.OpenRecordset("SELECT * from tblPartProject WHERE recordId = " & projId)
+Set rsProject = db.OpenRecordset("SELECT * from tblPartProject WHERE recordId = " & projId, dbOpenSnapshot)
 
 projTempId = rsProject!projectTemplateId
 pNum = rsProject!partNumber
@@ -2013,7 +2027,7 @@ DoEvents
 'FOR ASSEMBLED PARTS, ADD AUTOMATION GATES
 If projTempId = 8 Then
     Dim rsAssyTemplate As Recordset
-    Set rsAssyTemplate = db.OpenRecordset("SELECT * FROM tblPartStepTemplate WHERE gateTemplateId = 43")
+    Set rsAssyTemplate = db.OpenRecordset("SELECT * FROM tblPartStepTemplate WHERE gateTemplateId = 43", dbOpenSnapshot)
     
     'G3 planned date (-3 weeks) is the due date for the last gate for automation, per Matt Lindsey
     Dim totalDays As Long, assyRunningDate As Date
@@ -2056,7 +2070,7 @@ End If
 Dim db As Database
 Set db = CurrentDb()
 Dim rsPermissions As Recordset
-Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & User & "'")
+Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & User & "'", dbOpenSnapshot)
 grabTitle = rsPermissions!dept & " " & rsPermissions!Level
 
 rsPermissions.CLOSE
@@ -2072,7 +2086,7 @@ On Error GoTo Err_Handler
 Dim db As Database
 Set db = CurrentDb()
 Dim rsSteps As Recordset
-Set rsSteps = db.OpenRecordset("SELECT * from tblPartSteps WHERE partProjectId = " & projId)
+Set rsSteps = db.OpenRecordset("SELECT * from tblPartSteps WHERE partProjectId = " & projId, dbOpenSnapshot)
 
 Dim totalSteps, closedSteps
 rsSteps.MoveLast
@@ -2131,14 +2145,14 @@ notifyPE = False
 Dim db As Database
 Set db = CurrentDb()
 Dim rsPartTeam As Recordset
-Set rsPartTeam = db.OpenRecordset("SELECT * from tblPartTeam where partNumber = '" & partNum & "'")
+Set rsPartTeam = db.OpenRecordset("SELECT * from tblPartTeam where partNumber = '" & partNum & "'", dbOpenSnapshot)
 If rsPartTeam.RecordCount = 0 Then Exit Function
 
 Do While Not rsPartTeam.EOF
     Dim rsPermissions As Recordset, sendTo As String
     If IsNull(rsPartTeam!person) Then GoTo nextRec
     sendTo = rsPartTeam!person
-    Set rsPermissions = db.OpenRecordset("SELECT user, userEmail from tblPermissions where user = '" & sendTo & "' AND Dept = 'Project' AND Level = 'Engineer'")
+    Set rsPermissions = db.OpenRecordset("SELECT user, userEmail from tblPermissions where user = '" & sendTo & "' AND Dept = 'Project' AND Level = 'Engineer'", dbOpenSnapshot)
     If rsPermissions.RecordCount = 0 Then GoTo nextRec
     If sendTo = Environ("username") And Not sendAlways Then GoTo nextRec
     
@@ -2191,7 +2205,7 @@ Dim primaryProjId As Long
 Dim primaryProjPN As String
 
 Set rsPermissions = db.OpenRecordset("SELECT user, firstName, lastName from tblPermissions where Dept = '" & dept & "' AND Level = 'Engineer' AND user IN " & _
-                                    "(SELECT person FROM tblPartTeam WHERE partNumber = '" & partNumber & "')")
+                                    "(SELECT person FROM tblPartTeam WHERE partNumber = '" & partNumber & "')", dbOpenSnapshot)
 
 '---If nothing found, look through the primary part project (for child PNs)---
 If rsPermissions.RecordCount = 0 Then
@@ -2202,7 +2216,7 @@ If rsPermissions.RecordCount = 0 Then
     If primaryProjPN = "" Then Exit Function 'no primary project found
     
     Set rsPermissions = db.OpenRecordset("SELECT user, firstName, lastName from tblPermissions where Dept = '" & dept & "' AND Level = 'Engineer' AND user IN " & _
-                                    "(SELECT person FROM tblPartTeam WHERE partNumber = '" & primaryProjPN & "')")
+                                    "(SELECT person FROM tblPartTeam WHERE partNumber = '" & primaryProjPN & "')", dbOpenSnapshot)
     If rsPermissions.RecordCount = 0 Then Exit Function 'no primary project found
 End If
 
@@ -2245,6 +2259,7 @@ eFilt = ""
 If partNum <> "all" Then eFilt = " AND partNumber = '" & partNum & "'"
 
 Set rsSteps = db.OpenRecordset(dFilt & eFilt)
+'NEEDS CONVERTED TO ADODB
 
 If rsSteps.RecordCount = 0 Then GoTo exitThis 'no steps have actions attached, exit function
 
@@ -2263,9 +2278,9 @@ Dim pnId As String, matches As Boolean, matchingCol As String, meetsCriteria As 
 Dim temp As String
 
 'We will re-use the recordsets and just filter or findFirst on each
-Set rsStepActions = db.OpenRecordset("tblPartStepActions")
-Set rsPI = db.OpenRecordset("tblPartInfo")
-Set rsPMI = db.OpenRecordset("tblPartMoldingInfo")
+Set rsStepActions = db.OpenRecordset("tblPartStepActions", dbOpenSnapshot)
+Set rsPI = db.OpenRecordset("tblPartInfo", dbOpenSnapshot)
+Set rsPMI = db.OpenRecordset("tblPartMoldingInfo", dbOpenSnapshot)
 
 
 '---PRIMARY SCANNING LOOP---
@@ -2297,24 +2312,24 @@ Do While Not rsSteps.EOF
             If pnId = "" Then GoTo nextOne
             Set rsECOrev = db.OpenRecordset("select CHANGE_NOTICE from ENG_ENG_ENGINEERING_CHANGES " & _
                 "where CHANGE_NOTICE IN (select CHANGE_NOTICE from ENG_ENG_REVISED_ITEMS where REVISED_ITEM_ID = " & pnId & " ) " & _
-                "AND IMPLEMENTATION_DATE is not null AND CHANGE_ORDER_TYPE_ID = 72")
+                "AND IMPLEMENTATION_DATE is not null AND CHANGE_ORDER_TYPE_ID = 72", dbOpenSnapshot)
                 
             If rsECOrev.RecordCount = 0 Then GoTo nextOne
             GoTo performAction 'transfer ECO found!
         Case "Cost Documents" 'Checking SP site for documents
             Set rsCostDocs = db.OpenRecordset("SELECT * FROM [" & rsStepActions!compareTable & "] WHERE " & _
-                "[Part Number] = '" & rsSteps!partNumber & "' AND [" & rsStepActions!compareColumn & "] = '" & rsStepActions!compareData & "' AND [Document Type] = 'Custom Item Cost Sheet'")
+                "[Part Number] = '" & rsSteps!partNumber & "' AND [" & rsStepActions!compareColumn & "] = '" & rsStepActions!compareData & "' AND [Document Type] = 'Custom Item Cost Sheet'", dbOpenSnapshot)
                 
             If rsCostDocs.RecordCount = 0 Then GoTo nextOne
             GoTo performAction 'Custom Item Cost Sheet Found!
         Case "Master Setups" 'checking for master setup
-            Set rsMasterSetups = db.OpenRecordset("SELECT ID FROM [" & rsStepActions!compareTable & "] WHERE [Part Number] = '" & rsSteps!partNumber & "'")
+            Set rsMasterSetups = db.OpenRecordset("SELECT ID FROM [" & rsStepActions!compareTable & "] WHERE [Part Number] = '" & rsSteps!partNumber & "'", dbOpenSnapshot)
             
             If rsMasterSetups.RecordCount = 0 Then GoTo nextOne
             GoTo performAction 'Master Setup Sheet Found!
         Case "tblPartAssemblyGates"
             Set rsPartAssemblyGates = db.OpenRecordset("SELECT recordId FROM " & rsStepActions!compareTable & " WHERE projectId = " & rsSteps!partProjectId & _
-                " AND " & rsStepActions!compareColumn & " = " & rsStepActions!compareData & " AND gateStatus = 3")
+                " AND " & rsStepActions!compareColumn & " = " & rsStepActions!compareData & " AND gateStatus = 3", dbOpenSnapshot)
                 
             noMatch = rsPartAssemblyGates.RecordCount = 0
             rsPartAssemblyGates.CLOSE
@@ -2322,8 +2337,8 @@ Do While Not rsSteps.EOF
             If noMatch Then GoTo nextOne
             GoTo performAction 'Automation gate is complete!
         Case "APPS_MTL_SYSTEM_ITEMS"
-            Set rsSystemItems = db.OpenRecordset("SELECT " & rsStepActions!compareColumn & " FROM " & rsStepActions!compareTable & " WHERE SEGMENT1 = '" & rsSteps!partNumber & "'")
-            Set rsPI = db.OpenRecordset("SELECT lineStopper FROM tblPartInfo WHERE partNumber = '" & rsSteps!partNumber & "'")
+            Set rsSystemItems = db.OpenRecordset("SELECT " & rsStepActions!compareColumn & " FROM " & rsStepActions!compareTable & " WHERE SEGMENT1 = '" & rsSteps!partNumber & "'", dbOpenSnapshot)
+            Set rsPI = db.OpenRecordset("SELECT lineStopper FROM tblPartInfo WHERE partNumber = '" & rsSteps!partNumber & "'", dbOpenSnapshot)
             
             'for this one, check if the Oracle data matches tblPartInfo
             temp = Nz(DLookup("lineStopper", "tblDropDownsSP", "recordid = " & rsPI!lineStopper), "")
@@ -2345,7 +2360,7 @@ Do While Not rsSteps.EOF
     Dim ITEM, item1
     If InStr(rsStepActions!compareColumn, ",") Then
         For Each item1 In Split(rsStepActions!compareColumn, ",")
-            Set rsLookItUp = db.OpenRecordset("SELECT " & item1 & " FROM " & rsStepActions!compareTable & " WHERE " & matchingCol & " = " & identifier)
+            Set rsLookItUp = db.OpenRecordset("SELECT " & item1 & " FROM " & rsStepActions!compareTable & " WHERE " & matchingCol & " = " & identifier, dbOpenSnapshot)
             If rsLookItUp.RecordCount = 0 Then GoTo nextOne
             
             meetsCriteria = False
@@ -2367,7 +2382,7 @@ Do While Not rsSteps.EOF
             If meetsCriteria <> rsStepActions!compareAction Then GoTo nextOne
         Next item1
     Else 'for just a single column
-        Set rsLookItUp = db.OpenRecordset("SELECT " & rsStepActions!compareColumn & " FROM " & rsStepActions!compareTable & " WHERE " & matchingCol & " = " & identifier)
+        Set rsLookItUp = db.OpenRecordset("SELECT " & rsStepActions!compareColumn & " FROM " & rsStepActions!compareTable & " WHERE " & matchingCol & " = " & identifier, dbOpenSnapshot)
         If rsLookItUp.RecordCount = 0 Then GoTo nextOne
         
         meetsCriteria = False
@@ -2410,6 +2425,7 @@ performAction:
             If (DCount("recordId", "tblPartSteps", "[closeDate] is null AND partGateId = " & rsSteps!partGateId) = 0) Then 'if it's the last step in the gate, close the gate!
                 Dim rsGate As Recordset
                 Set rsGate = db.OpenRecordset("SELECT * FROM tblPartGates WHERE recordId = " & rsSteps!partGateId)
+                'NEEDS CONVERTED TO ADODB
                 Call registerPartUpdates("tblPartGates", rsSteps!partGateId, "actualDate", rsGate!actualDate, currentDate, rsSteps!partNumber, rsGate!gateTitle, rsSteps!partProjectId, "stepAction")
                 
                 rsGate.Edit
@@ -2469,8 +2485,8 @@ iHaveOpenApproval = False
 Dim db As Database
 Set db = CurrentDb()
 Dim rsPermissions As Recordset, rsApprovals As Recordset
-Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & Environ("username") & "'")
-Set rsApprovals = db.OpenRecordset("SELECT * from tblPartTrackingApprovals WHERE approvedOn is null AND tableName = 'tblPartSteps' AND tableRecordId = " & stepId & " AND ((dept = '" & rsPermissions!dept & "' AND reqLevel = '" & rsPermissions!Level & "') OR approver = '" & Environ("username") & "')")
+Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & Environ("username") & "'", dbOpenSnapshot)
+Set rsApprovals = db.OpenRecordset("SELECT * from tblPartTrackingApprovals WHERE approvedOn is null AND tableName = 'tblPartSteps' AND tableRecordId = " & stepId & " AND ((dept = '" & rsPermissions!dept & "' AND reqLevel = '" & rsPermissions!Level & "') OR approver = '" & Environ("username") & "')", dbOpenSnapshot)
 
 If rsApprovals.RecordCount > 0 Then iHaveOpenApproval = True
 
@@ -2493,8 +2509,8 @@ iAmApprover = False
 Dim db As Database
 Set db = CurrentDb()
 Dim rsPermissions As Recordset, rsApprovals As Recordset
-Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & Environ("username") & "'")
-Set rsApprovals = db.OpenRecordset("SELECT * from tblPartTrackingApprovals WHERE approvedOn is null AND recordId = " & approvalId & " AND ((dept = '" & rsPermissions!dept & "' AND reqLevel = '" & rsPermissions!Level & "') OR approver = '" & Environ("username") & "')")
+Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & Environ("username") & "'", dbOpenSnapshot)
+Set rsApprovals = db.OpenRecordset("SELECT * from tblPartTrackingApprovals WHERE approvedOn is null AND recordId = " & approvalId & " AND ((dept = '" & rsPermissions!dept & "' AND reqLevel = '" & rsPermissions!Level & "') OR approver = '" & Environ("username") & "')", dbOpenSnapshot)
 
 If rsApprovals.RecordCount > 0 Then iAmApprover = True
 
@@ -2592,6 +2608,7 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
 Set rs1 = db.OpenRecordset("tblPartUpdateTracking")
+'NEEDS CONVERTED TO ADODB
 
 Dim updatedBy As String
 updatedBy = Environ("username")
@@ -2637,7 +2654,7 @@ Dim db As Database
 Set db = CurrentDb()
 
 Dim rsApprovals As Recordset
-Set rsApprovals = db.OpenRecordset("Select * from tblPartTrackingApprovals WHERE tableName = 'tblPartSteps' AND tableRecordId = " & stepId)
+Set rsApprovals = db.OpenRecordset("Select * from tblPartTrackingApprovals WHERE tableName = 'tblPartSteps' AND tableRecordId = " & stepId, dbOpenSnapshot)
 
 Dim approvalsBool
 approvalsBool = True
@@ -2702,7 +2719,7 @@ detail2 = "Customer: Not Found"
 detail3 = "Tool Reason: Not Found"
 
 Set db = CurrentDb()
-Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & partNumber & "'")
+Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & partNumber & "'", dbOpenSnapshot)
 
 If rsPI.RecordCount > 0 Then
     Dim toolType As Long
@@ -2740,7 +2757,7 @@ Dim db As Database
 Set db = CurrentDb()
 
 Dim rsAssParts As Recordset
-Set rsAssParts = db.OpenRecordset("SELECT * FROM tblPartProjectPartNumbers WHERE projectId = " & projId)
+Set rsAssParts = db.OpenRecordset("SELECT * FROM tblPartProjectPartNumbers WHERE projectId = " & projId, dbOpenSnapshot)
 
 If emailAIFsend(stepId, partNumber, aifType) = False Then Exit Function 'do primary part number first
 

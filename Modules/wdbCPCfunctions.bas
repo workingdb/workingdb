@@ -26,14 +26,14 @@ notifyCPC = False
 Dim db As Database
 Set db = CurrentDb()
 Dim rsPartTeam As Recordset
-Set rsPartTeam = db.OpenRecordset("SELECT * from tblCPC_XFteams where projectId = " & projId)
+Set rsPartTeam = db.OpenRecordset("SELECT * from tblCPC_XFteams where projectId = " & projId, dbOpenSnapshot)
 If rsPartTeam.RecordCount = 0 Then Exit Function
 
 Do While Not rsPartTeam.EOF
     Dim rsPermissions As Recordset, sendTo As String
     If IsNull(rsPartTeam!memberName) Then GoTo nextRec
     sendTo = rsPartTeam!memberName
-    Set rsPermissions = db.OpenRecordset("SELECT user, userEmail from tblPermissions where user = '" & sendTo & "' AND Dept = 'Project' AND Level = 'Engineer'")
+    Set rsPermissions = db.OpenRecordset("SELECT user, userEmail from tblPermissions where user = '" & sendTo & "' AND Dept = 'Project' AND Level = 'Engineer'", dbOpenSnapshot)
     If rsPermissions.RecordCount = 0 Then GoTo nextRec
     If sendTo = Environ("username") And Not sendAlways Then GoTo nextRec
     
@@ -79,6 +79,7 @@ Dim rsStep As Recordset, projectOwner As String
 Dim errorText As String, testthis
 errorText = ""
 Set rsStep = db.OpenRecordset("SELECT * from tblCPC_Steps WHERE ID = " & stepId)
+'NEEDS CONVERTED TO ADODB
 
 projectOwner = "CPC"
 
@@ -120,7 +121,7 @@ If errorText <> "" Then GoTo errorOut
 If IsNull(rsStep!stepActionId) Then GoTo stepActionOK
 
 Dim rsStepAction As Recordset
-Set rsStepAction = db.OpenRecordset("SELECT * from tblPartStepActions WHERE recordID = " & rsStep!stepActionId)
+Set rsStepAction = db.OpenRecordset("SELECT * from tblPartStepActions WHERE recordID = " & rsStep!stepActionId, dbOpenSnapshot)
 
 If rsStepAction.RecordCount = 0 Then GoTo stepActionOK 'no step action found
 If rsStepAction!whenToRun <> "closeStep" And rsStepAction!whenToRun <> "firstTimeRun" Then GoTo stepActionOK 'check if this action should be running now. Ones marked "closeStep" are checks on close, meant to run now
@@ -136,7 +137,7 @@ Select Case rsStepAction!stepAction
         If moldInfoId = 0 Then errorText = "Need a tool associated with this part to close this step."
         If errorText <> "" Then GoTo errorOut
         
-        Set rsMoldInfo = db.OpenRecordset("select * from tblPartMoldingInfo where ID = " & moldInfoId)
+        Set rsMoldInfo = db.OpenRecordset("select * from tblPartMoldingInfo where ID = " & moldInfoId, dbOpenSnapshot)
         
         If IsNull(rsMoldInfo!toolNumber) Then errorText = "Need a tool associated with this part to send tool ship email!"
         If IsNull(rsMoldInfo!shipMethod) Then errorText = "Need to select ship method in molding info before closing this step!"
@@ -170,7 +171,7 @@ Select Case rsStepAction!stepAction
 
         'for these steps - check if the project is in NCM. for NCM folks, do NOT check Oracle data.
         Dim rsPI As Recordset
-        Set rsPI = db.OpenRecordset("SELECT developingLocation FROM tblPartInfo WHERE partNumber = '" & rsStep!partNumber & "'")
+        Set rsPI = db.OpenRecordset("SELECT developingLocation FROM tblPartInfo WHERE partNumber = '" & rsStep!partNumber & "'", dbOpenSnapshot)
         If rsPI!developingLocation <> "NCM" Then
             Call scanSteps(rsStep!partNumber, "firstTimeRun")
             Call snackBox("info", "FYI", "This step is automatically closed when specific data is present. Clicking 'Close' ran this check manually", frmActive)
@@ -238,7 +239,7 @@ getApprovalsCompleteCPC = 0
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT count(approvedOn) as appCount from tblCPC_StepApprovals WHERE [stepId] = " & stepId)
+Set rs1 = db.OpenRecordset("SELECT count(approvedOn) as appCount from tblCPC_StepApprovals WHERE [stepId] = " & stepId, dbOpenSnapshot)
 
 getApprovalsCompleteCPC = Nz(rs1!appCount, 0)
 
@@ -256,7 +257,7 @@ getTotalApprovalsCPC = 0
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT count(ID) as appCount from tblCPC_StepApprovals WHERE [stepId] = " & stepId)
+Set rs1 = db.OpenRecordset("SELECT count(ID) as appCount from tblCPC_StepApprovals WHERE [stepId] = " & stepId, dbOpenSnapshot)
 
 getTotalApprovalsCPC = Nz(rs1!appCount, 0)
 
@@ -279,7 +280,7 @@ Dim primaryProjId As Long
 Dim primaryProjPN As String
 
 Set rsPermissions = db.OpenRecordset("SELECT user, firstName, lastName from tblPermissions where Dept = '" & dept & "' AND Level = 'Engineer' AND user IN " & _
-                                    "(SELECT memberName as user FROM tblCPC_XFTeams WHERE projectId = " & projId & ")")
+                                    "(SELECT memberName as user FROM tblCPC_XFTeams WHERE projectId = " & projId & ")", dbOpenSnapshot)
 
 Do While Not rsPermissions.EOF
     If rsPermissions!User = Environ("username") And Not returnMe Then GoTo nextRec
@@ -312,6 +313,7 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
 Set rs1 = db.OpenRecordset("tblCPC_UpdateTracking")
+'NEEDS CONVERTED TO ADODB
 
 If Len(oldVal) > 255 Then oldVal = Left(oldVal, 255)
 If Len(newVal) > 255 Then newVal = Left(newVal, 255)

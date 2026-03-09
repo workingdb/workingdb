@@ -261,7 +261,7 @@ Dim rs As Recordset
 
 Set rs = db.OpenRecordset("SELECT Sum(TimeTrack_Work_Hours) as sumTime " & _
     "FROM dbo_tblTimeTrackChild WHERE [Associate_ID] = " & iUser & _
-    " AND Control_Number IN (SELECT Control_Number FROM qryApprovedTKO WHERE [Assignee] = " & iUser & ")")
+    " AND Control_Number IN (SELECT Control_Number FROM qryApprovedTKO WHERE [Assignee] = " & iUser & ")", dbOpenSnapshot)
 
 Me.avgTKO = rs!sumTime / Me.allTKOs
 Me.tkoHrPerc = Format(rs!sumTime / Me.allTime, "Percent")

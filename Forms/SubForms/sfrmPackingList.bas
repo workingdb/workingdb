@@ -38,7 +38,7 @@ rs1.CLOSE
 Set rs1 = Nothing
 
 Dim rs2 As Recordset
-Set rs2 = db.OpenRecordset("SELECT ITEM_COST FROM APPS_CST_ITEM_COST_TYPE_V WHERE ITEM_NUMBER = '" & Me.ITEM & "' AND COST_TYPE = 'Frozen' AND ITEM_COST > 0")
+Set rs2 = db.OpenRecordset("SELECT ITEM_COST FROM APPS_CST_ITEM_COST_TYPE_V WHERE ITEM_NUMBER = '" & Me.ITEM & "' AND COST_TYPE = 'Frozen' AND ITEM_COST > 0", dbOpenSnapshot)
 Me.unitCost = CDbl(rs2!ITEM_COST)
 
 rs2.CLOSE

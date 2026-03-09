@@ -35,7 +35,7 @@ Me.txtLongDay = Format(Date, "dddd, mmmm dd, yyyy")
 Dim db As Database
 Set db = CurrentDb()
 Dim rsHolidays As Recordset
-Set rsHolidays = db.OpenRecordset("tblHolidays")
+Set rsHolidays = db.OpenRecordset("tblHolidays", dbOpenSnapshot)
 
 Me.lblMonth.Caption = MonthName(TempVars!selMonth)
 Me.lblYear.Caption = TempVars!selYear
@@ -129,7 +129,7 @@ Me.txtLongDay = Format(Date, "dddd, mmmm dd, yyyy")
 Dim db As Database
 Set db = CurrentDb()
 Dim rsHolidays As Recordset, rsTasks As Recordset
-Set rsHolidays = db.OpenRecordset("tblHolidays")
+Set rsHolidays = db.OpenRecordset("tblHolidays", dbOpenSnapshot)
 
 Dim sqlSel As String, sqlWhere As String, sqlStatement As String
 
@@ -148,7 +148,7 @@ Select Case userData("Level")
             " UNION ALL SELECT " & sqlSel & " FROM sqryCalendarItems_Issues WHERE " & sqlWhere & ";"
 End Select
             
-Set rsTasks = db.OpenRecordset(sqlStatement)
+Set rsTasks = db.OpenRecordset(sqlStatement, dbOpenSnapshot)
 
 Me.lblMonth.Caption = MonthName(TempVars!selMonth)
 Me.lblYear.Caption = TempVars!selYear

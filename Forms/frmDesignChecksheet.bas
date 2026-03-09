@@ -58,6 +58,7 @@ If MsgBox("This will reset the current checksheet, inlcuding all comments." & vb
     Set db = CurrentDb()
     Dim rsChecksheet As Recordset
     Set rsChecksheet = db.OpenRecordset("SELECT * FROM tblDesignChecksheet WHERE controlNumber = " & controlNum)
+    'NEEDS CONVERTED TO ADODB
 
     Do While Not rsChecksheet.EOF
         rsChecksheet.Delete
@@ -180,8 +181,9 @@ If DCount("recordId", "tblDesignChecksheet", "controlNumber = " & controlNum) = 
     Dim db As Database
     Set db = CurrentDb()
     Dim rs1 As Recordset, rsChecksheet As Recordset
-    Set rs1 = db.OpenRecordset("SELECT * from tblDesignChecksheetDefaults WHERE drawingType LIKE '*" & drawingType & "*' AND designResponsible LIKE '*" & designResponsible & "*' AND partType LIKE '*" & partType & "*' ORDER BY indexOrder Asc")
+    Set rs1 = db.OpenRecordset("SELECT * from tblDesignChecksheetDefaults WHERE drawingType LIKE '*" & drawingType & "*' AND designResponsible LIKE '*" & designResponsible & "*' AND partType LIKE '*" & partType & "*' ORDER BY indexOrder Asc", dbOpenSnapshot)
     Set rsChecksheet = db.OpenRecordset("tblDesignChecksheet")
+    'NEEDS CONVERTED TO ADODB
 
     Do While Not rs1.EOF
         rsChecksheet.addNew

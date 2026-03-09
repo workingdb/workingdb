@@ -865,6 +865,7 @@ If MsgBox("Are you sure? This will delete all checksheet items for this WO, incl
     Set db = CurrentDb()
     Dim rsChecksheet As Recordset
     Set rsChecksheet = db.OpenRecordset("SELECT * FROM tblDesignChecksheet WHERE controlNumber = " & Me.Control_Number)
+    'NEEDS CONVERTED TO ADODB
     
     Do While Not rsChecksheet.EOF
         rsChecksheet.Delete

@@ -133,7 +133,7 @@ Set db = CurrentDb()
 db.Execute "DELETE * FROM tblSessionVariables WHERE pillarTitle is not null"
 
 Dim rsTemplate As Recordset, rsSess As Recordset
-Set rsTemplate = db.OpenRecordset("SELECT * FROM tblPartStepTemplate WHERE gateTemplateId IN (SELECT recordId FROM tblPartGateTemplate WHERE projectTemplateId = " & Me.projectTemplateId & ") AND pillarStep = TRUE")
+Set rsTemplate = db.OpenRecordset("SELECT * FROM tblPartStepTemplate WHERE gateTemplateId IN (SELECT recordId FROM tblPartGateTemplate WHERE projectTemplateId = " & Me.projectTemplateId & ") AND pillarStep = TRUE", dbOpenSnapshot)
 Set rsSess = db.OpenRecordset("tblSessionVariables")
 
 If rsSess.RecordCount > 0 Then
