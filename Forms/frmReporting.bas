@@ -70,3 +70,13 @@ Exit Sub
 Err_Handler:
     Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
+
+Private Sub sqOutsourceTracker_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmReporting_SQ_outsource"
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub

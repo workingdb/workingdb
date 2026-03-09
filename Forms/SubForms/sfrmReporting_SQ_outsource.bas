@@ -15,6 +15,116 @@ Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub lblCostOwner_Click()
+On Error GoTo Err_Handler
+
+Me.costOwner.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblCustomer_Click()
+On Error GoTo Err_Handler
+
+Me.Customer.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblDescription_Click()
+On Error GoTo Err_Handler
+
+Me.DESCRIPTION.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblNote_Click()
+On Error GoTo Err_Handler
+
+Me.reportNote.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblOutsource_Click()
+On Error GoTo Err_Handler
+
+Me.outsourceDate.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblPartType_Click()
+On Error GoTo Err_Handler
+
+Me.partType.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblPN_Click()
+On Error GoTo Err_Handler
+
+Me.partNumber.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblSOP_Click()
+On Error GoTo Err_Handler
+
+Me.SOPdate.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblUpdatedDate_Click()
+On Error GoTo Err_Handler
+
+Me.updatedDate.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblVendor_Click()
+On Error GoTo Err_Handler
+
+Me.outsourceVendor.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub noteHistory_Click()
 On Error GoTo Err_Handler
 
@@ -43,7 +153,7 @@ registerWdbUpdates "tblReporting_notes", Me.noteId, "reportNote", Me.reportNote.
 
 Me.updatedBy = Environ("username")
 Me.updatedDate = Now()
-Me.dataTag0 = "nmq_morning_ppap"
+Me.dataTag0 = "sq_outsource"
 
 Exit Sub
 Err_Handler:

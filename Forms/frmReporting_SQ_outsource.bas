@@ -10,10 +10,26 @@ On Error GoTo Err_Handler
 
 Call setTheme(Me)
 
-Me.sfrmReporting_PE_proj_latePillars.Form.filter = ""
-Me.sfrmReporting_PE_proj_latePillars.Form.FilterOn = False
+Me.sfrmReporting_sq_outsource.Form.filter = ""
+Me.sfrmReporting_sq_outsource.Form.FilterOn = False
 
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub outsourceExport_Click()
+On Error GoTo Err_Handler
+
+Dim FileName As String, sqlString As String, filt As String
+FileName = "H:\Reporting_SQ_outsource_" & nowString & ".xlsx"
+filt = " WHERE " & Me.sfrmReporting_sq_outsource.Form.filter
+If Me.sfrmReporting_sq_outsource.Form.FilterOn = False Then filt = ""
+sqlString = "SELECT * FROM sfrmReporting_SQ_outsource " & filt
+                    
+Call exportSQL(sqlString, FileName)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
 End Sub
