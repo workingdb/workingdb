@@ -76,6 +76,7 @@ Set db = CurrentDb()
 
 Dim rs As Recordset
 Set rs = db.OpenRecordset("tbllab_tech_schedule_alterations")
+'NEEDS CONVERTED TO ADODB
 
 Do While intDate <= Me.endDate
     

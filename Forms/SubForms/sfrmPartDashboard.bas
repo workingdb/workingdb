@@ -104,7 +104,7 @@ Set db = CurrentDb()
 Dim rsGates As Recordset
 Dim startdate As Date, endDate As Date
 
-Set rsGates = db.OpenRecordset("SELECT * from tblPartGates WHERE projectId = " & Me.partProjectId)
+Set rsGates = db.OpenRecordset("SELECT * from tblPartGates WHERE projectId = " & Me.partProjectId, dbOpenSnapshot)
 
 rsGates.FindFirst "gateTitle Like 'G1*'"
 
@@ -203,7 +203,7 @@ theCorrectFellow:
 Dim db As Database
 Set db = CurrentDb()
 Dim rs3 As Recordset
-Set rs3 = db.OpenRecordset("select * from tblPartTrackingApprovals where tableName = 'tblPartSteps' and approvedOn is null and tableRecordId = " & Me.recordId)
+Set rs3 = db.OpenRecordset("select * from tblPartTrackingApprovals where tableName = 'tblPartSteps' and approvedOn is null and tableRecordId = " & Me.recordId, dbOpenSnapshot)
 
 If rs3.RecordCount = 0 Then
     MsgBox "No open approvals found!", vbInformation, "Hmm.."
@@ -223,9 +223,9 @@ Do While Not rs3.EOF 'loop through all the approvals
     
     If Nz(sendTo) = "" Then 'if approver not specified, look through cross functional team and see if anyone matches
         Dim rs1 As Recordset, rs2 As Recordset
-        Set rs1 = db.OpenRecordset("select * from tblPartTeam where partNumber = '" & Me.partNumber & "'")
+        Set rs1 = db.OpenRecordset("select * from tblPartTeam where partNumber = '" & Me.partNumber & "'", dbOpenSnapshot)
         Do While Not rs1.EOF
-            Set rs2 = db.OpenRecordset("select * from tblPermissions where user = '" & rs1!person & "'")
+            Set rs2 = db.OpenRecordset("select * from tblPermissions where user = '" & rs1!person & "'", dbOpenSnapshot)
             If rs2!dept <> rs3!dept Or rs2!Level <> rs3!reqLevel Then GoTo nextOne 'dept/level dont match. skip this person
             sendTo = rs2!User
             If sendTo = Environ("username") Then
@@ -277,9 +277,9 @@ notiSent = False
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset, rs2 As Recordset
-Set rs1 = db.OpenRecordset("select * from tblPartTeam where partNumber = '" & Me.partNumber & "'")
+Set rs1 = db.OpenRecordset("select * from tblPartTeam where partNumber = '" & Me.partNumber & "'", dbOpenSnapshot)
 Do While Not rs1.EOF
-    Set rs2 = db.OpenRecordset("select * from tblPermissions where user = '" & rs1!person & "'")
+    Set rs2 = db.OpenRecordset("select * from tblPermissions where user = '" & rs1!person & "'", dbOpenSnapshot)
     If rs2!dept <> Me.responsible Then GoTo nextOne 'if dept isn't the same, skip this user
     sendTo = rs2!User
     If sendTo = Environ("username") Then

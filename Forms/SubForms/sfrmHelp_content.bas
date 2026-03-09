@@ -33,7 +33,7 @@ Dim xMargin As Long, pageWidth As Long
 xMargin = 1000
 pageWidth = Me.Width
 
-Set rsTopic = db.OpenRecordset("SELECT * from tblHelpTopics WHERE recordId = " & topicId & " ORDER BY indexOrder")
+Set rsTopic = db.OpenRecordset("SELECT * from tblHelpTopics WHERE recordId = " & topicId & " ORDER BY indexOrder", dbOpenSnapshot)
 
 xRunning = 200
 lineHeight = 500
@@ -52,7 +52,7 @@ ctlTopic.Visible = True
 
 xRunning = xRunning + 1000
 
-Set rsSections = db.OpenRecordset("SELECT * from tblHelpSections WHERE helpTopicId = " & rsTopic!recordId & " ORDER BY indexOrder")
+Set rsSections = db.OpenRecordset("SELECT * from tblHelpSections WHERE helpTopicId = " & rsTopic!recordId & " ORDER BY indexOrder", dbOpenSnapshot)
 
 Do While Not rsSections.EOF
     i = i + 1
@@ -72,7 +72,7 @@ Do While Not rsSections.EOF
     
     xRunning = xRunning + 500
 
-    Set rsItems = db.OpenRecordset("SELECT * from tblHelpItems WHERE helpSectionId = " & rsSections!recordId & " ORDER BY indexOrder")
+    Set rsItems = db.OpenRecordset("SELECT * from tblHelpItems WHERE helpSectionId = " & rsSections!recordId & " ORDER BY indexOrder", dbOpenSnapshot)
     
     Do While Not rsItems.EOF
         i = i + 1

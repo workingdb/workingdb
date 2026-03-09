@@ -123,6 +123,7 @@ If Me.Recordset.RecordCount = 0 Then
     Dim rsPI As Recordset
     
     Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & TempVars!partNumber & "'")
+    'NEEDS CONVERTED TO ADODB
     If rsPI.RecordCount = 1 Then
         Set quoteInfo = db.OpenRecordset("tblPartQuoteInfo", dbOpenSnapshot)
         db.Execute "INSERT INTO tblPartQuoteInfo(quoteNumber) VALUES (0)", dbFailOnError
@@ -152,7 +153,7 @@ End If
 
 'add primary pack info record
 If Not IsNull(Me.recordId) Then
-    Set rsPackInfo = db.OpenRecordset("SELECT * FROM tblPartPackagingInfo WHERE partInfoId = " & Me.recordId)
+    Set rsPackInfo = db.OpenRecordset("SELECT * FROM tblPartPackagingInfo WHERE partInfoId = " & Me.recordId, dbOpenSnapshot)
     If rsPackInfo.RecordCount = 0 Then db.Execute "INSERT INTO tblPartPackagingInfo(partInfoId,packType) VALUES (" & Me.recordId & ",1)"
     rsPackInfo.CLOSE
     Set rsPackInfo = Nothing

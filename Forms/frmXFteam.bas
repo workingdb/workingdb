@@ -44,7 +44,7 @@ If IsNull(TE) Or TE = "" Then
     Me.lblDB.Caption = "CNL Project DB"
     Set rs = db.OpenRecordset("SELECT Design_Engineer_ID, Project_Engineer_ID, Account_Manager_ID, Manufacturing_Engineer_ID, Quality_Engineer_ID, Tooling_Engineer_ID FROM [Main Table1] WHERE [Part Number] = '" & x & "'", dbOpenSnapshot)
     If rs.RecordCount = 0 Then Exit Sub
-    Set rsEmployee = db.OpenRecordset("SELECT EMPLOYEE, PERSON_ID from APPS_XXCUS_USER_EMPLOYEES_V")
+    Set rsEmployee = db.OpenRecordset("SELECT EMPLOYEE, PERSON_ID from APPS_XXCUS_USER_EMPLOYEES_V", dbOpenSnapshot)
     
     rsEmployee.filter = "Person_ID = " & rs![Project_Engineer_ID]
     Set rsFiltered = rsEmployee.OpenRecordset

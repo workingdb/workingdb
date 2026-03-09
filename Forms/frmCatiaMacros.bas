@@ -1013,6 +1013,7 @@ Do While i < UBound(myLetter)
 Loop
 
 Set rs = CurrentDb.OpenRecordset("tblCatiaFont")
+'NEEDS CONVERTED TO ADODB
 With rs
     .addNew
     !FontName = "3"

@@ -37,7 +37,7 @@ Dim db As Database
 Set db = CurrentDb()
 
 Dim rs As Recordset, rsCount As Recordset
-Set rs = db.OpenRecordset("SELECT * FROM tblPartUpdateTracking WHERE updatedBy = '" & Me.User & "'")
+Set rs = db.OpenRecordset("SELECT * FROM tblPartUpdateTracking WHERE updatedBy = '" & Me.User & "'", dbOpenSnapshot)
 
 'steps closed
 rs.filter = "newData = 'Closed' AND tableName = 'tblPartSteps'"

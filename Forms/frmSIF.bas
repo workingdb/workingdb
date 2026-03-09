@@ -44,10 +44,10 @@ Dim srchTxt As String
 srchTxt = Me.srchBox
 
 Set db = CurrentDb()
-Set rsSIF = db.OpenRecordset("SELECT * FROM APPS_Q_SIF_NEW_MOLDED_PART_V where SIFNUM = '" & srchTxt & "'")
+Set rsSIF = db.OpenRecordset("SELECT * FROM APPS_Q_SIF_NEW_MOLDED_PART_V where SIFNUM = '" & srchTxt & "'", dbOpenSnapshot)
 
-If rsSIF.RecordCount = 0 Then Set rsSIF = db.OpenRecordset("SELECT * FROM APPS_Q_SIF_NEW_ASSEMBLED_PART_V where SIFNUM = '" & srchTxt & "'")
-If rsSIF.RecordCount = 0 Then Set rsSIF = db.OpenRecordset("SELECT * FROM APPS_Q_SIF_NEW_PURCHASING_PART_V where SIFNUM = '" & srchTxt & "'")
+If rsSIF.RecordCount = 0 Then Set rsSIF = db.OpenRecordset("SELECT * FROM APPS_Q_SIF_NEW_ASSEMBLED_PART_V where SIFNUM = '" & srchTxt & "'", dbOpenSnapshot)
+If rsSIF.RecordCount = 0 Then Set rsSIF = db.OpenRecordset("SELECT * FROM APPS_Q_SIF_NEW_PURCHASING_PART_V where SIFNUM = '" & srchTxt & "'", dbOpenSnapshot)
 
 If rsSIF.RecordCount = 0 Then
     MsgBox "no records found!", vbInformation, "Woopsy"

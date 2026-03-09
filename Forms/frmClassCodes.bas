@@ -50,6 +50,7 @@ If x = "" Then GoTo exit_handler
 
 Dim rsPI As Recordset
 Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & x & "'")
+'NEEDS CONVERTED TO ADODB
 
 If rsPI.RecordCount = 0 Then
     MsgBox "No class info found"

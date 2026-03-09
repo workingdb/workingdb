@@ -54,7 +54,9 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset, rsFiltered As Recordset, rsUserSettings As Recordset
 Set rsUserSettings = db.OpenRecordset("tblUserSettings")
+'NEEDS CONVERTED TO ADODB
 Set rs1 = db.OpenRecordset("tblPermissions")
+'NEEDS CONVERTED TO ADODB
 rs1.filter = "[User] = '" & Environ("username") & "'"
 Set rsFiltered = rs1.OpenRecordset
 rsUserSettings.filter = "[username] = '" & Environ("username") & "'"
@@ -77,7 +79,7 @@ If rsFiltered.RecordCount = 0 Then 'Add new user!
     Dim rsEmployee As Recordset, firstN As String, lastN As String, emailAdd As String
     firstN = ""
     lastN = ""
-    Set rsEmployee = db.OpenRecordset("SELECT FIRST_NAME, LAST_NAME, EMAIL_ADDRESS FROM APPS_XXCUS_USER_EMPLOYEES_V WHERE USER_NAME = '" & StrConv(Environ("username"), vbUpperCase) & "'")
+    Set rsEmployee = db.OpenRecordset("SELECT FIRST_NAME, LAST_NAME, EMAIL_ADDRESS FROM APPS_XXCUS_USER_EMPLOYEES_V WHERE USER_NAME = '" & StrConv(Environ("username"), vbUpperCase) & "'", dbOpenSnapshot)
     If rsEmployee.RecordCount <> 0 Then
         firstN = StrConv(rsEmployee!First_Name, vbProperCase)
         lastN = StrConv(rsEmployee!Last_Name, vbProperCase)
@@ -133,7 +135,7 @@ TempVars.Add "smallScreen", Nz(rsUserSettings!smallScreenMode, "False")
 Dim rsTheme As Recordset
 
 If Nz(rsUserSettings!themeId, 0) <> 0 Then
-    Set rsTheme = db.OpenRecordset("SELECT * FROM tblTheme WHERE recordId = " & rsUserSettings!themeId)
+    Set rsTheme = db.OpenRecordset("SELECT * FROM tblTheme WHERE recordId = " & rsUserSettings!themeId, dbOpenSnapshot)
     
     If rsTheme!darkMode Then
         TempVars.Add "themeMode", "Dark"

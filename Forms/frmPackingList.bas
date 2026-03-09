@@ -90,7 +90,7 @@ On Error Resume Next
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT * FROM tblPermissions WHERE firstName & ' ' & lastName = '" & Me.packedBy & "'")
+Set rs1 = db.OpenRecordset("SELECT * FROM tblPermissions WHERE firstName & ' ' & lastName = '" & Me.packedBy & "'", dbOpenSnapshot)
 
 Me.sendTrackingTo = rs1!userEmail
 
@@ -109,7 +109,7 @@ On Error GoTo Err_Handler
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT * FROM tblPackList WHERE recordId = " & Me.prevAddress)
+Set rs1 = db.OpenRecordset("SELECT * FROM tblPackList WHERE recordId = " & Me.prevAddress, dbOpenSnapshot)
 
 Me.fullName = rs1!fullName
 Me.addressLine1 = rs1!addressLine1

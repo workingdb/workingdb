@@ -101,7 +101,7 @@ Dim errorbool As Boolean
 errorbool = False
 
 Set db = CurrentDb()
-Set rs = db.OpenRecordset("SELECT * FROM tblPartAttachmentsSP WHERE partProjectId = " & Me.recordId & " AND documentType = 2")
+Set rs = db.OpenRecordset("SELECT * FROM tblPartAttachmentsSP WHERE partProjectId = " & Me.recordId & " AND documentType = 2", dbOpenSnapshot)
 
 If rs.RecordCount = 0 Then errorbool = True
 
@@ -385,11 +385,11 @@ partNum = TempVars!partNumber
 Dim db As Database
 Set db = CurrentDb()
 Dim rsProjects As Recordset, projId
-Set rsProjects = db.OpenRecordset("SELECT * from tblPartProject WHERE partNumber = '" & partNum & "'")
+Set rsProjects = db.OpenRecordset("SELECT * from tblPartProject WHERE partNumber = '" & partNum & "'", dbOpenSnapshot)
 
 If rsProjects.RecordCount = 0 Then 'look for related projects
     projId = Nz(DLookup("projectId", "tblPartProjectPartNumbers", "childPartNumber = '" & partNum & "'"))
-    If projId <> "" Then Set rsProjects = db.OpenRecordset("SELECT * from tblPartProject WHERE recordId = " & projId)
+    If projId <> "" Then Set rsProjects = db.OpenRecordset("SELECT * from tblPartProject WHERE recordId = " & projId, dbOpenSnapshot)
 End If
 
 If rsProjects.RecordCount = 0 Then
@@ -483,10 +483,10 @@ If assyNum <> "" Then
 End If
 
 Dim rsPartInfo As Recordset, rsProgram As Recordset
-Set rsPartInfo = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & Me.partNumber & "'")
+Set rsPartInfo = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & Me.partNumber & "'", dbOpenSnapshot)
 If rsPartInfo.RecordCount = 0 Then GoTo noProgram
 If Nz(rsPartInfo!programId, 0) = 0 Then GoTo noProgram
-Set rsProgram = db.OpenRecordset("SELECT * FROM tblPrograms WHERE ID = " & rsPartInfo!programId)
+Set rsProgram = db.OpenRecordset("SELECT * FROM tblPrograms WHERE ID = " & rsPartInfo!programId, dbOpenSnapshot)
 If rsProgram.RecordCount = 0 Then GoTo noProgram
 
 'checks PASSED, program found

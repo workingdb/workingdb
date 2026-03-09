@@ -435,7 +435,7 @@ mascotImage.Visible = False
 wisdomText.Visible = False
 summonMike.Caption = "Summon Mike"
 
-Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & Environ("username") & "'")
+Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions where user = '" & Environ("username") & "'", dbOpenSnapshot)
 
 Me.orgLabel.Caption = DLookup("permissionsLocation", "tblDropDownsSP", "recordid = " & rsPermissions!Org)
 helloBox.Caption = getFullName(firstOnly:=True) 'get first name

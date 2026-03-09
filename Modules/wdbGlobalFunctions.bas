@@ -25,7 +25,7 @@ qdf.sql = Replace(qdf.sql, "{PART_NUMBER}", partNumber)
 db.QueryDefs.refresh
 
 Dim rsGet As Recordset
-Set rsGet = db.OpenRecordset("qryStandardCostOwner")
+Set rsGet = db.OpenRecordset("qryStandardCostOwner", dbOpenSnapshot)
 
 getStandardCostOwner = rsGet!Standard_Cost_Owner
 
@@ -61,7 +61,7 @@ qdf.sql = Replace(qdf.sql, "{PART_NUMBER}", partNumber)
 db.QueryDefs.refresh
 
 Dim rsGet As Recordset
-Set rsGet = db.OpenRecordset("qryFindCustomer")
+Set rsGet = db.OpenRecordset("qryFindCustomer", dbOpenSnapshot)
 
 Do While Not rsGet.EOF
     getCustomer = getCustomer & rsGet!CUSTOMER_NAME & vbNewLine
@@ -93,7 +93,7 @@ Dim rs As Recordset
 Set db = CurrentDb()
 Set rs = db.OpenRecordset("SELECT CT.ITEM_NUMBER, O.Org, CT.COST_TYPE, CT.ITEM_COST " & _
     "From tblOrgs As O INNER JOIN APPS_CST_ITEM_COST_TYPE_V as CT ON O.ID = CT.ORGANIZATION_ID " & _
-    "WHERE ((CT.ITEM_NUMBER = '" & partNumber & "') AND (O.Org = '" & Org & "') AND (CT.COST_TYPE = '" & costType & "'));")
+    "WHERE ((CT.ITEM_NUMBER = '" & partNumber & "') AND (O.Org = '" & Org & "') AND (CT.COST_TYPE = '" & costType & "'));", dbOpenSnapshot)
 
 If rs.RecordCount > 0 Then findCost = Nz(rs!ITEM_COST, 0)
 
@@ -187,7 +187,7 @@ Dim db As Database
 Set db = CurrentDb()
 
 Dim rs As Recordset
-Set rs = db.OpenRecordset("SELECT CUSTOMER_NAME FROM APPS_XXCUS_CUSTOMERS WHERE CUSTOMER_ID = " & customerId)
+Set rs = db.OpenRecordset("SELECT CUSTOMER_NAME FROM APPS_XXCUS_CUSTOMERS WHERE CUSTOMER_ID = " & customerId, dbOpenSnapshot)
 
 If rs.RecordCount > 0 Then getCustomerName = rs!CUSTOMER_NAME
 
@@ -414,6 +414,7 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
 Set rs1 = db.OpenRecordset("tblWdbUpdateTracking")
+'NEEDS CONVERTED TO ADODB
 
 If Len(oldVal) > 255 Then oldVal = Left(oldVal, 255)
 If Len(newVal) > 255 Then newVal = Left(newVal, 255)
@@ -459,6 +460,7 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
 Set rs1 = db.OpenRecordset("tblSalesUpdateTracking")
+'NEEDS CONVERTED TO ADODB
 
 With rs1
     .addNew
@@ -507,7 +509,7 @@ daysLeft = Abs(daysToAdd)
 intDirection = 1
 If daysToAdd < 0 Then intDirection = -1
 
-Set rsHolidays = db.OpenRecordset("tblHolidays")
+Set rsHolidays = db.OpenRecordset("tblHolidays", dbOpenSnapshot)
 
 Do While daysLeft > 0
     testDate = testDate + intDirection
@@ -581,7 +583,7 @@ On Error Resume Next
 Dim db As Database
 Set db = CurrentDb()
 Dim rsNoti As Recordset
-Set rsNoti = db.OpenRecordset("SELECT count(ID) as unRead FROM tblNotificationsSP WHERE recipientUser = '" & Environ("username") & "' AND readDate is null")
+Set rsNoti = db.OpenRecordset("SELECT count(ID) as unRead FROM tblNotificationsSP WHERE recipientUser = '" & Environ("username") & "' AND readDate is null", dbOpenSnapshot)
 
 Select Case rsNoti!unRead
     Case Is > 9
@@ -617,7 +619,7 @@ db.QueryDefs.refresh
 Set qdf = Nothing
 
 Dim rs2 As Recordset
-Set rs2 = db.OpenRecordset("qryFindPartRevision")
+Set rs2 = db.OpenRecordset("qryFindPartRevision", dbOpenSnapshot)
 
 If rs2.RecordCount = 0 Then GoTo exitThis
 If rs2("REV") = "" Or IsNull(rs2("REV")) Then
@@ -1031,6 +1033,7 @@ Set db = CurrentDb()
 'has this person been notified about this thing today already?
 Dim rsNotifications As Recordset
 Set rsNotifications = db.OpenRecordset("SELECT * from tblNotificationsSP WHERE recipientUser = '" & sendTo & "' AND notificationDescription = '" & StrQuoteReplace(desc) & "' AND sentDate > #" & Date - 1 & "#")
+'NEEDS CONVERTED TO ADODB
 If rsNotifications.RecordCount > 0 Then
     If rsNotifications!notificationType = 1 Then
         Dim msgTxt As String
@@ -1134,7 +1137,7 @@ getTotalPackingListWeight = 0
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT sum(unitWeight*quantity) as total FROM tblPackListChild WHERE packListId = " & packId & " GROUP BY packListId")
+Set rs1 = db.OpenRecordset("SELECT sum(unitWeight*quantity) as total FROM tblPackListChild WHERE packListId = " & packId & " GROUP BY packListId", dbOpenSnapshot)
 
 getTotalPackingListWeight = rs1!total
 
@@ -1151,7 +1154,7 @@ getTotalPackingListCost = 0
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset
-Set rs1 = db.OpenRecordset("SELECT sum(unitCost*quantity) as total FROM tblPackListChild WHERE packListId = " & packId & " GROUP BY packListId")
+Set rs1 = db.OpenRecordset("SELECT sum(unitCost*quantity) as total FROM tblPackListChild WHERE packListId = " & packId & " GROUP BY packListId", dbOpenSnapshot)
 
 getTotalPackingListCost = rs1!total
 
@@ -1177,7 +1180,7 @@ Dim d As Boolean, l As Boolean, rsPerm As Recordset
 d = True
 l = True
 
-Set rsPerm = db.OpenRecordset("SELECT * FROM tblPermissions WHERE user = '" & userName & "'")
+Set rsPerm = db.OpenRecordset("SELECT * FROM tblPermissions WHERE user = '" & userName & "'", dbOpenSnapshot)
 'restrict = true means you cannot access
 'set No Access first, then allow as it is OK
 
@@ -1219,7 +1222,7 @@ Dim db As Database
 Set db = CurrentDb()
 Dim rsAnalytics As Recordset, rsSummaryEmail As Recordset
 
-Set rsAnalytics = db.OpenRecordset("SELECT max(dateUsed) as anaDate from tblAnalytics WHERE module = 'firstTimeRun'")
+Set rsAnalytics = db.OpenRecordset("SELECT max(dateUsed) as anaDate from tblAnalytics WHERE module = 'firstTimeRun'", dbOpenSnapshot)
 If Not DateSerial(Year(rsAnalytics!anaDate), Month(rsAnalytics!anaDate), Day(rsAnalytics!anaDate)) >= Date Then
     'if max date is today, then this has already ran.
     Call checkProgramEvents
@@ -1229,7 +1232,7 @@ End If
 
 If Weekday(Date) = 1 Or Weekday(Date) = 7 Then Exit Sub 'only run summaries on weekdays
 
-Set rsSummaryEmail = db.OpenRecordset("SELECT max(dateUsed) as anaDate from tblAnalytics WHERE module = 'summaryEmail'")
+Set rsSummaryEmail = db.OpenRecordset("SELECT max(dateUsed) as anaDate from tblAnalytics WHERE module = 'summaryEmail'", dbOpenSnapshot)
 If Not DateSerial(Year(rsSummaryEmail!anaDate), Month(rsSummaryEmail!anaDate), Day(rsSummaryEmail!anaDate)) >= Date Then Call openPath("\\data\mdbdata\WorkingDB\build\workingdb_commands\summaryEmail.vbs")
 
 On Error Resume Next
@@ -1255,13 +1258,13 @@ Dim li As Long, ti As Long, ni As Long
 Dim strQry, ranThisWeek As Boolean
 Dim recordsetName As String
 
-Set rsAnalytics = db.OpenRecordset("SELECT max(dateUsed) as anaDate from tblAnalytics WHERE module = 'firstTimeRun'")
+Set rsAnalytics = db.OpenRecordset("SELECT max(dateUsed) as anaDate from tblAnalytics WHERE module = 'firstTimeRun'", dbOpenSnapshot)
 ranThisWeek = Format(rsAnalytics!anaDate, "ww", vbMonday, vbFirstFourDays) = Format(Date, "ww", vbMonday, vbFirstFourDays)
 
 strQry = ""
 If specificUser <> "" Then strQry = " AND user = '" & specificUser & "'"
 
-Set rsPeople = db.OpenRecordset("SELECT * from tblPermissions WHERE Inactive = False" & strQry)
+Set rsPeople = db.OpenRecordset("SELECT * from tblPermissions WHERE Inactive = False" & strQry, dbOpenSnapshot)
 
     li = 0
     ti = 0
@@ -1271,7 +1274,7 @@ Set rsPeople = db.OpenRecordset("SELECT * from tblPermissions WHERE Inactive = F
     ReDim Preserve nextSteps(ni)
 
 Do While Not rsPeople.EOF 'go through every active person
-    Set rsUserSettings = db.OpenRecordset("SELECT * from tblUserSettings WHERE username = '" & rsPeople!User & "'")
+    Set rsUserSettings = db.OpenRecordset("SELECT * from tblUserSettings WHERE username = '" & rsPeople!User & "'", dbOpenSnapshot)
 
     If rsUserSettings!notifications = 1 And specificUser = "" Then GoTo nextPerson 'this person wants no notifications
     If rsUserSettings!notifications = 2 And ranThisWeek And specificUser = "" Then GoTo nextPerson 'this person only wants weekly notifications
@@ -1291,7 +1294,7 @@ Do While Not rsPeople.EOF 'go through every active person
     End If
 
     Set rsOpenSteps = db.OpenRecordset(recordsetName & _
-                                " WHERE person = '" & rsPeople!User & "' AND due <= Date()+7")
+                                " WHERE person = '" & rsPeople!User & "' AND due <= Date()+7", dbOpenSnapshot)
     
     Do While (Not rsOpenSteps.EOF And Not (ti > 15 And li > 15 And ni > 15))
         Select Case rsOpenSteps!Due
@@ -1328,7 +1331,7 @@ nextStep:
     Set rsOpenSteps = Nothing
     
     Dim rsOpenIssues As Recordset
-    Set rsOpenIssues = db.OpenRecordset("SELECT * FROM qryOpenIssues_summaryEmail WHERE inCharge = '" & rsPeople!User & "' AND closeDate is null AND dueDate <= Date()+7")
+    Set rsOpenIssues = db.OpenRecordset("SELECT * FROM qryOpenIssues_summaryEmail WHERE inCharge = '" & rsPeople!User & "' AND closeDate is null AND dueDate <= Date()+7", dbOpenSnapshot)
     
     Do While Not rsOpenIssues.EOF
         Select Case rsOpenIssues!dueDate
@@ -1393,13 +1396,14 @@ Dim controlNum As Long, Comments As String, dueDate, body As String, strValues
 
 dueDate = addWorkdays(Date, 5)
 
-Set rsEvents = db.OpenRecordset("SELECT * from tblProgramEvents WHERE designWOcreated = False AND eventDate BETWEEN #" & Date & "# AND #" & Date + 50 & "#")
-Set rsPeople = db.OpenRecordset("SELECT * from tblPermissions WHERE designWOid = 1 AND InActive = FALSE")
+Set rsEvents = db.OpenRecordset("SELECT * from tblProgramEvents WHERE designWOcreated = False AND eventDate BETWEEN #" & Date & "# AND #" & Date + 50 & "#", dbOpenSnapshot)
+Set rsPeople = db.OpenRecordset("SELECT * from tblPermissions WHERE designWOid = 1 AND InActive = FALSE", dbOpenSnapshot)
 
 Do While Not rsEvents.EOF
-    Set rsProgram = db.OpenRecordset("SELECT * from tblPrograms WHERE ID = " & rsEvents!programId)
+    Set rsProgram = db.OpenRecordset("SELECT * from tblPrograms WHERE ID = " & rsEvents!programId, dbOpenSnapshot)
     
     Set rsWO = db.OpenRecordset("dbo_tblDRS")
+    'NEEDS CONVERTED TO ADODB
     rsWO.addNew
         With rsWO
             !Issue_Date = Date
@@ -1477,7 +1481,7 @@ On Error GoTo tryOracle
 Dim db As Database
 Set db = CurrentDb()
 Dim rsPermissions As Recordset
-Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions WHERE user = '" & userName & "'")
+Set rsPermissions = db.OpenRecordset("SELECT * from tblPermissions WHERE user = '" & userName & "'", dbOpenSnapshot)
 getEmail = Nz(rsPermissions!userEmail, "")
 rsPermissions.CLOSE
 Set rsPermissions = Nothing
@@ -1486,7 +1490,7 @@ GoTo exitFunc
 
 tryOracle:
 Dim rsEmployee As Recordset
-Set rsEmployee = db.OpenRecordset("SELECT FIRST_NAME, LAST_NAME, EMAIL_ADDRESS FROM APPS_XXCUS_USER_EMPLOYEES_V WHERE USER_NAME = '" & StrConv(userName, vbUpperCase) & "'")
+Set rsEmployee = db.OpenRecordset("SELECT FIRST_NAME, LAST_NAME, EMAIL_ADDRESS FROM APPS_XXCUS_USER_EMPLOYEES_V WHERE USER_NAME = '" & StrConv(userName, vbUpperCase) & "'", dbOpenSnapshot)
 getEmail = Nz(rsEmployee!EMAIL_ADDRESS, "")
 rsEmployee.CLOSE
 Set rsEmployee = Nothing

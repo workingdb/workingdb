@@ -230,7 +230,7 @@ Dim rsProject As Recordset, rsStepTemplate As Recordset, rsApprovalsTemplate As 
 Dim strInsert As String, strInsert1 As String
 Dim projTempId As Long, pillarDue As Date
 
-Set rsProject = db.OpenRecordset("SELECT * from tblCPC_Projects WHERE ID = " & Me.ID)
+Set rsProject = db.OpenRecordset("SELECT * from tblCPC_Projects WHERE ID = " & Me.ID, dbOpenSnapshot)
 
 'find the pillar step that is ZERO, then calculate everything from there
 'this is called the foundational pillar

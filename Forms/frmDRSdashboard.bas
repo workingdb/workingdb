@@ -268,6 +268,7 @@ If TempVars!newPartInfoId = 0 Then
     TempVars.Add "newPartInfoId", db.OpenRecordset("SELECT @@identity")(0).Value
 End If
 Set rsPartInfo = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE recordId = " & TempVars!newPartInfoId)
+'NEEDS CONVERTED TO ADODB
 
 '---Check for Quote Info---
 If Nz(rsPartInfo!quoteInfoId, 0) = 0 Then
@@ -338,7 +339,7 @@ End If
 
 '---Check for tblPartInfo Record on Every Related Part Number---
 '-------------------------------------------------------------------------------------------
-Set rsRelatedParts = db.OpenRecordset("SELECT * FROM qryRelatedParts WHERE primaryPN = '" & Me.Part_Number & "'")
+Set rsRelatedParts = db.OpenRecordset("SELECT * FROM qryRelatedParts WHERE primaryPN = '" & Me.Part_Number & "'", dbOpenSnapshot)
 
 Do While Not rsRelatedParts.EOF
     If DCount("recordId", "tblPartInfo", "partNumber = '" & rsRelatedParts!relatedPN & "'") = 0 Then db.Execute "INSERT INTO tblPartInfo(partNumber) VALUES ('" & rsRelatedParts!relatedPN & "')"
@@ -588,8 +589,9 @@ If DCount("recordId", "tblDesignChecksheet", "controlNumber = " & controlNum) = 
     Dim db As Database
     Set db = CurrentDb()
     Dim rs1 As Recordset, rsChecksheet As Recordset
-    Set rs1 = db.OpenRecordset("SELECT * from tblDesignChecksheetDefaults WHERE drawingType LIKE '*" & drawingType & "*' AND designResponsible LIKE '*" & designResponsible & "*' AND partType LIKE '*" & partType & "*' ORDER BY indexOrder Asc")
+    Set rs1 = db.OpenRecordset("SELECT * from tblDesignChecksheetDefaults WHERE drawingType LIKE '*" & drawingType & "*' AND designResponsible LIKE '*" & designResponsible & "*' AND partType LIKE '*" & partType & "*' ORDER BY indexOrder Asc", dbOpenSnapshot)
     Set rsChecksheet = db.OpenRecordset("tblDesignChecksheet")
+    'NEEDS CONVERTED TO ADODB
 
     Do While Not rs1.EOF
         rsChecksheet.addNew
@@ -1286,7 +1288,7 @@ If Nz(Me.Checker1) = "" And Nz(Me.Checker2) = "" Then errorMsg = "You need at le
 Dim db As Database
 Set db = CurrentDb()
 Dim rsChecksheet As Recordset, chkSheetExists As Boolean
-Set rsChecksheet = db.OpenRecordset("SELECT * FROM tblDesignChecksheet WHERE controlNumber = " & Me.Control_Number)
+Set rsChecksheet = db.OpenRecordset("SELECT * FROM tblDesignChecksheet WHERE controlNumber = " & Me.Control_Number, dbOpenSnapshot)
 
 chkSheetExists = rsChecksheet.RecordCount > 0
 
@@ -1321,7 +1323,7 @@ Select Case Me.Request_Type
         Else
             'if there is a meeting, check for the right data
             'first, check this part number's class information
-            Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & Me.Part_Number & "'")
+            Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & Me.Part_Number & "'", dbOpenSnapshot)
             
             errorCount = 0
             If Nz(rsPI!partClassCode, 0) = 0 Then errorCount = errorCount + 1
@@ -1332,10 +1334,10 @@ Select Case Me.Request_Type
             If errorCount > 0 Then pnList = Me.Part_Number
             
             'then, check all related parts
-            Set rsRelatedParts = db.OpenRecordset("SELECT * FROM qryRelatedParts WHERE primaryPN = '" & Me.Part_Number & "'")
+            Set rsRelatedParts = db.OpenRecordset("SELECT * FROM qryRelatedParts WHERE primaryPN = '" & Me.Part_Number & "'", dbOpenSnapshot)
             
             Do While Not rsRelatedParts.EOF
-                Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & rsRelatedParts!relatedPN & "'")
+                Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & rsRelatedParts!relatedPN & "'", dbOpenSnapshot)
                 
                 errorCount = 0
                 

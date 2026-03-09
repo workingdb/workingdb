@@ -48,7 +48,7 @@ End Sub
 Private Sub imgCreated_Click()
 On Error GoTo Err_Handler
 
-DoCmd.OpenForm "frmUserProfile", , , "user = '" & Me.createdBy & "'"
+DoCmd.OpenForm "frmUserProfile", , , "user = '" & Me.createdby & "'"
 
 Exit Sub
 Err_Handler:
@@ -89,7 +89,7 @@ End Sub
 Private Sub lblCreatedBy_Click()
 On Error GoTo Err_Handler
 
-Me.createdBy.SetFocus
+Me.createdby.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub

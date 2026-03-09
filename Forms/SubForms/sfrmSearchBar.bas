@@ -47,7 +47,7 @@ Dim rs1 As Recordset
 
 Dim counter As Long
 For counter = 1 To 10
-    Set rs1 = db.OpenRecordset("SELECT * FROM tblUserButtons WHERE User = '" & Environ("username") & "' AND ButtonNum = '" & counter & "'")
+    Set rs1 = db.OpenRecordset("SELECT * FROM tblUserButtons WHERE User = '" & Environ("username") & "' AND ButtonNum = '" & counter & "'", dbOpenSnapshot)
     If rs1.RecordCount = 0 Then GoTo setFavorite
 Next counter
 
@@ -58,6 +58,7 @@ setFavorite:
 
 Dim rs2 As Recordset
 Set rs2 = db.OpenRecordset("tblUserButtons")
+'NEEDS CONVERTED TO ADODB
 rs2.addNew
 
 rs2!User = Environ("username")

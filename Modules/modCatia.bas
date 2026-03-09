@@ -19,6 +19,7 @@ Public Function fncInit()
     ReDim gstrNotFoundModelID(0)
     
     Set rsPLMprops = CurrentDb().OpenRecordset("tblPLMproperties")
+    'NEEDS CONVERTED TO ADODB
 
     On Error Resume Next
     Set mobjCATIA = GetObject(, "CATIA.Application")
@@ -1642,7 +1643,7 @@ Public Function getSectionData(outColumnName As String, inColumnName As String, 
     Dim db As Database
     Dim rsPLMsections As Recordset
     Set db = CurrentDb()
-    Set rsPLMsections = db.OpenRecordset("SELECT * FROM tblPLMsection WHERE " & inColumnName & " = '" & matchVal & "'")
+    Set rsPLMsections = db.OpenRecordset("SELECT * FROM tblPLMsection WHERE " & inColumnName & " = '" & matchVal & "'", dbOpenSnapshot)
     
     getSectionData = rsPLMsections(outColumnName)
     

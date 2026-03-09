@@ -86,7 +86,7 @@ Set db = CurrentDb()
 Dim rsWorkloadTbl As Recordset, rsWorkloadTbl1 As Recordset
 Dim rsSessVar As Recordset, rsPerm As Recordset
 
-Set rsPerm = db.OpenRecordset("SELECT * FROM tblPermissions WHERE designWOpermissions <> 3 AND Inactive = False")
+Set rsPerm = db.OpenRecordset("SELECT * FROM tblPermissions WHERE designWOpermissions <> 3 AND Inactive = False", dbOpenSnapshot)
 Set rsSessVar = db.OpenRecordset("SELECT * FROM tblSessionVariables WHERE userName Is Not Null")
 
 Do While Not rsSessVar.EOF
@@ -96,9 +96,9 @@ Loop
 
 Do While Not rsPerm.EOF
     Set rsWorkloadTbl = db.OpenRecordset("SELECT Round(Sum([hours]),2) AS totalHours FROM tblWorkloadRanking WHERE " & _
-        "userName = '" & rsPerm!User & "' AND hoursDate < #" & Date & "#")
+        "userName = '" & rsPerm!User & "' AND hoursDate < #" & Date & "#", dbOpenSnapshot)
     Set rsWorkloadTbl1 = db.OpenRecordset("SELECT Round(Sum([hours]),2) AS totalHours FROM tblWorkloadRanking WHERE " & _
-        "userName = '" & rsPerm!User & "' AND hoursDate >= #" & issueDate & "# AND hoursDate <= #" & dueDate & "#")
+        "userName = '" & rsPerm!User & "' AND hoursDate >= #" & issueDate & "# AND hoursDate <= #" & dueDate & "#", dbOpenSnapshot)
 
     rsSessVar.addNew
     
@@ -143,9 +143,10 @@ Dim eta As Double
 Dim woPerDay As Double
 Dim forDate As Date
 
-Set rsUsers = db.OpenRecordset("SELECT * FROM tblPermissions WHERE designWOpermissions <> 3 AND Inactive = False")
+Set rsUsers = db.OpenRecordset("SELECT * FROM tblPermissions WHERE designWOpermissions <> 3 AND Inactive = False", dbOpenSnapshot)
 Set rsWorkloadTbl = db.OpenRecordset("tblWorkloadRanking")
-Set rsHolidays = db.OpenRecordset("tblHolidays")
+'NEEDS CONVERTED TO ADODBs
+Set rsHolidays = db.OpenRecordset("tblHolidays", dbOpenSnapshot)
 
 'Clear Table
 If rsWorkloadTbl.RecordCount > 0 Then
@@ -157,7 +158,7 @@ End If
 
 Do While Not rsUsers.EOF
     'select all open WOs for this assignee
-    Set rsWO = db.OpenRecordset("SELECT * FROM dbo_tblDRS WHERE Assignee = " & rsUsers!ID & " AND Approval_Status = 2 AND Completed_Date Is Null")
+    Set rsWO = db.OpenRecordset("SELECT * FROM dbo_tblDRS WHERE Assignee = " & rsUsers!ID & " AND Approval_Status = 2 AND Completed_Date Is Null", dbOpenSnapshot)
     
     Do While Not rsWO.EOF
         dueDate = Nz(rsWO!Adjusted_Due_Date, rsWO!Due_Date)

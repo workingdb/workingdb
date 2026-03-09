@@ -92,7 +92,7 @@ If Not Me.assembly Then Exit Function
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset, createdLoc As String, createdCompChild As String
-Set rs1 = db.OpenRecordset("SELECT * from tblSessionVariables WHERE componentNumber is not null")
+Set rs1 = db.OpenRecordset("SELECT * from tblSessionVariables WHERE componentNumber is not null", dbOpenSnapshot)
 
 Do While Not rs1.EOF
     createdLoc = createDocHisFolder(rs1!componentNumber, rs1!componentFull)
@@ -137,7 +137,7 @@ If Not Me.assembly Then Exit Function
 Dim db As Database
 Set db = CurrentDb()
 Dim rs1 As Recordset, createdLoc As String, createdCompChild As String
-Set rs1 = db.OpenRecordset("SELECT * from tblSessionVariables WHERE componentNumber is not null")
+Set rs1 = db.OpenRecordset("SELECT * from tblSessionVariables WHERE componentNumber is not null", dbOpenSnapshot)
 
 Do While Not rs1.EOF
     createdLoc = createModelV5fold(rs1!componentNumber, rs1!componentFull)

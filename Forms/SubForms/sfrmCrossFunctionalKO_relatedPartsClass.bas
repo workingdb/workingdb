@@ -29,7 +29,7 @@ If StrPtr(x) = 0 Then GoTo exit_handler
 If x = "" Then GoTo exit_handler
 
 Dim rsPI As Recordset
-Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & x & "'")
+Set rsPI = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE partNumber = '" & x & "'", dbOpenSnapshot)
 
 If rsPI.RecordCount = 0 Then
     MsgBox "No class info found"
