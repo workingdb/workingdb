@@ -1119,6 +1119,7 @@ Me.userPic.Picture = "\\data\mdbdata\WorkingDB\Pictures\Avatars\" & Environ("use
 DoCmd.Maximize
 
 closeApp
+hidecmd_Click
 
 If Nz(TempVars!smallScreen, False) = True Then
     Call smallScreenMode(True)

@@ -25,28 +25,6 @@ Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
 
-Private Sub lblCostOwner_Click()
-On Error GoTo Err_Handler
-
-Me.costOwner.SetFocus
-DoCmd.RunCommand acCmdFilterMenu
-
-Exit Sub
-Err_Handler:
-    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
-End Sub
-
-Private Sub lblCustomer_Click()
-On Error GoTo Err_Handler
-
-Me.Customer.SetFocus
-DoCmd.RunCommand acCmdFilterMenu
-
-Exit Sub
-Err_Handler:
-    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
-End Sub
-
 Private Sub lblDescription_Click()
 On Error GoTo Err_Handler
 
