@@ -5,6 +5,16 @@ Attribute VB_Exposed = False
 Option Compare Database
 Option Explicit
 
+Private Sub details_Click()
+On Error GoTo Err_Handler
+
+openPartProject (Me.partNumber)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub Form_Load()
 On Error GoTo Err_Handler
 
@@ -41,6 +51,17 @@ Private Sub lblDescription_Click()
 On Error GoTo Err_Handler
 
 Me.DESCRIPTION.SetFocus
+DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub lblGate_Click()
+On Error GoTo Err_Handler
+
+Me.gate.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub

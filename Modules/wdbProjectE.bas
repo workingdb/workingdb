@@ -226,6 +226,33 @@ Err_Handler:
     Call handleError("wdbProjectE", "addMissingProjectSteps", Err.DESCRIPTION, Err.number)
 End Function
 
+Public Function getCurrentGate(partNumber As String) As String
+On Error GoTo Err_Handler
+
+Dim db As Database
+Dim rs As Recordset
+
+Set db = CurrentDb()
+
+Set rs = db.OpenRecordset("SELECT gateTitle FROM tblPartGates WHERE partNumber = '" & partNumber & "' AND actualDate is null ORDER BY plannedDate", dbOpenSnapshot)
+
+If rs.RecordCount = 0 Then GoTo skip
+
+rs.MoveFirst
+getCurrentGate = rs!gateTitle
+
+skip:
+On Error Resume Next
+rs.CLOSE
+Set rs = Nothing
+
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "getCurrentGate", Err.DESCRIPTION, Err.number)
+End Function
+
 Public Function grabGatePlannedDate(partNumber As String, gateNum As Long) As Date
 On Error GoTo Err_Handler
 
@@ -234,7 +261,7 @@ Dim rs As Recordset
 
 Set db = CurrentDb()
 
-Set rs = db.OpenRecordset("SELECT * FROM tblPartGates WHERE partNumber = '" & partNumber & "' AND gateTitle Like 'G" & gateNum & "*'")
+Set rs = db.OpenRecordset("SELECT * FROM tblPartGates WHERE partNumber = '" & partNumber & "' AND gateTitle Like 'G" & gateNum & "*'", dbOpenSnapshot)
 
 If rs.RecordCount = 0 Then GoTo skip
 
