@@ -16,9 +16,11 @@ End Sub
 Function replaceDriveLetters(linkInput) As String
 On Error GoTo Err_Handler
 
-replaceDriveLetters = Replace(linkInput, "N:\", "\\ncm-fs2\data\Department\")
-replaceDriveLetters = Replace(linkInput, "T:\", "\\design\data\")
-replaceDriveLetters = Replace(linkInput, "S:\", "\\nas01\allshare\")
+replaceDriveLetters = linkInput
+
+replaceDriveLetters = Replace(replaceDriveLetters, "N:\", "\\ncm-fs2\data\Department\")
+replaceDriveLetters = Replace(replaceDriveLetters, "T:\", "\\design\data\")
+replaceDriveLetters = Replace(replaceDriveLetters, "S:\", "\\nas01\allshare\")
 
 Exit Function
 Err_Handler:
