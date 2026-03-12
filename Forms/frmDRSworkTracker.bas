@@ -408,6 +408,8 @@ End Sub
 Private Sub Form_Load()
 On Error GoTo Err_Handler
 
+Call setTheme(Me)
+
 Dim iLevel, userID, checkerBool As Boolean
 Me.fltAssignee.Value = Environ("username")
 
@@ -424,6 +426,8 @@ Me.Label31.Visible = checkerBool
 userID = DLookup("[ID]", "[tblPermissions]", "[user] = '" & Me.fltAssignee.Value & "'")
 Me.Repaint
 Call updateButtons("Assignee", "Approved")
+
+Me.open3DprintRequests.Visible = userData("beta")
 
 Me.OrderBy = "Due"
 Me.OrderByOn = True
@@ -544,7 +548,7 @@ End Sub
 Private Sub lblDescription_Click()
 On Error GoTo Err_Handler
 
-Me.PART_DESCRIPTION.SetFocus
+Me.Part_Description.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
 
 Exit Sub
@@ -590,6 +594,16 @@ On Error GoTo Err_Handler
 
 Me.Request_Type.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub open3DprintRequests_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frm3Dprint_requests"
 
 Exit Sub
 Err_Handler:

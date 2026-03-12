@@ -526,7 +526,7 @@ Set db = CurrentDb()
     End If
 '**BOTH**
 Me.Customer = UCase(Split(rs1!Customer, " ")(0))
-Me.Product_Name = UCase(rs1!PART_DESCRIPTION)
+Me.Product_Name = UCase(rs1!Part_Description)
 If Len(rs1!ENG_QUOTE_LOG_NUM) = 4 Or Len(rs1!ENG_QUOTE_LOG_NUM) = 5 Then
     Me.RFQ_No = Left(rs1!ENG_QUOTE_LOG_NUM, 4)
 End If

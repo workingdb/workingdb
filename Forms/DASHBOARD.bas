@@ -580,7 +580,7 @@ qdf1.sql = Replace(qdf1.sql, partNumber, "{PART_NUMBER}")
 If rsSIF.RecordCount > 0 Then
     partStatus = rsSIF!sifNum
     partType = rsSIF!SIF_TYPE
-    parDescription = rsSIF!PART_DESCRIPTION
+    parDescription = rsSIF!Part_Description
     Call showOracleTags(True)
     GoTo setItems
 End If

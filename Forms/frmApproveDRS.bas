@@ -229,7 +229,7 @@ Else
             !DR_Level = Me.DR_Level
             !Request_Type = Me.Request_Type
             !Part_Number = Me.Part_Number
-            !PART_DESCRIPTION = Me.PART_DESCRIPTION
+            !Part_Description = Me.Part_Description
             !DESIGN_RESPONSIBILITY = Me.DESIGN_RESPONSIBILITY
             !Model_Code = Me.Model_Code
             !Part_Complexity = Me.Part_Complexity
@@ -790,7 +790,7 @@ If errorTxt <> "" Then
 End If
 
 If DCount("[Part_Number]", "dbo_tblDRS", "[Part_Number] = '" & partNum & "'") > 0 Then
-    Me.PART_DESCRIPTION = DLookup("[Part_Description]", "dbo_tblDRS", "[Part_Number] = '" & partNum & "'")
+    Me.Part_Description = DLookup("[Part_Description]", "dbo_tblDRS", "[Part_Number] = '" & partNum & "'")
     Me.DESIGN_RESPONSIBILITY = DLookup("[Design_Responsibility]", "dbo_tblDRS", "[Part_Number] = '" & partNum & "'")
     Me.Model_Code = DLookup("[Model_Code]", "dbo_tblDRS", "[Part_Number] = '" & partNum & "'")
     Me.Part_Complexity = DLookup("[Part_Complexity]", "dbo_tblDRS", "[Part_Number] = '" & partNum & "'")
@@ -806,12 +806,12 @@ End If
 
 On Error Resume Next
 If DCount("[Description]", "APPS_MTL_SYSTEM_ITEMS", "[SEGMENT1] = '" & partNum & "'") > 0 Then
-    Me.PART_DESCRIPTION = Nz(DLookup("[Description]", "APPS_MTL_SYSTEM_ITEMS", "[SEGMENT1] = '" & partNum & "'"))
+    Me.Part_Description = Nz(DLookup("[Description]", "APPS_MTL_SYSTEM_ITEMS", "[SEGMENT1] = '" & partNum & "'"))
     GoTo exitThis
 End If
 
 If DCount("[Nifco_Part_Number]", "qryUnionPartDescriptions", "[Nifco_Part_Number] = '" & partNum & "'") > 0 Then   'SIFS
-    Me.PART_DESCRIPTION = Nz(DLookup("[Part_Description]", "qryUnionPartDescriptions", "[Nifco_Part_Number] = '" & partNum & "'"))
+    Me.Part_Description = Nz(DLookup("[Part_Description]", "qryUnionPartDescriptions", "[Nifco_Part_Number] = '" & partNum & "'"))
     GoTo exitThis
 End If
 
@@ -843,7 +843,7 @@ Select Case True
         validate = "Due Date"
     Case Nz(Me.Part_Number) = ""
         validate = "Part Number"
-    Case Nz(Me.PART_DESCRIPTION) = ""
+    Case Nz(Me.Part_Description) = ""
         validate = "Part Description"
     Case Nz(Me.Comments) = ""
         validate = "Comments"

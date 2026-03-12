@@ -264,7 +264,7 @@ End If
 '---Check tblPartInfo---
 TempVars.Add "newPartInfoId", Nz(DLookup("recordId", "tblPartInfo", "partNumber = '" & Me.Part_Number & "'"), 0)
 If TempVars!newPartInfoId = 0 Then
-    db.Execute "INSERT INTO tblPartInfo(partNumber,description,designResponsibility) VALUES('" & Me.Part_Number & "','" & Me.PART_DESCRIPTION & "','" & Me.DESIGN_RESPONSIBILITY & "')"
+    db.Execute "INSERT INTO tblPartInfo(partNumber,description,designResponsibility) VALUES('" & Me.Part_Number & "','" & Me.Part_Description & "','" & Me.DESIGN_RESPONSIBILITY & "')"
     TempVars.Add "newPartInfoId", db.OpenRecordset("SELECT @@identity")(0).Value
 End If
 Set rsPartInfo = db.OpenRecordset("SELECT * FROM tblPartInfo WHERE recordId = " & TempVars!newPartInfoId)

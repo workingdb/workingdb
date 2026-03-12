@@ -35,7 +35,7 @@ Function renameLabels()
 
 Dim frm As Form, ctl As Control
 
-Set frm = forms("frmCapacityRequestDetails")
+Set frm = forms("frm3Dprint_materials")
 For Each ctl In frm.Controls
     Select Case ctl.ControlType
         Case acLabel

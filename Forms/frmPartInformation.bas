@@ -374,7 +374,7 @@ Me.sellingPrice = rs1!PIECE_PRICE
 Call registerPartUpdates("tblPartInfo", Me.recordId, "sellingPrice", Me.sellingPrice.OldValue, Me.sellingPrice, Me.partNumber, Me.name)
 Me.customerId = rs1!CUSTOMER_ID
 Call registerPartUpdates("tblPartInfo", Me.recordId, "customerId", Me.customerId.OldValue, Me.customerId, Me.partNumber, Me.name)
-Me.DESCRIPTION = rs1!PART_DESCRIPTION
+Me.DESCRIPTION = rs1!Part_Description
 Call registerPartUpdates("tblPartInfo", Me.recordId, "Description", Me.DESCRIPTION.OldValue, Me.DESCRIPTION, Me.partNumber, Me.name)
 Me.SOPdate = rs1!EST_SOP_DATE
 Call registerPartUpdates("tblPartInfo", Me.recordId, "SOPdate", Me.SOPdate.OldValue, Me.SOPdate, Me.partNumber, Me.name)
