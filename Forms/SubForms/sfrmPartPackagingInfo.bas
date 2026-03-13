@@ -18,6 +18,7 @@ End If
 Dim db As Database
 Set db = CurrentDb()
 db.Execute "INSERT INTO tblPartPackagingInfo(partInfoId, packType) VALUES (" & Me.partInfoId & "," & packType & ");"
+'NEEDS CONVERTED TO ADODB
 TempVars.Add "packId", db.OpenRecordset("SELECT @@identity")(0).Value
 Set db = Nothing
 
@@ -110,7 +111,9 @@ Call registerPartUpdates("tblPartPackagingInfo", Me.recordId, "Part Packaging In
 Dim db As Database
 Set db = CurrentDb()
 db.Execute ("DELETE FROM tblPartPackagingComponents WHERE [packagingInfoId] = " & Me.recordId)
+'NEEDS CONVERTED TO ADODB
 db.Execute ("DELETE FROM tblPartPackagingInfo WHERE [recordId] = " & Me.recordId)
+'NEEDS CONVERTED TO ADODB
 
 Set db = Nothing
 

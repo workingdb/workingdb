@@ -137,6 +137,7 @@ Set db = CurrentDb()
 
 db.Execute "INSERT INTO tblPartMeetings(partNum,partProjectId,partStepId,dateOfMeeting) VALUES " & _
                                     "('" & Me.TpartNumber & "'," & Me.TprojectId & "," & Nz(Me.TstepId, "Null") & ",Date());"
+                                    'NEEDS CONVERTED TO ADODB
 TempVars.Add "meetingId", db.OpenRecordset("SELECT @@identity")(0).Value
 Call registerPartUpdates("tblPartMeetings", TempVars!meetingId, "Meeting Creation", "", "Created", Me.TpartNumber, Me.name)
 Me.Requery
@@ -194,7 +195,9 @@ Set db = CurrentDb()
 If MsgBox("Are you sure you want to delete this Meeting?", vbYesNo, "Please confirm") = vbYes Then
     Call registerPartUpdates("tblPartMeetings", Me.recordId, "Meeting", Nz(Me.meetingType.column(1)), "Deleted", Nz(Me.TpartNumber), Me.name)
     db.Execute ("DELETE FROM tblPartMeetingAttendees WHERE [meetingId] = " & Me.recordId)
+    'NEEDS CONVERTED TO ADODB
     db.Execute ("DELETE FROM tblPartMeetings WHERE [recordId] = " & Me.recordId)
+    'NEEDS CONVERTED TO ADODB
     Me.Requery
 End If
 

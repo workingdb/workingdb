@@ -24,6 +24,111 @@ Set db = Nothing
 
 End Function
 
+Function markProjectsAsComplete()
+Dim db As Database
+Dim rsSteps As Recordset, rsProject As Recordset, rsGates As Recordset
+Dim rsGateTemp As Recordset, rsStepTemp As Recordset, rsApprovalsTemplate As Recordset
+Dim dueDate
+Dim indexOrder As Long
+
+Set db = CurrentDb()
+
+'check the project status - skip if not In Progress
+Set rsProject = db.OpenRecordset("SELECT * FROM tblPartProject WHERE projectStatus = 1")
+
+Do While Not rsProject.EOF
+
+    'check if all steps are closed
+    Set rsSteps = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE partProjectId = " & rsProject!recordId & " AND status <> 'Closed'")
+    If rsSteps.RecordCount > 0 Then GoTo nextProject 'some steps are open
+    
+    'if this is the last gate, then mark the project as closed too
+    If DCount("recordId", "tblPartGates", "projectId = " & rsProject!recordId & " AND actualDate is null") = 0 Then
+        Call registerPartUpdates("tblPartProject", rsProject!recordId, "projectStatus", rsProject!projectStatus, "3", rsProject!partNumber, "automated", "postfix")
+        rsProject.Edit
+        rsProject!projectStatus = 3
+        rsProject.Update
+    End If
+    
+    
+nextProject:
+    rsProject.MoveNext
+Loop
+
+rsProject.CLOSE
+Set rsProject = Nothing
+
+On Error Resume Next
+rsSteps.CLOSE
+Set rsSteps = Nothing
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "markProjectsAsComplete", Err.DESCRIPTION, Err.number)
+End Function
+
+Function addActualDates()
+Dim db As Database
+Dim rsSteps As Recordset, rsProject As Recordset, rsGates As Recordset
+Dim rsGateTemp As Recordset, rsStepTemp As Recordset, rsApprovalsTemplate As Recordset
+Dim dueDate
+Dim indexOrder As Long
+
+Set db = CurrentDb()
+
+'check the project status - skip if > 2
+Set rsProject = db.OpenRecordset("SELECT * FROM tblPartProject WHERE projectStatus < 3")
+
+Do While Not rsProject.EOF
+    Set rsGates = db.OpenRecordset("SELECT * FROM tblPartGates WHERE projectId = " & rsProject!recordId & " AND actualDate is null")
+    
+    Do While Not rsGates.EOF
+        'in every gate (with no actual date), check if all steps are closed
+        Set rsSteps = db.OpenRecordset("SELECT * FROM tblPartSteps WHERE partGateId = " & rsGates!recordId & " AND status <> 'Closed'")
+        If rsSteps.RecordCount > 0 Then GoTo nextGate 'some steps are open
+        
+        'all steps are closed! mark this gate as closed with the latest close date
+        Dim lastClose As Date
+        lastClose = rsGates!plannedDate
+        lastClose = DMax("closeDate", "tblPartSteps", "partGateId = " & rsGates!recordId & " AND status = 'Closed'")
+        
+        rsGates.Edit
+        rsGates!actualDate = lastClose
+        rsGates.Update
+        
+        Call registerPartUpdates("tblPartGates", rsGates!recordId, "actualDate", "", lastClose, rsGates!partNumber, "automated", "postfix")
+        
+        'if this is the last gate, then mark the project as closed too
+        If DCount("recordId", "tblPartGates", "projectId = " & rsProject!recordId & " AND actualDate is null") = 0 Then
+            Call registerPartUpdates("tblPartProject", rsProject!recordId, "projectStatus", rsProject!projectStatus, "3", rsProject!partNumber, "automated", "postfix")
+            rsProject.Edit
+            rsProject!projectStatus = 3
+            rsProject.Update
+        End If
+        
+nextGate:
+        rsGates.MoveNext
+    Loop
+    
+    
+nextProject:
+    rsProject.MoveNext
+Loop
+
+rsProject.CLOSE
+Set rsProject = Nothing
+
+On Error Resume Next
+rsSteps.CLOSE
+Set rsSteps = Nothing
+Set db = Nothing
+
+Exit Function
+Err_Handler:
+    Call handleError("wdbProjectE", "addActualDates", Err.DESCRIPTION, Err.number)
+End Function
+
 Public Function addStepToAllProjects()
 'On Error GoTo Err_Handler
 
@@ -83,6 +188,7 @@ Do While Not rsProject.EOF
     rsSteps.Update
     
     db.Execute "UPDATE tblPartSteps SET indexOrder = indexOrder + 1 WHERE partGateId = " & rsGates!recordId & " AND indexOrder >= " & indexOrder
+    'NEEDS CONVERTED TO ADODB
     
 '            '--ADD APPROVALS FOR THIS STEP
 '            TempVars.Add "stepId", db.OpenRecordset("SELECT @@identity")(0).Value
@@ -157,6 +263,7 @@ Do While Not rsGates.EOF
                     Else
                         indexOrder = rsStepTemp!indexOrder
                         db.Execute "UPDATE tblPartSteps SET indexOrder = indexOrder + 1 WHERE partGateId = " & rsGates!recordId & " AND indexOrder >= " & indexOrder
+                        'NEEDS CONVERTED TO ADODB
                     End If
 
                     If rsStepTemp!pillarStep Then
@@ -196,6 +303,7 @@ Do While Not rsGates.EOF
                         db.Execute "INSERT INTO tblPartTrackingApprovals(partNumber,requestedBy,requestedDate,dept,reqLevel,tableName,tableRecordId) VALUES ('" & _
                             partNumber & "','" & Environ("username") & "','" & Now() & "','" & _
                             Nz(rsApprovalsTemplate![dept], "") & "','" & Nz(rsApprovalsTemplate![reqLevel], "") & "','tblPartSteps'," & TempVars!stepId & ");"
+                            'NEEDS CONVERTED TO ADODB
                         rsApprovalsTemplate.MoveNext
                     Loop
 
@@ -406,6 +514,7 @@ Dim rsTemplate As Recordset
 'first check if there are other check items
 'delete if so
 db.Execute "DELETE * FROM tblPartMeetingInfo WHERE meetingId = " & meetingId
+'NEEDS CONVERTED TO ADODB
 
 'then find template and add all new items
 Set rsTemplate = db.OpenRecordset("SELECT * FROM tblPartMeetingTemplates WHERE meetingType = " & meetingType & " order By indexOrder", dbOpenSnapshot)
@@ -1994,6 +2103,7 @@ If Nz(pNum) = "" Then Exit Function 'escape possible part number null projects
 
 'Add user to Cross Functional Team
 If DCount("recordId", "tblPartTeam", "partNumber = '" & pNum & "' AND person = '" & Environ("username") & "'") = 0 Then db.Execute "INSERT INTO tblPartTeam(partNumber,person) VALUES ('" & pNum & "','" & Environ("username") & "')", dbFailOnError 'assign project engineer
+'NEEDS CONVERTED TO ADODB
 
 Set rsGateTemplate = db.OpenRecordset("Select * FROM tblPartGateTemplate WHERE [projectTemplateId] = " & projTempId, dbOpenSnapshot)
 Set rsSess = db.OpenRecordset("SELECT * FROM tblSessionVariables WHERE pillarTitle is not null")
@@ -2003,6 +2113,7 @@ Do While Not rsGateTemplate.EOF
     '--ADD THIS GATE
     runningDate = addWorkdays(runningDate, rsGateTemplate![gateDuration])
     db.Execute "INSERT INTO tblPartGates(projectId,partNumber,gateTitle,plannedDate) VALUES (" & projId & ",'" & pNum & "','" & rsGateTemplate![gateTitle] & "',#" & runningDate & "#)", dbFailOnError
+    'NEEDS CONVERTED TO ADODB
     TempVars.Add "gateId", db.OpenRecordset("SELECT @@identity")(0).Value
     
     '--ADD STEPS FOR THIS GATE
@@ -2031,6 +2142,7 @@ Do While Not rsGateTemplate.EOF
         End If
             
         db.Execute strInsert, dbFailOnError
+        'NEEDS CONVERTED TO ADODB
         
         '--ADD APPROVALS FOR THIS STEP
         TempVars.Add "stepId", db.OpenRecordset("SELECT @@identity")(0).Value
@@ -2041,6 +2153,7 @@ Do While Not rsGateTemplate.EOF
                 pNum & "','" & Environ("username") & "','" & Now() & "','" & _
                 Nz(rsApprovalsTemplate![dept], "") & "','" & Nz(rsApprovalsTemplate![reqLevel], "") & "','tblPartSteps'," & TempVars!stepId & ");"
             db.Execute strInsert1
+            'NEEDS CONVERTED TO ADODB
             rsApprovalsTemplate.MoveNext
         Loop
 nextStep:
@@ -2064,6 +2177,7 @@ If projTempId = 8 Then
     Do While Not rsAssyTemplate.EOF
         assyRunningDate = addWorkdays(assyRunningDate, Nz(rsAssyTemplate![duration], 1))
         db.Execute "INSERT INTO tblPartAssemblyGates(projectId,templateGateId,partNumber,gateStatus,plannedDate) VALUES (" & projId & "," & rsAssyTemplate!recordId & ",'" & pNum & "',1,'" & assyRunningDate & "')", dbFailOnError
+        'NEEDS CONVERTED TO ADODB
         rsAssyTemplate.MoveNext
     Loop
     

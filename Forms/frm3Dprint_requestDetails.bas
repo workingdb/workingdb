@@ -111,7 +111,7 @@ Call setTheme(Me)
 
 TempVars.Add "req3Ddelete", "False"
 
-Me.createdby.DefaultValue = DLookup("ID", "tblPermissions", "user = '" & Environ("username") & "'")
+Me.createdBy.DefaultValue = DLookup("ID", "tblPermissions", "user = '" & Environ("username") & "'")
 
 Me.allowEdits = True
 
@@ -209,8 +209,8 @@ If TempVars!new3Dreq = "True" Then
     body = emailContentGen("New Print Request", _
         "New " & Me.requestReason.column(1), _
         "Notes: " & Me.requestNotes, _
-         "Title: " & Me.requestTitle & " for: " & Me.createdby.column(1), _
-        "Requested: " & CStr(Date) & ", by: " & Me.createdby.column(1), _
+         "Title: " & Me.requestTitle & " for: " & Me.createdBy.column(1), _
+        "Requested: " & CStr(Date) & ", by: " & Me.createdBy.column(1), _
         "Priority: " & Me.requestPriority.column(1), _
         "Printer: " & Me.Controls("printer").column(1), "3D Print", Me.recordId)
         

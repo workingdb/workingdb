@@ -254,6 +254,7 @@ Else
 '-- duplicate the related records: append query.
             strSQL = "INSERT INTO [dbo_tblComments] (Control_Number, Comments ) VALUES (" & lngNewID & ", '" & StrQuoteReplace(strOldComments) & "');"
             db.Execute strSQL, dbFailOnError
+            'NEEDS CONVERTED TO ADODB
         Me.Requery
     End With
     

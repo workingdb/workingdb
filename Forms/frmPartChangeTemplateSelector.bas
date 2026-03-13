@@ -40,6 +40,7 @@ templateIndexCount = rsStepTemplate.RecordCount
 indexVal = Form_sfrmPartDashboard.indexOrder
 
 db.Execute "UPDATE tblPartSteps SET indexOrder = indexOrder + " & templateIndexCount & " WHERE partGateId = " & Form_sfrmPartDashboard.partGateId & " AND indexOrder > " & indexVal
+'NEEDS CONVERTED TO ADODB
 
 Do While Not rsStepTemplate.EOF
     If (IsNull(rsStepTemplate![Title]) Or rsStepTemplate![Title] = "") Then GoTo nextStep
@@ -53,6 +54,7 @@ Do While Not rsStepTemplate.EOF
     strInsert = strInsert & Nz(rsStepTemplate![stepActionId], "NULL") & "," & Nz(rsStepTemplate![documentType], "NULL") & ",'" & _
         Nz(rsStepTemplate![responsible], "") & "'," & indexVal & "," & Nz(rsStepTemplate![duration], 1) & ");"
     db.Execute strInsert, dbFailOnError
+    'NEEDS CONVERTED TO ADODB
     
     '--ADD APPROVALS FOR THIS STEP
     If Not rsStepTemplate![approvalRequired] Then GoTo nextStep
@@ -64,6 +66,7 @@ Do While Not rsStepTemplate.EOF
             pNum & "','" & Environ("username") & "','" & Now() & "','" & _
             Nz(rsApprovalsTemplate![dept], "") & "','" & Nz(rsApprovalsTemplate![reqLevel], "") & "','tblPartSteps'," & TempVars!stepId & ");"
         db.Execute strInsert1
+        'NEEDS CONVERTED TO ADODB
         rsApprovalsTemplate.MoveNext
     Loop
 nextStep:
