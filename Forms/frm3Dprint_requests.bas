@@ -35,6 +35,17 @@ Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)
 End Sub
 
+Private Sub help_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frmHelp"
+Form_frmHelp.setHelpScreen (7)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
 Private Sub materials_Click()
 On Error GoTo Err_Handler
 
