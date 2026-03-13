@@ -1425,6 +1425,7 @@ Do While Not rsEvents.EOF
     Comments = "'Hold program review for " & rsProgram!modelCode & " " & rsEvents!eventTitle & "'"
     
     db.Execute "INSERT INTO dbo_tblComments(Control_Number, Comments) VALUES(" & controlNum & "," & Comments & ")"
+    'NEEDS CONVERTED TO ADODB
     
     body = emailContentGen("Program Review WO", "WO Notice", "WO Auto-Created for " & rsProgram!modelCode & " Program Review", "Event: " & rsEvents!eventTitle, "WO#" & controlNum, "Due: " & dueDate, "Sent On: " & CStr(Now()))
     

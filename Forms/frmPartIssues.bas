@@ -549,6 +549,7 @@ Set db = CurrentDb()
 
 db.Execute "INSERT INTO tblPartIssues(issueOpenedBy,inCharge,foundBy,partNumber, issueStatus, issuePriority,foundDate) VALUES " & _
                                     "('" & Environ("username") & "','" & Environ("username") & "','" & Environ("username") & "','" & Me.fltPartNumber & "',1,2,Date());"
+                                    'NEEDS CONVERTED TO ADODB
 TempVars.Add "issueId", db.OpenRecordset("SELECT @@identity")(0).Value
 Call registerPartUpdates("tblPartIssues", TempVars!issueId, "Issue Creation", "", "Created", Me.fltPartNumber, Me.name)
 Me.Requery

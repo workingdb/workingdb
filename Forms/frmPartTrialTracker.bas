@@ -381,6 +381,7 @@ If partInfoId = "" Then
     moldInfoId = Nz(DLookup("recordId", "tblPartMoldingInfo", "toolNumber = '" & x & "'"), "")
     If moldInfoId = "" Then
         db.Execute "INSERT INTO tblPartMoldingInfo(toolNumber) VALUES ('" & x & "')"
+        'NEEDS CONVERTED TO ADODB
         moldInfoId = db.OpenRecordset("SELECT @@identity")(0).Value
     End If
     
@@ -440,6 +441,7 @@ db.Execute "INSERT INTO tblPartTrials(partNumber,creator,partInfoId,currentUnit,
     tTrialNumber & ",'" & _
     Environ("username") & "'," & _
     runnerWeight & ");"
+    'NEEDS CONVERTED TO ADODB
 TempVars.Add "trialId", db.OpenRecordset("SELECT @@identity")(0).Value
 Call registerPartUpdates("tblPartTrials", TempVars!trialId, "Trial", "", "Created", Me.fltPartNumber, Me.name, Nz(Me.fltPartNumber.column(1)))
 Me.Requery

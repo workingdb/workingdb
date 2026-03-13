@@ -6,4 +6,4 @@ FROM
 WHERE
     (
         (RI.IMPLEMENTATION_DATE Is Not Null)
-        AND (SI.SEGMENT1='30580'));
+        AND (SI.SEGMENT1='29532'));

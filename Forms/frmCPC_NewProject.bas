@@ -149,6 +149,7 @@ Set db = CurrentDb
 Set rsECO = db.OpenRecordset("SELECT ecoNumber FROM tblCPC_ECOs WHERE projectId = " & Me.ID, dbOpenSnapshot)
 
 db.Execute "DELETE * FROM tblCPC_Parts WHERE projectId = " & Me.ID
+'NEEDS CONVERTED TO ADODB
 
 sqlMain = "INSERT INTO tblCPC_Parts (projectId, partNumber, newRev, unit) " & _
     "SELECT " & Me.ID & ", APPS_MTL_SYSTEM_ITEMS.SEGMENT1 AS partNumber, ENG_ENG_REVISED_ITEMS.NEW_ITEM_REVISION AS newRev, APPS_MTL_CATEGORIES_VL.SEGMENT1 AS unit " & _
@@ -163,6 +164,7 @@ If Not (rsECO.BOF And rsECO.EOF) Then
         If rsECO("ecoNumber") <> "" Then
             sqlWhere = "HAVING APPS_MTL_CATEGORIES_VL.SEGMENT1 Like 'U*' AND ENG_ENG_REVISED_ITEMS.CHANGE_NOTICE='" & rsECO("ecoNumber") & "';"
             db.Execute sqlMain & sqlWhere, dbFailOnError
+            'NEEDS CONVERTED TO ADODB
         End If
         rsECO.MoveNext
     Loop
@@ -243,6 +245,7 @@ rsStepTemplate.FindFirst "pillarStep = TRUE AND duration = 0"
 opT0 = Me.kickoffDate
 
 If DCount("ID", "tblCPC_XFteams", "projectId = " & Me.ID & " AND memberName = '" & Environ("username") & "'") = 0 Then db.Execute "INSERT INTO tblCPC_XFteams(projectId,memberName) VALUES (" & Me.ID & ",'" & Environ("username") & "')", dbFailOnError 'assign project engineer
+'NEEDS CONVERTED TO ADODB
 
 '--ADD STEPS
 rsStepTemplate.MoveFirst
@@ -267,6 +270,7 @@ Do While Not rsStepTemplate.EOF
         End If
         
     db.Execute strInsert, dbFailOnError
+    'NEEDS CONVERTED TO ADODB
     
     '--ADD APPROVALS FOR THIS STEP
     TempVars.Add "stepId", db.OpenRecordset("SELECT @@identity")(0).Value
@@ -277,6 +281,7 @@ Do While Not rsStepTemplate.EOF
             Environ("username") & "','" & Now() & "','" & _
             Nz(rsApprovalsTemplate![dept], "") & "','" & Nz(rsApprovalsTemplate![reqLevel], "") & "'," & TempVars!stepId & ");"
         db.Execute strInsert1
+        'NEEDS CONVERTED TO ADODB
         rsApprovalsTemplate.MoveNext
     Loop
 nextStep:

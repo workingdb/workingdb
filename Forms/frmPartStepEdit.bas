@@ -43,7 +43,9 @@ Call registerPartUpdates("tblPartSteps", Me.recordId, "Step", Me.stepType, "Dele
 Dim db As Database
 Set db = CurrentDb()
 db.Execute "DELETE FROM tblPartTrackingApprovals WHERE tableName = 'tblPartSteps' AND tableRecordId = " & Me.recordId
+'NEEDS CONVERTED TO ADODB
 db.Execute "DELETE FROM tblPartSteps WHERE recordId = " & Me.recordId
+'NEEDS CONVERTED TO ADODB
 DoCmd.CLOSE
 Form_frmPartDashboard.partDash_refresh_Click
 

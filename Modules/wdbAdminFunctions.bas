@@ -132,6 +132,7 @@ db.Execute ("INSERT INTO tblAnalytics(module,form,username,dateused,datatag0,dat
     Now() & "','" & _
     StrQuoteReplace(dataTag0) & "','" & _
     TempVars!wdbVersion & "')")
+    'NEEDS CONVERTED TO ADODB
 
 Set db = Nothing
 

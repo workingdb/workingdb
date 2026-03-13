@@ -25,10 +25,7 @@ End Sub
 Private Sub deleteTime_Click()
 On Error GoTo Err_Handler
 
-Dim db As Database
-Set db = CurrentDb()
-db.Execute "DELETE from tblTaskTracker WHERE Task_ID = " & Me.TASK_ID
-Set db = Nothing
+dbExecute "DELETE from tblTaskTracker WHERE Task_ID = " & Me.TASK_ID
 Me.Requery
 
 Exit Sub

@@ -322,6 +322,7 @@ projId = DLookup("partProjectId", "tblPartSteps", "recordId = " & Me.TtableRecor
 
 db.Execute "INSERT INTO tblPartTrackingApprovals(partNumber,tableName,tableRecordId,requestedBy,requestedDate) VALUES ('" & _
     Me.TpartNumber & "','" & Me.TtableName & "'," & Me.TtableRecordId & ",'" & Environ("username") & "',#" & Now() & "#);"
+    'NEEDS CONVERTED TO ADODB
 TempVars.Add "approvalId", db.OpenRecordset("SELECT @@identity")(0).Value
 Call registerPartUpdates("tblPartTrackingApprovals", Me.TtableRecordId, "Approval", "", "Created", Me.TpartNumber, Me.itemName.Caption, projId)
 Me.Requery

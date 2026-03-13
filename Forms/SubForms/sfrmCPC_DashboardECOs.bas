@@ -74,6 +74,7 @@ Do While Not rs1.EOF
     If rs2.noMatch Then
         db.Execute ("INSERT INTO tblCPC_Parts (projectNumber, partNumber, newRev) " & _
                         "SELECT '" & Me.projectNumber & "', '" & rs1("SEGMENT1") & "', '" & rs1("NEW_ITEM_REVISION") & "'")
+                        'NEEDS CONVERTED TO ADODB
     End If
     rs1.MoveNext
 Loop
