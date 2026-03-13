@@ -97,7 +97,7 @@ If (restrict(Environ("username"), "Project") And restrict(Environ("username"), "
 Me.nmqDash.Visible = Not restrict(Environ("username"), "New Model Quality")
 
 Me.reports.Visible = _
-    Not restrict(Environ("username"), "New Model Quality", "Supervisor", True) Or _
+    Not restrict(Environ("username"), "New Model Quality", True) Or _
     Not restrict(Environ("username"), "Project", "Supervisor", True) Or _
     Not restrict(Environ("username"), "Supplier Quality") Or _
     userData("developer")

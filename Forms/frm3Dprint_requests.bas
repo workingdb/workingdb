@@ -24,6 +24,12 @@ Call setTheme(Me)
 Me.filter = "[requestStatus] <> 'Completed'"
 Me.FilterOn = True
 
+'are you a champion?
+TempVars.Add "printerChampion", Nz(DCount("recordId", "tbl3Dprinters", "printerChampion = " & userData("ID")), 0) > 0
+
+Me.printers.Visible = TempVars!printerChampion = "True"
+Me.materials.Visible = TempVars!printerChampion = "True"
+
 Exit Sub
 Err_Handler:
     Call handleError(Me.name, "Form_Load", Err.DESCRIPTION, Err.number)

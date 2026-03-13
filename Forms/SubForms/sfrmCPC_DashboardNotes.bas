@@ -29,7 +29,7 @@ If Nz(name) = "" Then
     Exit Sub
 End If
 
-Me.createdBy.DefaultValue = "'" & name & "'"
+Me.createdby.DefaultValue = "'" & name & "'"
 
 Exit Sub
 Err_Handler:

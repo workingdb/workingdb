@@ -109,9 +109,36 @@ On Error GoTo Err_Handler
 
 Call setTheme(Me)
 
-Me.createdBy.DefaultValue = DLookup("ID", "tblPermissions", "user = '" & Environ("username") & "'")
+TempVars.Add "req3Ddelete", "False"
 
-Me.requestStatus.Locked = TempVars!new3Dreq = "True"
+Me.createdby.DefaultValue = DLookup("ID", "tblPermissions", "user = '" & Environ("username") & "'")
+
+Me.allowEdits = True
+
+If TempVars!printerChampion = "True" Then
+    Me.requestStatus.Locked = False
+    Me.remove.Visible = True
+    GoTo permOk
+End If
+
+'non champions
+Me.requestStatus.Locked = True
+Me.remove.Visible = False
+
+'if new request, just lock requestStatus
+If Me.requestStatus = 1 And TempVars!new3Dreq = "False" Then 'if not accepted yet, allow a few fields to be edited
+    Dim ctl As Control
+    For Each ctl In Me.Controls
+        If ctl.tag Like "*lckReq*" Then ctl.Locked = True
+    Next
+    Me.materialid.Locked = False
+    Me.requestQuantity.Locked = False
+ElseIf Me.requestStatus > 1 Then
+    Me.allowEdits = False
+End If
+
+
+permOk:
 
 Exit Sub
 Err_Handler:
@@ -173,6 +200,25 @@ If validate = False Then Exit Sub
 
 Call registerDRSUpdates("tbl3DprintRequests", Me.recordId, "Request", "", "Saved", Me.name)
 
+If TempVars!new3Dreq = "True" Then
+    Dim printerChampion As String, champId As Long
+    champId = DLookup("printerChampion", "tbl3Dprinters", "recordId = " & Me.Controls("printer"))
+    printerChampion = DLookup("user", "tblPermissions", "ID = " & champId)
+    
+    Dim body As String
+    body = emailContentGen("New Print Request", _
+        "New " & Me.requestReason.column(1), _
+        "Notes: " & Me.requestNotes, _
+         "Title: " & Me.requestTitle & " for: " & Me.createdby.column(1), _
+        "Requested: " & CStr(Date) & ", by: " & Me.createdby.column(1), _
+        "Priority: " & Me.requestPriority.column(1), _
+        "Printer: " & Me.Controls("printer").column(1), "3D Print", Me.recordId)
+        
+    Call registerDRSUpdates("tbl3DprintRequests", Me.recordId, "Submission", "", "New Request", Me.name)
+    
+    Call sendNotification(printerChampion, 6, 2, "New Print Request", body, "3D Print", Me.recordId)
+End If
+
 DoCmd.CLOSE acForm, "frm3Dprint_requestDetails"
 
 If CurrentProject.AllForms("frm3Dprint_requests").IsLoaded Then Form_frm3Dprint_requests.Requery
@@ -184,6 +230,8 @@ End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 On Error GoTo Err_Handler
+
+If TempVars!req3Ddelete = "True" Then Exit Sub
 
 If Me.Dirty Then Me.Dirty = False
 
@@ -234,6 +282,22 @@ Me.materialid.RowSource = "SELECT " & _
     "ORDER BY mat.materialQuantity DESC;"
     
 Call registerDRSUpdates("tbl3DprintRequests", Me.recordId, Me.ActiveControl.name, "", Me.ActiveControl.column(1), Me.name)
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
+
+Private Sub remove_Click()
+On Error GoTo Err_Handler
+
+If MsgBox("Are you sure you want to delete this request?", vbYesNo, "Please confirm") = vbYes Then
+    Call registerDRSUpdates("tbl3DprintRequests", Me.recordId, "Request", Me.requestTitle, "Deleted", Me.name)
+    dbExecute ("DELETE FROM tbl3DprintRequests WHERE [recordId] = " & Me.recordId)
+    TempVars.Add "req3Ddelete", "True"
+    DoCmd.CLOSE
+    If CurrentProject.AllForms("frm3Dprint_requests").IsLoaded Then Form_frm3Dprint_requests.Requery
+End If
 
 Exit Sub
 Err_Handler:

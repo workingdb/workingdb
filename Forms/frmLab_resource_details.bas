@@ -67,7 +67,7 @@ On Error GoTo Err_Handler
 Call setTheme(Me)
 
 If IsNull(Me.recordId) Then
-    Me.createdBy = Environ("username")
+    Me.createdby = Environ("username")
     Me.createdDate = Date
 End If
 
