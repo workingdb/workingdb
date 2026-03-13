@@ -22,7 +22,7 @@ Me.tabCtrl.Pages("tabSupplierQuality").Enabled = Not dev
 Select Case userData("dept")
     Case "New Molder Quality"
         'this also requires supervisor
-        Me.tabCtrl.Pages("tabNMQ").Enabled = Not restrict(Environ("username"), "New Model Quality", "Supervisor", True)
+        Me.tabCtrl.Pages("tabNMQ").Enabled = Not restrict(Environ("username"), "New Model Quality", True)
     Case "Project"
         'this also requires supervisor
         Me.tabCtrl.Pages("tabProject").Enabled = Not restrict(Environ("username"), "Project", "Supervisor", True)

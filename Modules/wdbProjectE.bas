@@ -1573,9 +1573,9 @@ Select Case rsPI!partType
         aifInsert "MOLDING INFORMATION", "", , , , True
         Set rsPMI = db.OpenRecordset("SELECT * from tblPartMoldingInfo WHERE recordId = " & rsPI!moldInfoId, dbOpenSnapshot)
         weight100Pc = Nz(rsPI!itemWeight100Pc, 0)
-        insLev = Nz(rsPMI!inspection)
-        mpLev = Nz(rsPMI!measurePack)
-        anneal = Nz(rsPMI!annealing)
+        insLev = Nz(rsPMI!inspection, 0)
+        mpLev = Nz(rsPMI!measurePack, 0)
+        anneal = Nz(rsPMI!annealing, 0)
         If rsPMI!insertMold Then
             laborType = "Insert Mold"
         Else

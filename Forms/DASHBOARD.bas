@@ -1100,6 +1100,7 @@ designPrograms = Nz(TempVars!dept) = "Design"
 Me.btn3DexSheet.Visible = designPrograms Or dev
 Me.modelV5search.Visible = designPrograms Or dev
 Me.catiaMacros.Visible = designPrograms Or dev
+Me.open3DprintRequests.Visible = designPrograms Or dev
 
 Dim Org
 Org = Nz(TempVars!Org, 4)
@@ -1119,7 +1120,7 @@ Me.userPic.Picture = "\\data\mdbdata\WorkingDB\Pictures\Avatars\" & Environ("use
 DoCmd.Maximize
 
 closeApp
-hidecmd_Click
+Call hidecmd_Click
 
 If Nz(TempVars!smallScreen, False) = True Then
     Call smallScreenMode(True)
@@ -1312,6 +1313,16 @@ DoCmd.OpenForm "frmNotifications"
 
 Exit Sub
 Err_Handler:: Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number): End Sub
+
+Private Sub open3DprintRequests_Click()
+On Error GoTo Err_Handler
+
+DoCmd.OpenForm "frm3Dprint_requests"
+
+Exit Sub
+Err_Handler:
+    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
+End Sub
 
 Public Sub openCust_Click()
 On Error GoTo Err_Handler

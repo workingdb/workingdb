@@ -427,8 +427,6 @@ userID = DLookup("[ID]", "[tblPermissions]", "[user] = '" & Me.fltAssignee.Value
 Me.Repaint
 Call updateButtons("Assignee", "Approved")
 
-Me.open3DprintRequests.Visible = userData("beta")
-
 Me.OrderBy = "Due"
 Me.OrderByOn = True
 
@@ -594,16 +592,6 @@ On Error GoTo Err_Handler
 
 Me.Request_Type.SetFocus
 DoCmd.RunCommand acCmdFilterMenu
-
-Exit Sub
-Err_Handler:
-    Call handleError(Me.name, Me.ActiveControl.name, Err.DESCRIPTION, Err.number)
-End Sub
-
-Private Sub open3DprintRequests_Click()
-On Error GoTo Err_Handler
-
-DoCmd.OpenForm "frm3Dprint_requests"
 
 Exit Sub
 Err_Handler:

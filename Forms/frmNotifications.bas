@@ -110,6 +110,8 @@ Select Case Me.appName
         DoCmd.OpenForm "frmPartIssues", , , "recordId = " & Me.appId.Value
     Case "Trial"
         DoCmd.OpenForm "frmPartTrialDetails", , , "recordId = " & Me.appId.Value
+    Case "3D Print"
+        DoCmd.OpenForm "frm3Dprint_requestDetails", , , "recordId = " & Me.appId.Value
 End Select
 
 Exit Sub
